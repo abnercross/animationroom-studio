@@ -1,0 +1,16 @@
+{
+  "name": "studio",
+  "displayName": "Animation Room Studio",
+  "version": "0.17.0",
+  "description": "Turn a voiceover into an animation, or your own video into a finished edit, in a style you pick. Start with: set up my studio.",
+  "author": {
+    "name": "Abner Cross"
+  },
+  "keywords": [
+    "video",
+    "animation",
+    "editing",
+    "remotion",
+    "reels"
+  ]
+}

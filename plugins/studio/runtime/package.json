@@ -1,0 +1,18 @@
+{
+  "name": "animationroom-runtime",
+  "private": true,
+  "version": "0.12.0",
+  "description": "Shared render runtime for Animation Room Studio: setup test clip and the Animate engine. Installed once into the plugin data folder.",
+  "dependencies": {
+    "@remotion/bundler": "4.0.533",
+    "@remotion/cli": "4.0.533",
+    "@remotion/fonts": "4.0.533",
+    "@remotion/install-whisper-cpp": "4.0.533",
+    "@remotion/paths": "4.0.533",
+    "@remotion/renderer": "4.0.533",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.533"
+  },
+  "studioEngine": "1.9.0"
+}

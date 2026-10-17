@@ -1,0 +1,36 @@
+{
+  "whisperCpp": "1.5.5",
+  "commit": "7395c70a748753e3800b63e3422a2b558a097c80",
+  "base": "https://animationroom.app/engine",
+  "builds": {
+    "arm64": {
+      "file": "whisper-cpp-1.5.5-macos-arm64.zip",
+      "sha256": "6163c37be11bfa8ceb80759882751015fd7d60ac25cae6c92ab5cae8c0e5874c",
+      "bytes": 609159,
+      "programs": [
+        "main"
+      ],
+      "needs": {},
+      "gpu": "metal"
+    },
+    "x64": {
+      "file": "whisper-cpp-1.5.5-macos-x64.zip",
+      "sha256": "eeee8e46459d4c4c4cc800ec3d4b20e33746dc42c3bb456d8750256a7294d0d2",
+      "bytes": 1190221,
+      "programs": [
+        "main-avx2",
+        "main-baseline"
+      ],
+      "needs": {
+        "main-avx2": [
+          "AVX1.0",
+          "AVX2",
+          "FMA",
+          "F16C"
+        ],
+        "main-baseline": []
+      },
+      "gpu": "none"
+    }
+  }
+}

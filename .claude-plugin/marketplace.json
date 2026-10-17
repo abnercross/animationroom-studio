@@ -1,0 +1,17 @@
+{
+  "name": "animationroom",
+  "description": "Animation Room Studio: turn a voiceover into a finished animation, or a talking video into a finished edit.",
+  "owner": {
+    "name": "Animation Room",
+    "url": "https://animationroom.app"
+  },
+  "plugins": [
+    {
+      "name": "studio",
+      "source": "./plugins/studio",
+      "description": "Animation Room Studio. Needs a license from animationroom.app.",
+      "category": "video",
+      "homepage": "https://animationroom.app"
+    }
+  ]
+}

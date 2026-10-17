@@ -1,0 +1,244 @@
+{
+  "box": 100,
+  "drawings": {
+    "magnifier": {
+      "about": "looking closely, finding out what is really there",
+      "keywords": ["look","looking","see","check","checking","examine","inspect","closer","search","find","finding","discover","notice","understand","assess","actually","really","detail","investigate"],
+      "strokes": [
+        {"d":"M42 16A26 26 0 1 1 42 68A26 26 0 1 1 42 16"},
+        {"d":"M61 61L88 88"},
+        {"d":"M27 38A16 16 0 0 1 40 26","tone":"mid"}
+      ]
+    },
+    "drop": {
+      "about": "a liquid, water, oil, hydration",
+      "keywords": ["drop","water","oil","serum","liquid","hydration","hydrate","moisture","moisturise","moisturize","wet","sweat","tear"],
+      "strokes": [
+        {"d":"M50 12C40 28 24 46 24 62A26 26 0 0 0 76 62C76 46 60 28 50 12Z"},
+        {"d":"M36 64A14 14 0 0 0 48 76","tone":"mid"}
+      ]
+    },
+    "bottles": {
+      "about": "a bottle and a dropper: products, what someone uses or applies",
+      "keywords": ["product","products","bottle","bottles","dropper","cream","lotion","serum","using","use","apply","applying","routine","ingredient","ingredients","formula","medicine","supplement"],
+      "strokes": [
+        {"d":"M27 30L27 20L49 20L49 30"},
+        {"d":"M28 30Q20 34 20 42L20 82Q20 88 26 88L50 88Q56 88 56 82L56 42Q56 34 48 30Z"},
+        {"d":"M20 54L56 54M20 72L56 72","tone":"mid"},
+        {"d":"M74 12Q66 12 66 22L66 32L82 32L82 22Q82 12 74 12Z"},
+        {"d":"M64 32L84 32L84 38L64 38Z"},
+        {"d":"M70 38L70 64L74 74L78 64L78 38"},
+        {"d":"M74 81Q70 87 74 90Q78 87 74 81Z","tone":"mid"}
+      ]
+    },
+    "target": {
+      "about": "a goal, what someone wants to reach",
+      "keywords": ["goal","goals","target","aim","achieve","achieving","want","result","results","focus","objective","reach","outcome","purpose"],
+      "strokes": [
+        {"d":"M46 20A34 34 0 1 1 46 88A34 34 0 1 1 46 20"},
+        {"d":"M46 32A22 22 0 1 1 46 76A22 22 0 1 1 46 32","tone":"mid"},
+        {"d":"M46 44A10 10 0 1 1 46 64A10 10 0 1 1 46 44"},
+        {"d":"M88 12L47 53"},
+        {"d":"M80 20L80 8M80 20L92 20","tone":"mid"}
+      ]
+    },
+    "clock": {
+      "about": "time, how long, waiting",
+      "keywords": ["time","clock","hour","hours","minute","minutes","long","wait","waiting","quick","quickly","fast","slow","late","early","soon","moment"],
+      "strokes": [
+        {"d":"M50 14A36 36 0 1 1 50 86A36 36 0 1 1 50 14"},
+        {"d":"M50 14L50 20M86 50L80 50M50 86L50 80M14 50L20 50","tone":"mid"},
+        {"d":"M50 50L50 28"},
+        {"d":"M50 50L66 59"}
+      ]
+    },
+    "calendar": {
+      "about": "a date, a day, a week, a schedule",
+      "keywords": ["calendar","date","day","days","week","weeks","month","months","year","years","schedule","appointment","daily","weekly","monthly","booking","session","sessions"],
+      "strokes": [
+        {"d":"M20 20L80 20Q86 20 86 26L86 80Q86 86 80 86L20 86Q14 86 14 80L14 26Q14 20 20 20Z"},
+        {"d":"M14 38L86 38"},
+        {"d":"M34 12L34 27M66 12L66 27"},
+        {"d":"M28 52L38 52M45 52L55 52M62 52L72 52M28 68L38 68M45 68L55 68","tone":"mid"}
+      ]
+    },
+    "check": {
+      "about": "done, right, approved, yes",
+      "keywords": ["check","checked","done","right","correct","yes","approved","works","confirm","confirmed","proven","safe","ready","complete","finished"],
+      "strokes": [
+        {"d":"M50 14A36 36 0 1 1 50 86A36 36 0 1 1 50 14"},
+        {"d":"M32 51L45 64L69 36"}
+      ]
+    },
+    "arrow": {
+      "about": "a direction, the next step, moving forward",
+      "keywords": ["next","forward","then","direction","move","moving","go","going","toward","towards","lead","leads","follow","step"],
+      "strokes": [
+        {"d":"M14 38L14 62","tone":"mid"},
+        {"d":"M14 50L84 50"},
+        {"d":"M62 28L84 50L62 72"}
+      ]
+    },
+    "chart": {
+      "about": "growth, getting better, going up",
+      "keywords": ["grow","growth","growing","rise","rising","increase","improve","improving","improvement","better","progress","more","up","higher","sales","results","trend"],
+      "strokes": [
+        {"d":"M16 14L16 84L88 84"},
+        {"d":"M32 84L32 72M50 84L50 62M68 84L68 50","tone":"mid"},
+        {"d":"M24 68L42 54L56 60L82 26"},
+        {"d":"M68 26L82 26L82 40"}
+      ]
+    },
+    "lightbulb": {
+      "about": "an idea, a tip, understanding",
+      "keywords": ["idea","ideas","tip","tips","insight","realise","realize","learn","learned","secret","trick","think","thought","clever","smart","discover"],
+      "strokes": [
+        {"d":"M38 66C30 60 24 52 24 40A26 26 0 0 1 76 40C76 52 70 60 62 66L62 73L38 73Z"},
+        {"d":"M42 44L47 53L50 44L53 53L58 44","tone":"mid"},
+        {"d":"M40 80L60 80"},
+        {"d":"M44 87L56 87"}
+      ]
+    },
+    "shield": {
+      "about": "protection, safety, trust",
+      "keywords": ["protect","protection","protects","safe","safety","secure","security","trust","guard","defend","barrier","prevent","prevention","risk"],
+      "strokes": [
+        {"d":"M50 10L82 22L82 48C82 68 68 82 50 90C32 82 18 68 18 48L18 22Z"},
+        {"d":"M36 50L46 60L64 38"}
+      ]
+    },
+    "heart": {
+      "about": "care, health, what someone loves",
+      "keywords": ["heart","love","care","caring","health","healthy","feel","feeling","kind","favourite","favorite","passion","wellbeing"],
+      "strokes": [
+        {"d":"M50 84C22 62 12 48 12 34A19.2 19.2 0 0 1 50 30A19.2 19.2 0 0 1 88 34C88 48 78 62 50 84Z"},
+        {"d":"M24 36A9 9 0 0 1 33 27","tone":"mid"}
+      ]
+    },
+    "steps": {
+      "about": "a process, stages, one step at a time",
+      "keywords": ["step","steps","stage","stages","process","phase","phases","level","levels","gradually","journey","path","climb","method","system"],
+      "strokes": [
+        {"d":"M10 86L32 86L32 68L54 68L54 50L76 50L76 32L92 32"},
+        {"d":"M16 58L44 30","tone":"mid"},
+        {"d":"M32 30L44 30L44 42","tone":"mid"}
+      ]
+    },
+    "gears": {
+      "about": "how something works, a system, a mechanism",
+      "keywords": ["work","works","working","system","mechanism","machine","function","functions","process","engine","automatic","automate","technical","behind"],
+      "strokes": [
+        {"d":"M58.4 55.1L65.8 56.3L65.8 63.7L58.4 64.9L55.9 71L60.3 77L55 82.3L49 77.9L42.9 80.4L41.7 87.8L34.3 87.8L33.1 80.4L27 77.9L21 82.3L15.7 77L20.1 71L17.6 64.9L10.2 63.7L10.2 56.3L17.6 55.1L20.1 49L15.7 43L21 37.7L27 42.1L33.1 39.6L34.3 32.2L41.7 32.2L42.9 39.6L49 42.1L55 37.7L60.3 43L55.9 49Z"},
+        {"d":"M38 52A8 8 0 1 1 38 68A8 8 0 1 1 38 52","tone":"mid"},
+        {"d":"M84.8 30.3L89.1 33.4L86.2 38.3L81.4 36.2L77.4 38.5L76.8 43.7L71.2 43.7L70.6 38.5L66.6 36.2L61.8 38.3L58.9 33.4L63.2 30.3L63.2 25.7L58.9 22.6L61.8 17.7L66.6 19.8L70.6 17.5L71.2 12.3L76.8 12.3L77.4 17.5L81.4 19.8L86.2 17.7L89.1 22.6L84.8 25.7Z"},
+        {"d":"M74 24A4 4 0 1 1 74 32A4 4 0 1 1 74 24","tone":"mid"}
+      ]
+    },
+    "chat": {
+      "about": "talking, a question, a conversation",
+      "keywords": ["talk","talking","say","tell","ask","asking","question","questions","conversation","message","chat","speak","discuss","consultation","answer","listen"],
+      "strokes": [
+        {"d":"M18 18L82 18Q88 18 88 24L88 60Q88 66 82 66L44 66L28 82L28 66L18 66Q12 66 12 60L12 24Q12 18 18 18Z"},
+        {"d":"M26 34L74 34","tone":"mid"},
+        {"d":"M26 49L58 49","tone":"mid"}
+      ]
+    },
+    "people": {
+      "about": "clients, a team, everyone",
+      "keywords": ["people","person","client","clients","patient","patients","customer","customers","team","everyone","everybody","group","community","family","audience","someone"],
+      "strokes": [
+        {"d":"M50 20A10 10 0 1 1 50 40A10 10 0 1 1 50 20"},
+        {"d":"M30 82C30 62 38 52 50 52C62 52 70 62 70 82"},
+        {"d":"M21 34A7 7 0 1 1 21 48A7 7 0 1 1 21 34","tone":"mid"},
+        {"d":"M7 82C7 67 12 59 21 59","tone":"mid"},
+        {"d":"M79 34A7 7 0 1 1 79 48A7 7 0 1 1 79 34","tone":"mid"},
+        {"d":"M93 82C93 67 88 59 79 59","tone":"mid"}
+      ]
+    },
+    "house": {
+      "about": "home, at home, a place",
+      "keywords": ["home","house","place","live","living","room","clinic","studio","office","space","stay"],
+      "strokes": [
+        {"d":"M12 48L50 14L88 48"},
+        {"d":"M22 40L22 86L78 86L78 40"},
+        {"d":"M42 86L42 62L58 62L58 86"},
+        {"d":"M66 28L66 17L74 17L74 35","tone":"mid"}
+      ]
+    },
+    "coin": {
+      "about": "money, cost, saving",
+      "keywords": ["money","cost","costs","price","pay","paying","spend","spending","save","saving","budget","cheap","expensive","invest","investment","worth","value","income"],
+      "strokes": [
+        {"d":"M20 34A30 10 0 1 1 80 34A30 10 0 1 1 20 34"},
+        {"d":"M20 34L20 70A30 10 0 0 0 80 70L80 34"},
+        {"d":"M20 46A30 10 0 0 0 80 46","tone":"mid"},
+        {"d":"M20 58A30 10 0 0 0 80 58","tone":"mid"}
+      ]
+    },
+    "leaf": {
+      "about": "natural, gentle, growing",
+      "keywords": ["natural","nature","plant","plants","leaf","green","organic","gentle","fresh","grow","herbal","clean","calm"],
+      "strokes": [
+        {"d":"M18 82C18 40 44 16 84 16C84 56 60 82 18 82Z"},
+        {"d":"M18 82L68 32"},
+        {"d":"M34 66L30 48M48 52L46 34","tone":"mid"},
+        {"d":"M34 66L52 70M48 52L66 54","tone":"mid"}
+      ]
+    },
+    "scale": {
+      "about": "balance, weighing two things, a fair choice",
+      "keywords": ["balance","balanced","weigh","weighing","compare","comparing","versus","fair","equal","choice","decide","decision","either","both","difference"],
+      "strokes": [
+        {"d":"M50 16L50 86"},
+        {"d":"M32 86L68 86"},
+        {"d":"M18 28L82 28"},
+        {"d":"M18 28L8 54M18 28L28 54","tone":"mid"},
+        {"d":"M6 54A12 9 0 0 0 30 54Z"},
+        {"d":"M82 28L72 54M82 28L92 54","tone":"mid"},
+        {"d":"M70 54A12 9 0 0 0 94 54Z"}
+      ]
+    },
+    "branches": {
+      "about": "one thing with several causes, options or ways",
+      "keywords": ["different","causes","cause","options","option","ways","way","various","several","many","reasons","reason","depends","depending","types","kinds","choices","paths"],
+      "strokes": [
+        {"d":"M16 44A6 6 0 1 1 16 56A6 6 0 1 1 16 44"},
+        {"d":"M22 50L42 50"},
+        {"d":"M42 50C56 50 56 22 72 22L88 22"},
+        {"d":"M42 50L88 50"},
+        {"d":"M42 50C56 50 56 78 72 78L88 78"},
+        {"d":"M82 16L88 22L82 28M82 44L88 50L82 56M82 72L88 78L82 84","tone":"mid"}
+      ]
+    },
+    "sparkle": {
+      "about": "clear, fresh, new, a visible result",
+      "keywords": ["clear","clearer","clean","bright","brighter","glow","glowing","shine","new","fresh","smooth","smoother","perfect","beautiful","better","result"],
+      "strokes": [
+        {"d":"M44 14C46 38 54 46 78 48C54 50 46 58 44 82C42 58 34 50 10 48C34 46 42 38 44 14Z"},
+        {"d":"M78 62C79 72 82 75 92 76C82 77 79 80 78 90C77 80 74 77 64 76C74 75 77 72 78 62Z","tone":"mid"},
+        {"d":"M76 12L76 26M69 19L83 19","tone":"mid"}
+      ]
+    },
+    "ruler": {
+      "about": "measuring, size, what fits",
+      "keywords": ["size","sizes","fit","fits","measure","measuring","measured","exact","exactly","precise","length","amount","dose","much","tailored","custom","personal"],
+      "strokes": [
+        {"d":"M8 38L92 38L92 66L8 66Z"},
+        {"d":"M20 38L20 52M44 38L44 52M68 38L68 52"},
+        {"d":"M32 38L32 46M56 38L56 46M80 38L80 46","tone":"mid"}
+      ]
+    },
+    "clipboard": {
+      "about": "a plan, an assessment, a list to go through",
+      "keywords": ["plan","plans","planning","assess","assessment","assessing","list","checklist","review","notes","record","form","test","tests","report","prescription","programme","program"],
+      "strokes": [
+        {"d":"M36 18L26 18Q20 18 20 24L20 82Q20 88 26 88L74 88Q80 88 80 82L80 24Q80 18 74 18L64 18"},
+        {"d":"M38 12L62 12L62 24L38 24Z"},
+        {"d":"M32 44L37 49L45 39"},
+        {"d":"M54 45L68 45","tone":"mid"},
+        {"d":"M32 64L37 69L45 59"},
+        {"d":"M54 65L68 65","tone":"mid"}
+      ]
+    }
+  }
+}
