@@ -6,14 +6,14 @@ import {continueRender, delayRender} from 'remotion';
 import {getBoundingBox} from '@remotion/paths';
 import type {Block} from './blocks';
 import {fontsReady} from './fonts';
-import {StyleTokens, clamp, cubicInOut, gray, hash, progress} from './lib';
+import {StoryContext, StyleTokens, clamp, cubicInOut, gray, hash, progress, useFrame} from './lib';
 import {easeBack, easeIn, easeOut, pose, seedOf, shapeD} from './paper';
 import {BrushStroke} from './sketch';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
 // Things every block in a storyboard may need: the cast of characters and when the voice is speaking.
-export const StoryContext = React.createContext<{cast?: Record<string, any>; speech?: number[][]; W?: number; H?: number}>({});
+export {StoryContext};
 
 const pal = (k: StyleTokens, c: string | undefined, def: string) => (c && k.palette?.[c] !== undefined ? gray(k.palette[c]) : c && c.startsWith('#') ? c : def);
 
@@ -894,6 +894,7 @@ export const PageWipe: React.FC<{k: StyleTokens; t: number; cuts: number[]; W: n
 
 // ---------- caption: the spoken words under the picture; the word being said lights up ----------
 export const CaptionBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const words = (b.words ?? []) as [number, number, string][];
   if (!words.length || t < b.at - 0.15 || (b.out !== undefined && t > b.out + 0.2)) return null;
   const size = b.size ?? 62;
@@ -911,7 +912,7 @@ export const CaptionBlock: React.FC<P> = ({b, t, k}) => {
   return (
     <g opacity={fade}>
       {lines.map((ln, li) => (
-        <text key={li} x={b.x ?? 540} y={b.y + li * size * 1.2} textAnchor="middle" fontFamily={k.fonts.ui} fontWeight={k.type?.labelWeight ?? 500} fontSize={size} style={{whiteSpace: 'pre'}}>
+        <text key={li} x={b.x ?? W / 2} y={b.y + li * size * 1.2} textAnchor="middle" fontFamily={k.fonts.ui} fontWeight={k.type?.labelWeight ?? 500} fontSize={size} style={{whiteSpace: 'pre'}}>
           {ln.map((w, j) => {
             const idx = i++;
             return (

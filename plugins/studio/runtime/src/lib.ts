@@ -1,7 +1,16 @@
 // Animation Room engine: shared helpers and types.
 // Styles are data (tokens + rules). The engine owns the block types.
+import React from 'react';
 
-export const ENGINE_VERSION = '1.9.0';
+export const ENGINE_VERSION = '1.10.0';
+
+// Things every block in a storyboard may need: the cast of characters, when the voice is speaking and the frame size
+// (1080 x 1920 or 1920 x 1080). Blocks that centre or align to an edge read the size here instead of assuming portrait.
+export const StoryContext = React.createContext<{cast?: Record<string, any>; speech?: number[][]; W?: number; H?: number}>({});
+export const useFrame = () => {
+  const {W = 1080, H = 1920} = React.useContext(StoryContext);
+  return {W, H};
+};
 
 export type Gray = number; // 0 = black, 1 = white
 export type Color = Gray | string; // a gray level, or a CSS colour such as "#22342c"

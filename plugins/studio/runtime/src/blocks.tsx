@@ -14,6 +14,7 @@ import {
   outFade,
   progress,
   quintOut,
+  useFrame,
 } from './lib';
 
 // Every block has: type, at (seconds), optional out (seconds).
@@ -223,11 +224,12 @@ export const DotBlock: React.FC<P> = ({b, t, k}) => {
 
 // ---------- label: dot at target, elbow leader to margin, typed mono text ----------
 export const LabelBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const pop = quintOut(progress(t, b.at, 0.3));
   if (pop <= 0) return null;
   const [tx, ty] = b.target as [number, number];
   const right = (b.side ?? 'right') === 'right';
-  const mx = right ? 1080 - k.margins : k.margins;
+  const mx = b.labelX ?? (right ? W - k.margins : k.margins);
   const ly = b.labelY ?? ty;
   const ex = tx + (right ? 1 : -1) * Math.min(Math.abs(ly - ty) * 0.6 + 30, Math.abs(mx - tx) * 0.5);
   const pts: [number, number][] = [[tx, ty], [ex, ly], [mx, ly]];
@@ -272,9 +274,10 @@ export const LabelBlock: React.FC<P> = ({b, t, k}) => {
 
 // Headline for styles that write their text: kicker, then each line in turn, then an underline.
 const WrittenHeadline: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const size = b.size ?? 110;
   const lh = size * 1.12;
-  const x = b.x ?? 540;
+  const x = b.x ?? W / 2;
   const anchor = b.align === 'left' ? 'start' : b.align === 'right' ? 'end' : 'middle';
   const lines: string[] = b.lines;
   const kicker = b.kicker ? lc(k, b.kicker) : '';
@@ -322,11 +325,12 @@ const WrittenHeadline: React.FC<P> = ({b, t, k}) => {
 
 // ---------- text: mono kicker plus masked slide up headline lines ----------
 export const TextBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   if (k.type?.reveal === 'write') return <WrittenHeadline b={b} t={t} k={k} />;
   if (k.type?.reveal === 'pop') return <PopHeadline b={b} t={t} k={k} />;
   const size = b.size ?? 110;
   const lh = size * 1.12;
-  const x = b.x ?? 540;
+  const x = b.x ?? W / 2;
   const anchor = b.align === 'left' ? 'start' : b.align === 'right' ? 'end' : 'middle';
   const lines: string[] = b.lines;
   const op = outFade(t, b.out);
@@ -383,19 +387,20 @@ export const TextBlock: React.FC<P> = ({b, t, k}) => {
 
 // ---------- note: small mono caption ----------
 export const NoteBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const p = quintOut(progress(t, b.at, 0.5));
   if (p <= 0) return null;
   const anchor = b.align === 'left' ? 'start' : b.align === 'right' ? 'end' : 'middle';
   if (k.type?.reveal === 'write') {
     return (
       <g opacity={outFade(t, b.out)}>
-        <WriteText k={k} t={t} at={b.at} text={lc(k, b.text)} x={b.x ?? 540} y={b.y} anchor={anchor} size={ls(k, b.size ?? 20)} fill={colorOf(k, b.color ?? 'ink')} letterSpacing={k.monoTracking} {...labelFont(k)} />
+        <WriteText k={k} t={t} at={b.at} text={lc(k, b.text)} x={b.x ?? W / 2} y={b.y} anchor={anchor} size={ls(k, b.size ?? 20)} fill={colorOf(k, b.color ?? 'ink')} letterSpacing={k.monoTracking} {...labelFont(k)} />
       </g>
     );
   }
   return (
     <text
-      x={b.x ?? 540}
+      x={b.x ?? W / 2}
       y={b.y + 12 * (1 - p)}
       opacity={p * outFade(t, b.out)}
       textAnchor={anchor}
@@ -411,6 +416,7 @@ export const NoteBlock: React.FC<P> = ({b, t, k}) => {
 
 // ---------- counter: big light numerals counting up ----------
 export const CounterBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const p = quintOut(progress(t, b.at, b.dur ?? 1.4));
   if (t < b.at) return null;
   const from = b.from ?? 0;
@@ -420,7 +426,7 @@ export const CounterBlock: React.FC<P> = ({b, t, k}) => {
   const op = outFade(t, b.out) * quintOut(progress(t, b.at, 0.3));
   return (
     <g opacity={op}>
-      <text x={b.x ?? 540} y={b.y} textAnchor="middle" fontFamily={k.fonts.headline} fontWeight={k.type?.headlineWeight ?? 300} fontSize={size} letterSpacing={-size * 0.03} fill={colorOf(k, b.color)}>
+      <text x={b.x ?? W / 2} y={b.y} textAnchor="middle" fontFamily={k.fonts.headline} fontWeight={k.type?.headlineWeight ?? 300} fontSize={size} letterSpacing={-size * 0.03} fill={colorOf(k, b.color)}>
         {txt}
         {b.unit && (
           <tspan {...labelFont(k)} fontSize={ls(k, 30)} letterSpacing={k.monoTracking} fill={gray(k.mid)} dx={14}>
@@ -429,7 +435,7 @@ export const CounterBlock: React.FC<P> = ({b, t, k}) => {
         )}
       </text>
       {b.caption && (
-        <text x={b.x ?? 540} y={b.y + ls(k, 64)} textAnchor="middle" {...labelFont(k)} fontSize={ls(k, 22)} letterSpacing={k.monoTracking} fill={gray(k.mid)}>
+        <text x={b.x ?? W / 2} y={b.y + ls(k, 64)} textAnchor="middle" {...labelFont(k)} fontSize={ls(k, 22)} letterSpacing={k.monoTracking} fill={gray(k.mid)}>
           {lc(k, b.caption)}
         </text>
       )}
@@ -545,6 +551,7 @@ export const TravelBlock: React.FC<P> = ({b, t, k}) => {
 
 // ---------- group: children moved by keyframes {t, x, y, scale, rotate, opacity} ----------
 export const GroupBlock: React.FC<P & {render: (b: Block) => React.ReactNode}> = ({b, t, render}) => {
+  const {W, H} = useFrame();
   const keys: any[] = b.keys ?? [{t: b.at}];
   const val = (prop: string, def: number) => {
     let v = keys[0][prop] ?? def;
@@ -556,8 +563,8 @@ export const GroupBlock: React.FC<P & {render: (b: Block) => React.ReactNode}> =
     }
     return v;
   };
-  const ox = b.origin?.[0] ?? 540;
-  const oy = b.origin?.[1] ?? 860;
+  const ox = b.origin?.[0] ?? W / 2;
+  const oy = b.origin?.[1] ?? (H === 1920 ? 860 : H / 2);
   const tr = `translate(${val('x', 0)},${val('y', 0)}) translate(${ox},${oy}) rotate(${val('rotate', 0)}) scale(${val('scale', 1)}) translate(${-ox},${-oy})`;
   return (
     <g transform={tr} opacity={val('opacity', 1) * outFade(t, b.out)}>

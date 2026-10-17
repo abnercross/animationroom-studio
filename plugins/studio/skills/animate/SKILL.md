@@ -63,7 +63,7 @@ Times are seconds or word references: `"@trapezius"`, `"@temple+0.15"`, `"@your#
 | `path` | `d` (SVG path in canvas pixels, 1080 x 1920), `at`, `dur`, `width` primary/secondary/construction or a number, `dashed` true or "dotted", `fill` fill/dark/hatch/bg, `color`, `arrow` true or "both", `pulse` |
 | `morph` | `keys: [{t, d}, ...]` shape changes (same command structure morphs smoothly, anything else cross fades), `drawDur`, `dur` |
 | `dot` | `x`, `y`, `r`, `ring`, `pulse`, `hollow` |
-| `label` | `text`, `target: [x, y]`, `labelY`, `side` left or right, `sub` |
+| `label` | `text`, `target: [x, y]`, `labelY`, `side` left or right, `labelX` (where the text column starts, for wide frames), `sub` |
 | `text` | `lines: [...]`, `kicker`, `y`, `size`, `align`, `x` |
 | `note` | `text`, `x`, `y`, `size`, `align`, `color` |
 | `counter` | `value`, `from`, `unit`, `caption`, `x`, `y`, `decimals`, `dur` |
@@ -84,7 +84,7 @@ Times are seconds or word references: `"@trapezius"`, `"@temple+0.15"`, `"@your#
 | `frame` | brush styles. Doodle border: `family` rough/dashed/cloud/zigzag/corners, `rect: [x, y, w, h]`, `dur` |
 | `group` | `blocks: [...]`, `keys: [{t, x, y, scale, rotate, opacity, dur}]`, `origin` |
 
-A storyboard may set `"format": "16:9"` (1920 x 1080) when the style supports it, and a scene may set `"transition": "swipe"` (brush styles). Every block also takes `out` (fade out time), `accent: true` (the single big reveal gets a thump and bell) and `sfx: false`. `color` is `ink`, `mid`, `soft`, `dark`, or one of the colour names the style's guide lists; a style without colours only has the first four. Which blocks suit a style, and how they look in it, is in that style's guide. Use `"camera": "still"` on scenes whose labels point at a drawing in `overlay`, so they stay lined up.
+A storyboard may set `"format": "16:9"` (1920 x 1080) when the style supports it (every style does, a few scene types of Space Age Poster excepted: its guide says which). A request that says "Make it wide (16:9) for YouTube." means exactly that, and the guide's Layout 16:9 section gives the positions, and a scene may set `"transition": "swipe"` (brush styles). Every block also takes `out` (fade out time), `accent: true` (the single big reveal gets a thump and bell) and `sfx: false`. `color` is `ink`, `mid`, `soft`, `dark`, or one of the colour names the style's guide lists; a style without colours only has the first four. Which blocks suit a style, and how they look in it, is in that style's guide. Use `"camera": "still"` on scenes whose labels point at a drawing in `overlay`, so they stay lined up.
 
 ## Step 5. Check before rendering
 

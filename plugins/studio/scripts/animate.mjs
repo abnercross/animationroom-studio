@@ -306,6 +306,7 @@ function validate(sbPath, wordsPath, style) {
   // the lowest things may sit: above the Instagram caption area in 9:16, above the bottom edge in 16:9
   const LOW = (sb.height ?? 1920) === 1920 ? 1560 : sb.height - 60, LOW_TEXT = (sb.height ?? 1920) === 1920 ? 1500 : sb.height - 80;
   const walk = (b, where, scene) => {
+    if (sb.format === "16:9" && (style.portraitOnly ?? []).includes(b.type)) errors.push(`${where}: the ${style.name} style draws "${b.type}" in 9:16 only for now. Use another scene type in 16:9 (the guide lists the ones that work).`);
     if (!BLOCK_TYPES.includes(b.type)) errors.push(`${where}: unknown block type "${b.type}" (engine ${ENGINE_VERSION} knows ${BLOCK_TYPES.join(", ")})`);
     if (b.at !== undefined) b.at = T(b.at, where);
     if (b.out !== undefined) b.out = T(b.out, `${where}.out`);
@@ -386,6 +387,10 @@ function validate(sbPath, wordsPath, style) {
     if (b.type.startsWith("poster")) {
       // engine 1.6 poster blocks: words, a hero object, a counting ring, cards, a banner. Times inside lists are resolved here.
       const colors = COLOR_NAMES(style);
+      if (b.type === "posterSplit") { // in a wide frame the two halves are left and right: accept those names too
+        if (b.left !== undefined && b.top === undefined) b.top = b.left;
+        if (b.right !== undefined && b.bottom === undefined) b.bottom = b.right;
+      }
       if (b.type === "posterWord") {
         if (!b.text) errors.push(`${where}: posterWord needs "text"`);
         if (b.mode !== undefined && !["ink", "register", "stamp", "kicker", "pill"].includes(b.mode)) errors.push(`${where}: mode must be ink, register, stamp, kicker or pill`);

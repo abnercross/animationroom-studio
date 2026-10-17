@@ -2,7 +2,7 @@
 import React from 'react';
 import {getBoundingBox, getLength, getPointAtLength, getSubpaths, scalePath, translatePath} from '@remotion/paths';
 import type {Block} from './blocks';
-import {StyleTokens, clamp, gray, hash, progress} from './lib';
+import {StyleTokens, clamp, gray, hash, progress, useFrame} from './lib';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
@@ -216,9 +216,10 @@ const TILE_COLORS = ['red', 'mustard', 'teal', 'navy', 'pink', 'sage', 'kraft', 
 const TILE_PATTERNS = [undefined, undefined, undefined, 'dots', 'lines', 'print'];
 
 export const RansomBlock: React.FC<P> = ({b, t, k}) => {
+  const {W} = useFrame();
   const lines: string[] = b.lines ?? [b.text];
   const size = b.size ?? 190; // tile height
-  const cx = b.x ?? 540;
+  const cx = b.x ?? W / 2;
   const tiles = React.useMemo(() => {
     const out: any[] = [];
     let n = 0;
