@@ -5,6 +5,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { openProject } from "./projects.mjs";
 import { resolveData, noteAdopted } from "./home.mjs";
+import { ensureFfmpeg } from "./ffmpeg-tool.mjs";
 
 const argv = process.argv.slice(2);
 export const pos = [], opt = {};
@@ -36,12 +37,12 @@ noteAdopted(HOME);
 export const DATA = HOME.data;
 export const readConfig = () => { try { return readJson(path.join(DATA, "config.json")); } catch { return {}; } };
 
-// ---------- ffmpeg: the computer's own, otherwise the copy inside the render engine ----------
+// ---------- ffmpeg: a full copy (the computer's own or the studio's), the render engine's cut down copy only as a last resort ----------
 const remotionCli = () =>
   ["runtime-edit", "runtime"].map((d) => path.join(DATA, d, "node_modules", "@remotion", "cli", "remotion-cli.js")).find((f) => fs.existsSync(f)) || "";
-const hasSystem = (bin) => spawnSync(bin, ["-version"]).status === 0;
 export function ff(args, { allowFail = false } = {}) {
-  const [cmd, full] = hasSystem("ffmpeg") ? ["ffmpeg", args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
+  const bin = ensureFfmpeg(DATA);
+  const [cmd, full] = bin ? [bin, args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
   const r = spawnSync(cmd, full, { encoding: "utf8", maxBuffer: 1e9 });
   if (r.status !== 0 && !allowFail) fail(`video processing failed: ${String(r.stderr).slice(-400)}`);
   return r;
@@ -49,7 +50,8 @@ export function ff(args, { allowFail = false } = {}) {
 
 // Raw bytes from ffmpeg (for reading the sound itself).
 export function ffRaw(args) {
-  const [cmd, full] = hasSystem("ffmpeg") ? ["ffmpeg", args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
+  const bin = ensureFfmpeg(DATA);
+  const [cmd, full] = bin ? [bin, args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
   const r = spawnSync(cmd, full, { maxBuffer: 1e9 });
   if (r.status !== 0) fail(`video processing failed: ${String(r.stderr).slice(-300)}`);
   return r.stdout;

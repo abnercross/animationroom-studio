@@ -14,6 +14,10 @@ A VPN, a company network or a firewall is blocking `registry.npmjs.org` or `node
 
 Fix: ask them to switch off the VPN for the install, or try a home network. Company laptops sometimes block installs completely; if so, say so plainly and suggest a personal computer.
 
+## The video tools (ffmpeg) are missing or a command says a filter or encoder is not available
+
+The studio needs a full ffmpeg. The small copy inside the render engine is cut down (no contact sheets, loudness check or sound limiter), so a computer with no ffmpeg of its own needs one in the studio folder. Run `STUDIO ffmpeg install`; it puts a copy under `tools/ffmpeg` in the studio folder and needs only the internet (the same npm registry as the render engine). Never use Homebrew, winget or a manual download for this. If the install fails, the same causes as "No internet" apply (VPN, firewall); fix those and run it again.
+
 ## Node.js download fails or the checksum check fails
 
 Run the Node install script once more (downloads sometimes break halfway). The script falls back to a known good release by itself if the release list cannot be read. If it fails again, use the official installer instead:

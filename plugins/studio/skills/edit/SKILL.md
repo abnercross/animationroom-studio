@@ -19,6 +19,7 @@ A ready made engine draws everything. You do not write video code. You fill in a
 - Find the Node to use by running the setup check (`skills/setup/scripts/check.sh`, or `check.ps1` on Windows) and reading `NODE_USE`.
 - `EDIT` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/edit.mjs"` and `STUDIO` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/studio.mjs"`. Always add `--data "${CLAUDE_PLUGIN_DATA}"`.
 - Scripts end with `KEY=value` lines. `RESULT=failed` comes with a `REASON` written for the person; pass it on in your own words and do what it says. Lines starting `warning:` or `problem:` are for you to act on, not to read out.
+- Video tools (ffmpeg): the studio looks after them. The scripts find a full copy or install one into the studio folder by themselves (one line on screen, about a minute, once). Never install ffmpeg yourself (no brew, winget or downloads) and never ask the person about it. If you need to cut or convert a file yourself, run `STUDIO ffmpeg install` and use the `FFMPEG_PATH` it prints.
 
 ## Step 0. Is everything ready?
 

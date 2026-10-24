@@ -17,7 +17,7 @@ import {
 import {BadgeBlock, CaptionBlock, Iris, PageWipe, PersonBlock, PropBlock, ShapeBlock, StoryContext, TintSet} from './chibi';
 import {HeroBlock} from './hero';
 import {FrameBlock, InkSwipe, SplatBlock, StampBlock} from './sketch';
-import {PosterArrow, PosterBanner, PosterBar, PosterBg, PosterButton, PosterCards, PosterDefs, PosterGauge, PosterHero, PosterJourney, PosterPanel, PosterRecap, PosterRing, PosterSlots, PosterSparks, PosterSplit, PosterStars, PosterSteps, PosterTile, PosterWord} from './poster';
+import {PosterArrow, PosterBanner, PosterBar, PosterBg, PosterButton, PosterCards, PosterDefs, PosterDraw, PosterGauge, PosterHero, PosterJourney, PosterPanel, PosterRecap, PosterRing, PosterSlots, PosterSparks, PosterSplit, PosterStars, PosterSteps, PosterTile, PosterWord} from './poster';
 import {BeanBadge, BeanBlock, BeanDraw, BeanInfo, BeanProp, BeanTitle} from './bean';
 import {CutoutBlock, FaceBlock, PaperDefs, RansomBlock, Sheet, Table, sheetTransform} from './paper';
 import {Style, clamp, cubicInOut, gray, hash, mergeTokens, progress, quintOut, StyleTokens} from './lib';
@@ -92,6 +92,8 @@ const renderBlock = (b: Block, t: number, k: StyleTokens): React.ReactNode => {
       return <FrameBlock b={b} t={t} k={k} />;
     case 'posterWord':
       return <PosterWord b={b} t={t} k={k} />;
+    case 'posterDraw':
+      return <PosterDraw b={b} t={t} k={k} />;
     case 'posterHero':
       return <PosterHero b={b} t={t} k={k} />;
     case 'posterRing':

@@ -98,6 +98,12 @@ then the editing engine, which reuses that browser and takes about a minute:
 
 Give each command enough time (up to ten minutes on a slow connection). On `RESULT=failed`, follow the troubleshooting guide. If the only problem is the video browser download and Google Chrome is installed, rerun with `--browser "<path to Chrome>"` as the guide explains.
 
+Then the video tools. Tell them: "One more small piece, the video tools, about 40 MB." Run:
+
+`STUDIO ffmpeg install --data "${CLAUDE_PLUGIN_DATA}"`
+
+`RESULT=already_ready` means the computer already has them: say nothing. `RESULT=installed` means a copy was put inside the studio folder (nothing else on the computer changes). Never install ffmpeg any other way (no Homebrew, winget or downloads) and never ask the person to. If this fails twice, carry on: Animate and Edit try again by themselves the first time they need it.
+
 ## Step 6. Speech engine
 
 The speech engine listens to their voice and turns it into timed words, which every video needs (animations and edits both use it). There is one, and it understands every language, so nobody chooses a language or downloads a second one. Tell them before starting: "Last install: the speech engine, about 1.5 GB. It takes 10 to 20 minutes, and it covers every language." Do not ask a question. Then run:

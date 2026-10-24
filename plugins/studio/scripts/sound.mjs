@@ -448,7 +448,7 @@ export function collectEvents(sb, map = {}) {
       case 'posterRing': { const d = b.dur ?? 1.1; tickRun(b.at, 14, d / 14.5); P('stamp', b.at + d, {g: 1}); P('ding', b.at + d, {m: 91, g: 0.35}); break; }
       case 'posterCards': case 'posterSteps': (b.items || []).forEach((it, i) => P('blip', it.at, {f: 520 + i * 90, g: 0.9})); break;
       case 'posterBanner': (b.texts || []).forEach((x) => P('stamp', x.at, {g: 0.6})); break;
-      case 'posterTile': blip(b.at); break;
+      case 'posterTile': case 'posterDraw': blip(b.at); break;
       case 'posterSlots': for (let i = 0; i < (b.n ?? 4); i++) P('blip', b.at + i * 0.16, {f: 700 + i * 90, g: 0.6}); break;
       case 'posterSplit':
         for (const side of ['top', 'bottom']) { blip(b[side]?.labelAt); P('stamp', b[side]?.wordAt, {g: 0.6}); }

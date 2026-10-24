@@ -2,7 +2,7 @@
 // Styles are data (tokens + rules). The engine owns the block types.
 import React from 'react';
 
-export const ENGINE_VERSION = '1.10.0';
+export const ENGINE_VERSION = '1.11.0';
 
 // Things every block in a storyboard may need: the cast of characters, when the voice is speaking and the frame size
 // (1080 x 1920 or 1920 x 1080). Blocks that centre or align to an edge read the size here instead of assuming portrait.

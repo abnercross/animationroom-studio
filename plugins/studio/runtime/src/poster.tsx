@@ -918,8 +918,39 @@ export const PosterJourney: React.FC<P> = ({b, t, k}) => {
   );
 };
 
+// posterDraw: DRAW ANYTHING in the poster look. The drawing lives once in the storyboard's top level "drawings"
+// ({name: {parts: [{d, fill, shade, line, color, width, text, x, y, size}]}}, about 200 by 200 around 0, 0); the checker
+// copies the parts onto the block. Parts are flat printed inks with no outline. shade: true stipples the lower half of a part
+// (like the hero's dark faces), line: true is an open ink stroke, text is a short word. x, y centre, size sets the sheet width.
+// Takes at, out, rot, flip, bob, pulse, shadow (a soft offset print shadow, on by default), scale.
+export const PosterDraw: React.FC<P> = ({b, t, k}) => {
+  const e = pop(t, b.at, 0.45) * (b.scale ?? 1);
+  if (e <= 0) return null;
+  const parts: any[] = b.parts ?? [];
+  const bob = Math.sin(t * 1.4) * 9 * (b.bob ?? 0);
+  const pulse = 1 + (b.pulse ?? 0) * Math.sin(t * 3);
+  const sc = ((b.size ?? 260) / 200) * e * pulse;
+  const deep = pc(k, 'deep', 'navy');
+  const draw = (p: any, i: number, flat?: string) => {
+    if (p.text !== undefined) return flat ? null : <text key={i} x={p.x ?? 0} y={p.y ?? 0} textAnchor="middle" dominantBaseline="central" fontFamily={display(k)} fontSize={p.size ?? 40} fill={pc(k, p.color ?? p.fill ?? 'cream')}>{p.text}</text>;
+    if (p.line) return <path key={i} d={p.d} fill="none" stroke={flat ?? pc(k, p.color ?? p.fill ?? 'deep', 'navy')} strokeWidth={p.width ?? 8} strokeLinecap="round" strokeLinejoin="round" />;
+    return (
+      <g key={i}>
+        <path d={p.d} fill={flat ?? pc(k, p.fill, 'orange')} />
+        {!flat && p.shade && <g filter="url(#pstStipDeep)"><path d={p.d} fill="url(#pstDown)" /></g>}
+      </g>
+    );
+  };
+  return (
+    <g opacity={outFade(t, b.out)} transform={`translate(${b.x ?? 540} ${(b.y ?? 960) + bob}) rotate(${b.rot ?? 0}) scale(${b.flip ? -sc : sc} ${sc})`}>
+      {b.shadow !== false && <g transform="translate(6 8)" opacity={0.28}>{parts.filter((p) => !p.line && p.text === undefined).map((p, i) => draw(p, i, deep))}</g>}
+      {parts.map((p, i) => draw(p, i))}
+    </g>
+  );
+};
+
 export const POSTER_BLOCKS = [
   'posterWord', 'posterHero', 'posterRing', 'posterCards', 'posterBanner',
   'posterArrow', 'posterSparks', 'posterStars', 'posterPanel', 'posterBar', 'posterButton',
-  'posterTile', 'posterSlots', 'posterSplit', 'posterGauge', 'posterSteps', 'posterRecap', 'posterJourney',
+  'posterTile', 'posterSlots', 'posterSplit', 'posterGauge', 'posterSteps', 'posterRecap', 'posterJourney', 'posterDraw',
 ];

@@ -13,6 +13,7 @@
 
 import { updateEngine } from "./engine-update.mjs";
 import { resolveData, noteAdopted } from "./home.mjs";
+import { ensureFfmpeg } from "./ffmpeg-tool.mjs";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -25,7 +26,7 @@ import { expandChibi } from "./chibi-names.mjs";
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const API = process.env.AR_API || "https://animationroom.app/api"; // Placeholder until the server is live.
-const BLOCK_TYPES = ["path", "morph", "dot", "label", "text", "note", "counter", "ruler", "mark", "travel", "cutout", "ransom", "face", "shape", "prop", "person", "badge", "caption", "group", "hero", "splat", "stamp", "frame", "posterWord", "posterHero", "posterRing", "posterCards", "posterBanner", "posterArrow", "posterSparks", "posterStars", "posterPanel", "posterBar", "posterButton", "posterTile", "posterSlots", "posterSplit", "posterGauge", "posterSteps", "posterRecap", "posterJourney", "bean", "beanTitle", "beanBadge", "beanProp", "beanDraw", "beanInfo", "voxCard", "voxTag", "voxText", "voxHighlight", "voxLine", "voxStamp", "voxChip", "voxMark", "voxNumbers", "voxList", "voxNetwork", "voxSparks", "voxArt", "voxDraw", "voxSubscribe", "voxGroup"];
+const BLOCK_TYPES = ["path", "morph", "dot", "label", "text", "note", "counter", "ruler", "mark", "travel", "cutout", "ransom", "face", "shape", "prop", "person", "badge", "caption", "group", "hero", "splat", "stamp", "frame", "posterWord", "posterHero", "posterRing", "posterCards", "posterBanner", "posterArrow", "posterSparks", "posterStars", "posterPanel", "posterBar", "posterButton", "posterTile", "posterSlots", "posterDraw", "posterSplit", "posterGauge", "posterSteps", "posterRecap", "posterJourney", "bean", "beanTitle", "beanBadge", "beanProp", "beanDraw", "beanInfo", "voxCard", "voxTag", "voxText", "voxHighlight", "voxLine", "voxStamp", "voxChip", "voxMark", "voxNumbers", "voxList", "voxNetwork", "voxSparks", "voxArt", "voxDraw", "voxSubscribe", "voxGroup"];
 // engine 1.7 Happy Bean: names the validator checks (the engine draws them in bean.tsx)
 const BEAN_MOODS = ["happy", "grin", "joy", "laugh", "wink", "calm", "curious", "thinking", "surprised", "shocked", "worried", "sad", "crying", "angry", "determined", "proud", "sleepy", "love", "confused", "shy"];
 const BEAN_POSES = ["stand", "wave", "point", "pointup", "cheer", "shrug", "think", "hips", "hold", "read", "hug", "open", "highfive", "facepalm", "sad", "walk", "run", "climb", "jump", "fall", "sit", "sleep", "peek", "carry", "tiptoe", "holdhand", "bothhands"];
@@ -112,10 +113,11 @@ const runtimeRequire = () => createRequire(path.join(RUNTIME, "package.json"));
 const importRuntime = (name) => import(pathToFileURL(runtimeRequire().resolve(name)).href);
 const remotionCli = () => path.join(RUNTIME, "node_modules", "@remotion", "cli", "remotion-cli.js");
 
-// ffmpeg: the computer's own if it has one, otherwise the copy that ships with the render engine.
+// ffmpeg: a full copy (the computer's own, else one the studio installs into its own folder by itself). The copy that
+// ships inside the render engine is cut down (no tile, fps, afade, ebur128, alimiter), so it is only the last resort.
 function ff(args, { encoding = "buffer", allowFail = false } = {}) {
-  const sys = spawnSync("ffmpeg", ["-version"]).status === 0;
-  const [cmd, full] = sys ? ["ffmpeg", args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
+  const bin = ensureFfmpeg(DATA);
+  const [cmd, full] = bin ? [bin, args] : [process.execPath, [remotionCli(), "ffmpeg", ...args]];
   const r = spawnSync(cmd, full, { encoding, maxBuffer: 1e9 });
   if (r.status !== 0 && !allowFail) fail(`audio or video processing failed: ${String(r.stderr).slice(-400)}`);
   return r;
@@ -427,6 +429,23 @@ function validate(sbPath, wordsPath, style) {
       }
       if (b.type === "posterSplit") for (const side of ["top", "bottom"]) { if (!b[side]?.word) errors.push(`${where}: posterSplit needs ${side}.word`); for (const f of ["label", "word"]) checkText(b[side]?.[f], `${where}.${side}.${f}`); }
       if (b.type === "posterSplit" && b.badge !== undefined && !["neq", "vs", "plus", "arrow"].includes(b.badge)) errors.push(`${where}: badge must be neq, vs, plus or arrow`);
+      if (b.type === "posterDraw") {
+        // engine 1.11: draw anything in the poster look. The drawing lives once in the storyboard's "drawings"; the engine reads the parts from the block.
+        const def = sb.drawings?.[b.draw];
+        if (!def) errors.push(`${where}: posterDraw needs "draw", the name of a drawing in the storyboard's "drawings" (${Object.keys(sb.drawings ?? {}).join(", ") || "none yet"})`);
+        else {
+          b.parts = def.parts;
+          if (!Array.isArray(def.parts) || !def.parts.length) errors.push(`drawings.${b.draw}: needs "parts"`);
+          for (const [i, pt] of (def.parts ?? []).entries()) {
+            const w = `drawings.${b.draw}.parts[${i}]`;
+            if (pt.text !== undefined) { checkText(pt.text, `${w}.text`); continue; }
+            if (!(typeof pt.d === "string" && /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.\-eE]+$/.test(pt.d) && /^\s*[Mm]/.test(pt.d))) errors.push(`${w}: "d" must be an SVG path starting with M`);
+            if (!pt.line && pt.fill === undefined) errors.push(`${w}: needs "fill" (a colour name) or "line": true`);
+            for (const f of ["fill", "color"]) if (pt[f] !== undefined && !colors.includes(pt[f])) errors.push(`${w}: ${f} "${pt[f]}" is not in the ${style.name} style. Use one of ${colors.join(", ")}`);
+          }
+        }
+        if (typeof b.x !== "number" || typeof b.y !== "number") errors.push(`${where}: posterDraw needs "x" and "y"`);
+      }
       if (b.type === "posterButton") { if (!b.text) errors.push(`${where}: posterButton needs "text"`); checkText(b.text, `${where}.text`); }
       if (b.type === "posterJourney") for (const [i, r] of (b.readouts ?? []).entries()) for (const f of ["label", "value", "unit"]) checkText(r[f], `${where}.readouts[${i}].${f}`);
       for (const f of ["kicker", "pill", "gravityLabel", "lowerLabel"]) checkText(b[f], `${where}.${f}`);

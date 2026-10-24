@@ -13,6 +13,7 @@ Voiceover in, finished animation out. The person is usually a beginner. Talk the
 - Find the Node to use by running the setup check (`skills/setup/scripts/check.sh`, or `check.ps1` on Windows) and reading `NODE_USE`.
 - `ANIMATE` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/animate.mjs"` and `STUDIO` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/studio.mjs"`. Always add `--data "${CLAUDE_PLUGIN_DATA}"`.
 - Scripts end with `KEY=value` lines. `RESULT=failed` comes with a `REASON` written for the person; pass it on in your own words and do what it says.
+- Video tools (ffmpeg): the studio looks after them. The scripts find a full copy or install one into the studio folder by themselves (one line on screen, about a minute, once). Never install ffmpeg yourself (no brew, winget or downloads) and never ask the person about it. If you need to cut or convert a file yourself, run `STUDIO ffmpeg install` and use the `FFMPEG_PATH` it prints.
 
 ## Step 0. Is the studio ready?
 
@@ -41,6 +42,14 @@ Read the words that are printed. The pauses between sentences are where scenes c
 ## Step 4. Storyboard (the creative part)
 
 Tell them the plan first in 4 to 6 short lines: one per scene, the element that travels through the whole video, and the ending. Adjust if they want changes. Then write `storyboard.json` in the project folder.
+
+**The style is a reference, never a cage.** The voiceover leads. The style gives the look (colours, lines, type, motion, layout rules, the ready made pieces and the sheets that show them). It never limits what the video may show. Plan from what the script says, not from what the library happens to hold:
+
+1. Take each line of the voiceover and picture the image that explains it best, as if you were drawing it by hand. Then build that image in the style.
+2. Use a ready made piece only when it says what the line says. When nothing fits, make it: draw it with the style's own drawing tools (the guide names them: `drawings`, `shapes`, custom paths or draw blocks), or build it from simple shapes, or combine pieces into a new arrangement. Never show a different object because it is the closest one in the list.
+3. What you make keeps the style's look: its colours, its line weight and the level of detail on its reference sheets. Open the sheet that shows how the style draws things before drawing something new.
+4. The story, the scene order, the layout, the camera, the metaphors and the timing are yours to invent. Only the safe zones and the checker's rules are fixed.
+5. If an idea truly cannot be built with the style's tools, use the nearest honest way, and tell the person in one line what you could not draw, so it can be added later.
 
 ```json
 {

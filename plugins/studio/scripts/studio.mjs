@@ -8,6 +8,7 @@
 //   node studio.mjs runtime test --out FILE [--name NAME]
 //   node studio.mjs transcriber install [--compile]            the speech engine and the multilingual speech model (1.5 GB, one download for every language)
 //                                                               on a Mac the engine is downloaded ready made; --compile builds it instead (needs Apple's developer tools)
+//   node studio.mjs ffmpeg [check|install]                      the video tools: checks for a full ffmpeg and installs one into the studio folder if the computer has none
 //   node studio.mjs folders [setup] [--path FOLDER]
 //   node studio.mjs project --name "Name"                       start a project (work folder now, finished folder on export)
 //   node studio.mjs project --project "20261013 Name" --original FILE   move the original out of Drop videos here
@@ -24,6 +25,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { FOLDER_NAMES as PROJECT_FOLDERS, moveOriginal, nextVersion, openProject } from "./projects.mjs";
 import { SPEECH_MODEL } from "./speech.mjs";
 import { resolveData, rememberStudio, noteAdopted, nodeEnv } from "./home.mjs";
+import { findFfmpeg, installFfmpeg } from "./ffmpeg-tool.mjs";
 import { fetchPrebuilt, proveEngine, useProgram, markProven, readPrebuiltState, hasAppleTools } from "./prebuilt-whisper.mjs";
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -308,6 +310,25 @@ async function cmdTranscriber() {
   if (freed) out("FREED_GB", (freed / 1e9).toFixed(1));
 }
 
+// The video tools (ffmpeg). The copy inside the render engine is cut down, so a computer with no full ffmpeg of its own
+// gets one installed into the studio folder. Scripts also do this by themselves the first time they need it.
+async function cmdFfmpeg() {
+  const sub = pos[1] || "check";
+  if (sub !== "check" && sub !== "install" && sub !== "path") fail("use: ffmpeg check or ffmpeg install");
+  const before = findFfmpeg(DATA);
+  if (sub === "check") {
+    out("FFMPEG", before ? "ready" : "missing");
+    if (before) { out("FFMPEG_SOURCE", before.source); out("FFMPEG_PATH", before.bin); }
+    return;
+  }
+  const r = installFfmpeg(DATA);
+  if (r.error) fail(r.error);
+  out("RESULT", before ? "already_ready" : "installed");
+  out("FFMPEG", "ready");
+  out("FFMPEG_SOURCE", r.source);
+  out("FFMPEG_PATH", r.bin);
+}
+
 async function cmdOpen() {
   const file = pos[1];
   if (!file || !fs.existsSync(file)) fail("file not found");
@@ -398,7 +419,7 @@ async function cmdAutoupdate() {
   out("RESULT", "enabled");
 }
 
-const commands = { autoupdate: cmdAutoupdate, project: cmdProject, folders: cmdFolders, config: cmdConfig, activate: cmdActivate, runtime: cmdRuntime, transcriber: cmdTranscriber, open: cmdOpen };
+const commands = { autoupdate: cmdAutoupdate, project: cmdProject, folders: cmdFolders, config: cmdConfig, activate: cmdActivate, runtime: cmdRuntime, transcriber: cmdTranscriber, ffmpeg: cmdFfmpeg, open: cmdOpen };
 const fn = commands[pos[0]];
-if (!fn) fail("unknown command. Use: config, activate, runtime, transcriber, folders, project, autoupdate, open");
+if (!fn) fail("unknown command. Use: config, activate, runtime, transcriber, ffmpeg, folders, project, autoupdate, open");
 fn().catch((e) => fail(String(e && e.message ? e.message : e)));
