@@ -14,13 +14,14 @@ import {
   TextBlock,
   TravelBlock,
 } from './blocks';
+import {RingBlock} from './glow';
 import {BadgeBlock, CaptionBlock, Iris, PageWipe, PersonBlock, PropBlock, ShapeBlock, StoryContext, TintSet} from './chibi';
 import {HeroBlock} from './hero';
 import {FrameBlock, InkSwipe, SplatBlock, StampBlock} from './sketch';
 import {PosterArrow, PosterBanner, PosterBar, PosterBg, PosterButton, PosterCards, PosterDefs, PosterDraw, PosterGauge, PosterHero, PosterJourney, PosterPanel, PosterRecap, PosterRing, PosterSlots, PosterSparks, PosterSplit, PosterStars, PosterSteps, PosterTile, PosterWord} from './poster';
 import {BeanBadge, BeanBlock, BeanDraw, BeanInfo, BeanProp, BeanTitle} from './bean';
 import {CutoutBlock, FaceBlock, PaperDefs, RansomBlock, Sheet, Table, sheetTransform} from './paper';
-import {Style, clamp, cubicInOut, gray, hash, mergeTokens, progress, quintOut, StyleTokens} from './lib';
+import {ScreenContext, Style, clamp, cubicInOut, gray, hash, mergeTokens, progress, quintOut, StyleTokens} from './lib';
 import {VoxAnimate} from './vox';
 
 export type CamKey = {t: number; x?: number; y?: number; zoom?: number; dur?: number};
@@ -84,6 +85,8 @@ const renderBlock = (b: Block, t: number, k: StyleTokens): React.ReactNode => {
       return <BadgeBlock b={b} t={t} k={k} />;
     case 'hero':
       return <HeroBlock b={b} t={t} k={k} />;
+    case 'ring':
+      return <RingBlock b={b} t={t} k={k} />;
     case 'splat':
       return <SplatBlock b={b} t={t} k={k} />;
     case 'stamp':
@@ -282,7 +285,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
   const keyCam = k.camera === 'keys';
   const now = storyboard.scenes.find((s) => t >= s.start && t <= s.end + 0.001) ?? last;
   // Camera for styles that key it per scene: focus point and zoom, a small punch on each cut, a shake on impacts.
-  const camOf = (s: Scene) => {
+  const camAt = (s: Scene) => {
     let x = W / 2, y = H / 2, zoom = 1;
     for (const c of s.cam ?? []) {
       const p = cubicInOut(progress(t, c.t, c.dur ?? 0.6));
@@ -304,7 +307,16 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
     // a slow drift of a few pixels, so the camera never fully stops
     const cd = k.cameraDrift ?? 0;
     if (cd) (sx += cd * Math.sin(t * 0.41), (sy += cd * Math.sin(t * 0.33 + 1.7)));
+    return {x, y, zoom, sx, sy};
+  };
+  const camOf = (s: Scene) => {
+    const {x, y, zoom, sx, sy} = camAt(s);
     return `translate(${W / 2 + sx},${H / 2 + sy}) scale(${zoom}) translate(${-x},${-y})`;
+  };
+  const camUndo = (s: Scene) => {
+    const {x, y, zoom, sx, sy} = camAt(s);
+    if (zoom === 1 && x === W / 2 && y === H / 2 && !sx && !sy) return undefined;
+    return `translate(${x},${y}) scale(${1 / zoom}) translate(${-(W / 2 + sx)},${-(H / 2 + sy)})`;
   };
   const paper = !!k.paper;
   const board = k.background?.type === 'board';
@@ -451,8 +463,10 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
             const irisP = poster && s.transition === 'iris' && si > 0 ? cubicInOut(progress(t, s.start, 0.6)) : 1;
             const cx = W / 2;
             const cy = H === 1920 ? 860 : H / 2;
+            const undo = keyCam ? camUndo(s) : scale === 1 && !ep ? undefined : `translate(${cx},${cy}) scale(${1 / scale}) translate(${-cx},${-cy}) translate(0,${36 * ep})`;
             return (
-              <g key={s.id} opacity={1 - ep} filter={k.finish?.rough ? 'url(#roughInk)' : k.finish?.stitch ? 'url(#stitchPixels)' : undefined} transform={keyCam ? camOf(s) : `translate(0,${-36 * ep}) translate(${cx},${cy}) scale(${scale}) translate(${-cx},${-cy})`}>
+              <ScreenContext.Provider key={s.id} value={undo}>
+              <g opacity={1 - ep} filter={k.finish?.rough ? 'url(#roughInk)' : k.finish?.stitch ? 'url(#stitchPixels)' : undefined} transform={keyCam ? camOf(s) : `translate(0,${-36 * ep}) translate(${cx},${cy}) scale(${scale}) translate(${-cx},${-cy})`}>
                 {tinted && (!additive || s === storyboard.scenes[0]) && <TintSet k={k} t={t} W={W} H={H} tint={(additive ? now.tint : s.tint) ?? ''} floor={s.floor ?? k.background?.floor ?? 1320} />}
                 {poster && (
                   <>
@@ -475,6 +489,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
                   </g>
                 ))}
               </g>
+              </ScreenContext.Provider>
             );
           })}
           {(storyboard.overlay ?? []).map((b, i) => (

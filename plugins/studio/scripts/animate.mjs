@@ -28,7 +28,7 @@ import { mystyleCommand, mineDir } from "./mystyle.mjs";
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const API = process.env.AR_API || "https://animationroom.app/api"; // Placeholder until the server is live.
-const BLOCK_TYPES = ["path", "morph", "dot", "label", "text", "note", "counter", "ruler", "mark", "travel", "cutout", "ransom", "face", "shape", "prop", "person", "badge", "caption", "group", "hero", "splat", "stamp", "frame", "posterWord", "posterHero", "posterRing", "posterCards", "posterBanner", "posterArrow", "posterSparks", "posterStars", "posterPanel", "posterBar", "posterButton", "posterTile", "posterSlots", "posterDraw", "posterSplit", "posterGauge", "posterSteps", "posterRecap", "posterJourney", "bean", "beanTitle", "beanBadge", "beanProp", "beanDraw", "beanInfo", "voxCard", "voxTag", "voxText", "voxHighlight", "voxLine", "voxStamp", "voxChip", "voxMark", "voxNumbers", "voxList", "voxNetwork", "voxSparks", "voxArt", "voxDraw", "voxSubscribe", "voxGroup"];
+const BLOCK_TYPES = ["path", "morph", "dot", "label", "text", "note", "counter", "ruler", "mark", "travel", "cutout", "ransom", "face", "shape", "prop", "person", "badge", "caption", "group", "hero", "ring", "splat", "stamp", "frame", "posterWord", "posterHero", "posterRing", "posterCards", "posterBanner", "posterArrow", "posterSparks", "posterStars", "posterPanel", "posterBar", "posterButton", "posterTile", "posterSlots", "posterDraw", "posterSplit", "posterGauge", "posterSteps", "posterRecap", "posterJourney", "bean", "beanTitle", "beanBadge", "beanProp", "beanDraw", "beanInfo", "voxCard", "voxTag", "voxText", "voxHighlight", "voxLine", "voxStamp", "voxChip", "voxMark", "voxNumbers", "voxList", "voxNetwork", "voxSparks", "voxArt", "voxDraw", "voxSubscribe", "voxGroup"];
 // engine 1.7 Happy Bean: names the validator checks (the engine draws them in bean.tsx)
 const BEAN_MOODS = ["happy", "grin", "joy", "laugh", "wink", "calm", "curious", "thinking", "surprised", "shocked", "worried", "sad", "crying", "angry", "determined", "proud", "sleepy", "love", "confused", "shy"];
 const BEAN_POSES = ["stand", "wave", "point", "pointup", "cheer", "shrug", "think", "hips", "hold", "read", "hug", "open", "highfive", "facepalm", "sad", "walk", "run", "climb", "jump", "fall", "sit", "sleep", "peek", "carry", "tiptoe", "holdhand", "bothhands"];
@@ -324,6 +324,14 @@ function validate(sbPath, wordsPath, style) {
     ["text", "kicker", "caption", "unit", "sub"].forEach((f) => checkText(b[f], `${where}.${f}`));
     (b.lines ?? []).forEach((l, i) => checkText(l, `${where}.lines[${i}]`));
     if ((b.type === "path" || b.type === "travel") && !b.d) errors.push(`${where}: ${b.type} needs "d"`);
+    // gradient fills (shape, hero, ring): colour names from the style, or hex
+    for (const g of [b.gradient, ...(b.keys ?? []).map((kf) => kf.gradient)]) {
+      if (g === undefined) continue;
+      const cols = Array.isArray(g) ? g : g?.colors;
+      if (!Array.isArray(cols) || !cols.length) errors.push(`${where}: gradient must be a list of colour names, or {"colors": [...], "angle": 0, "kind": "linear" or "radial"}`);
+      else for (const c of cols) if (style.tokens?.palette?.[c] === undefined && !/^#[0-9a-fA-F]{6}$/.test(String(c))) errors.push(`${where}: gradient colour "${c}" is not a colour name in the ${style.name} style (${Object.keys(style.tokens?.palette ?? {}).join(", ")})`);
+    }
+    if (b.type === "ring" && (typeof b.x !== "number" || typeof b.y !== "number")) errors.push(`${where}: ring needs "x" and "y" (its middle)`);
     if (b.type === "cutout") {
       if (!style.tokens?.paper) errors.push(`${where}: the ${style.name} style has no paper pieces, so it cannot use "cutout"`);
       if (!b.d && !((["circle", "ellipse", "rect"].includes(b.shape) || STAMP_KINDS.includes(b.kind)) && typeof b.x === "number" && typeof b.y === "number")) errors.push(`${where}: cutout needs "d", or "shape" (circle, ellipse, rect), or "kind" (${STAMP_KINDS.join(", ")}), with "x" and "y"`);

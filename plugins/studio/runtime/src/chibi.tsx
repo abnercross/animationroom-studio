@@ -6,9 +6,10 @@ import {continueRender, delayRender} from 'remotion';
 import {getBoundingBox} from '@remotion/paths';
 import type {Block} from './blocks';
 import {fontsReady} from './fonts';
-import {StoryContext, StyleTokens, clamp, cubicInOut, gray, hash, progress, useFrame} from './lib';
+import {ScreenContext, StoryContext, StyleTokens, clamp, cubicInOut, gray, hash, progress, useFrame} from './lib';
 import {easeBack, easeIn, easeOut, pose, seedOf, shapeD} from './paper';
 import {BrushStroke} from './sketch';
+import {GradDef, colorOf, gradOf, idOf} from './glow';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
@@ -108,6 +109,9 @@ export const ShapeBlock: React.FC<P> = ({b, t, k}) => {
   const bo = boil(t, k, geo.seed);
   const {cx, cy} = geo;
   const sc = ps.scale * lp.s;
+  // `gradient`: a list of colour names (top to bottom) or {colors, angle, kind} instead of one flat colour
+  const g = gradOf(b.gradient);
+  const gid = g ? idOf('sg', b) : '';
   return (
     <g transform={`translate(${ps.x + bo.x},${ps.y + lp.y + bo.y}) translate(${cx + mv.dx},${cy + mv.dy}) rotate(${(b.rotate ?? 0) + ps.rot + lp.r + bo.r + mv.rotate}) scale(${sc * mv.scale * (1 + mv.squash * 0.25)},${sc * mv.scale * (1 - mv.squash * 0.3)}) translate(${-cx},${-cy})`} opacity={ps.opacity * (b.opacity ?? 1) * mv.opacity} clipPath={rows < 1 ? `url(#${clipId})` : undefined}>
       {rows < 1 && (
@@ -115,8 +119,9 @@ export const ShapeBlock: React.FC<P> = ({b, t, k}) => {
           <rect x={geo.bb.x1 - 20} y={geo.bb.y1 - 20} width={geo.bb.x2 - geo.bb.x1 + 40} height={Math.round(((geo.bb.y2 - geo.bb.y1 + 40) * rows) / 8) * 8} />
         </clipPath>
       )}
-      {b.glow && <circle cx={cx} cy={cy} r={Math.max(geo.bb.x2 - geo.bb.x1, geo.bb.y2 - geo.bb.y1) * 0.9} fill={pal(k, typeof b.glow === 'string' ? b.glow : b.color, '#ffe680')} opacity={0.34} style={{filter: `blur(${Math.max(14, (geo.bb.x2 - geo.bb.x1) * 0.3)}px)`}} />}
-      <Flat k={k} d={geo.d} fill={b.color === 'none' ? 'none' : pal(k, b.color, gray(k.fill))} ow={b.outline === false || (b.outline === undefined && k.rig?.outline === false) ? 0 : widthFor(k, b.width)} shade={b.shade ?? b.color !== 'none'} />
+      {g && <GradDef id={gid} g={g} stops={g.colors.map((c) => colorOf(k, c, gray(k.fill)))} />}
+      {b.glow && <circle cx={cx} cy={cy} r={Math.max(geo.bb.x2 - geo.bb.x1, geo.bb.y2 - geo.bb.y1) * 0.9} fill={pal(k, typeof b.glow === 'string' ? b.glow : b.color ?? g?.colors[0], '#ffe680')} opacity={0.34} style={{filter: `blur(${Math.max(14, (geo.bb.x2 - geo.bb.x1) * 0.3)}px)`}} />}
+      <Flat k={k} d={geo.d} fill={g ? `url(#${gid})` : b.color === 'none' ? 'none' : pal(k, b.color, gray(k.fill))} ow={b.outline === false || (b.outline === undefined && k.rig?.outline === false) ? 0 : widthFor(k, b.width)} shade={b.shade ?? b.color !== 'none'} />
     </g>
   );
 };
@@ -716,6 +721,7 @@ const ChibiPerson: React.FC<P> = ({b, t, k}) => {
 // ---------- badge: chapter number. Pops in the middle with its label, then parks in the top left corner. ----------
 export const BadgeBlock: React.FC<P> = ({b, t, k}) => {
   const {W = 1080, H = 1920} = React.useContext(StoryContext);
+  const undoCam = React.useContext(ScreenContext);
   if (t < b.at || (b.out !== undefined && t > b.out + 0.2)) return null;
   const pop = easeBack((t - b.at) / 0.35);
   const park = cubicInOut(progress(t, b.at + (b.hold ?? 0.9), 0.45));
@@ -726,9 +732,10 @@ export const BadgeBlock: React.FC<P> = ({b, t, k}) => {
   const ow = k.lineWidths.primary / (s || 1);
   const fill = pal(k, b.color ?? 'teal', '#1f6f78');
   if (k.type?.badge === 'counter') {
+    // the counter is part of the screen, not the scene: the camera never moves or scales it
     const two = (v: any) => String(v).padStart(2, '0');
     return (
-      <g opacity={Math.min(1, pop) * gone} transform="translate(96,150)">
+      <g opacity={Math.min(1, pop) * gone} transform={undoCam ? `${undoCam} translate(96,150)` : 'translate(96,150)'}>
         <text fontFamily={k.fonts.mono} fontSize={34} fontWeight={700} fill={gray(k.ink)}>
           {two(b.text)}
           <tspan fill={gray(k.soft)} fontWeight={400}>{b.total ? ` / ${two(b.total)}` : ''}</tspan>

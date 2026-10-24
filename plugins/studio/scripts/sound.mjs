@@ -632,6 +632,7 @@ export function collectEvents(sb, map = {}) {
     if (b.type === 'splat') ev.push({kind: 'plop', at: b.at});
     if (b.type === 'stamp') ev.push({kind: 'stampHit', at: b.at});
     if (b.type === 'frame') ev.push({kind: draw('path'), at: b.at, dur: b.dur ?? 0.9});
+    if (b.type === 'ring') ev.push((b.enter ?? 'draw') === 'draw' ? {kind: 'whoosh', at: b.at, soft: true} : {kind: 'pop', at: b.at, n: ev.length, soft: true});
     if (b.type === 'hero') {
       if (b.enter !== 'none') ev.push({kind: 'pop', at: b.at, n: 2});
       let shape = b.shape ?? 'circle', shat = 0;

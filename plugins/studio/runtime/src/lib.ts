@@ -2,7 +2,7 @@
 // Styles are data (tokens + rules). The engine owns the block types.
 import React from 'react';
 
-export const ENGINE_VERSION = '1.11.0';
+export const ENGINE_VERSION = '1.12.1';
 
 // Things every block in a storyboard may need: the cast of characters, when the voice is speaking and the frame size
 // (1080 x 1920 or 1920 x 1080). Blocks that centre or align to an edge read the size here instead of assuming portrait.
@@ -11,6 +11,10 @@ export const useFrame = () => {
   const {W = 1080, H = 1920} = React.useContext(StoryContext);
   return {W, H};
 };
+
+// The undoing of the scene's camera (push, keyed zoom, drift, shake) for pieces that stay put on the screen, like the
+// chapter counter. Empty while the camera leaves the scene where it is, so those frames draw exactly as before.
+export const ScreenContext = React.createContext<string | undefined>(undefined);
 
 export type Gray = number; // 0 = black, 1 = white
 export type Color = Gray | string; // a gray level, or a CSS colour such as "#22342c"

@@ -6,6 +6,7 @@ import React from 'react';
 import type {Block} from './blocks';
 import {StyleTokens, clamp, cubicInOut, gray, hash, progress} from './lib';
 import {easeBack, easeIn, easeOut} from './paper';
+import {GradDef, Grad, Rainbow, colorOf, gradOf, idOf} from './glow';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
@@ -98,14 +99,28 @@ const mix = (a: number[], b: number[], p: number) => a.map((v, i) => v + (b[i] -
 const hex = (c: number[]) => `rgb(${c.map((v) => Math.round(v)).join(',')})`;
 
 const EASE: Record<string, (x: number) => number> = {back: easeBack, out: easeOut, in: easeIn, inout: cubicInOut, linear: clamp, spring: (x: number) => (x >= 1 ? 1 : x <= 0 ? 0 : 1 - Math.exp(-6.5 * x) * Math.cos(13 * x) * (1 - x))};
-const NUM_DEFAULT: Record<string, number> = {x: 0, y: 0, r: 0, sx: 1, sy: 1, squash: 0, rot: 0, spike: 0, core: 0, trail: 0, shat: 0, glow: 0, opacity: 1};
+const NUM_DEFAULT: Record<string, number> = {x: 0, y: 0, r: 0, sx: 1, sy: 1, squash: 0, rot: 0, spike: 0, core: 0, trail: 0, shat: 0, glow: 0, opacity: 1, rainbow: 0};
 
-type State = {num: Record<string, number>; from: string; to: string | null; m: number; col: number[]};
+type State = {num: Record<string, number>; from: string; to: string | null; m: number; col: number[]; stops: number[][] | null; grad: Grad | null};
+
+// a list of colours stretched or squeezed to n evenly spaced stops, so two gradients can blend stop by stop
+const resample = (cols: number[][], n: number) =>
+  Array.from({length: n}, (_, i) => {
+    const pos = cols.length === 1 ? 0 : (i / (n - 1)) * (cols.length - 1);
+    const lo = Math.floor(pos), hi = Math.min(cols.length - 1, lo + 1);
+    return mix(cols[lo], cols[hi], pos - lo);
+  });
 
 const stateAt = (b: Block, t: number, k: StyleTokens): State => {
   const palette = (c: string | undefined, def: string) => (c && k.palette?.[c] !== undefined ? gray(k.palette[c]) : c && c.startsWith('#') ? c : def);
-  const num = {...NUM_DEFAULT, x: b.x ?? 540, y: b.y ?? 820, r: b.r ?? 96};
+  const num = {...NUM_DEFAULT, x: b.x ?? 540, y: b.y ?? 820, r: b.r ?? 96, rainbow: b.rainbow ?? 0};
   let col = rgb(palette(b.color ?? 'white', '#f0ede4'));
+  // gradient body: `gradient` on the block or a key; a key's `color` fades every stop to that colour, a key's `gradient` brings one back
+  const keyGrads = ((b.keys as any[] | undefined) ?? []).map((kf) => gradOf(kf.gradient));
+  let grad = gradOf(b.gradient);
+  const nStops = Math.max(3, grad?.colors.length ?? 0, ...keyGrads.map((g) => g?.colors.length ?? 0));
+  const stopsOf = (g: Grad) => resample(g.colors.map((c) => rgb(palette(c, '#f0ede4'))), nStops);
+  let stops = grad || keyGrads.some(Boolean) ? (grad ? stopsOf(grad) : resample([col], nStops)) : null;
   let from: string = b.shape ?? 'circle';
   let to: string | null = null;
   let m = 0;
@@ -114,6 +129,11 @@ const stateAt = (b: Block, t: number, k: StyleTokens): State => {
     const p = (EASE[kf.ease] ?? cubicInOut)(progress(t, kf.t, kf.dur ?? 0.5));
     for (const key of Object.keys(NUM_DEFAULT)) if (kf[key] !== undefined) num[key] += (kf[key] - num[key]) * p;
     if (kf.color !== undefined) col = mix(col, rgb(palette(kf.color, '#f0ede4')), p);
+    if (stops) {
+      const kg = gradOf(kf.gradient);
+      if (kf.color !== undefined) stops = stops.map((c) => mix(c, rgb(palette(kf.color, '#f0ede4')), p));
+      if (kg) (stops = stopsOf(kg).map((c, i) => mix(stops![i], c, p))), (grad = kg);
+    }
     if (kf.shape !== undefined && kf.shape !== from) {
       if (p >= 1) (from = kf.shape, (to = null), (m = 0));
       else (to = kf.shape, (m = p));
@@ -121,7 +141,7 @@ const stateAt = (b: Block, t: number, k: StyleTokens): State => {
   }
   num.sx *= 1 + num.squash * 0.25;
   num.sy *= 1 - num.squash * 0.3;
-  return {num, from, to, m, col};
+  return {num, from, to, m, col, stops, grad: grad ?? (stops ? {colors: [], angle: 0, kind: 'linear'} : null)};
 };
 
 const outline = (s: State, t: number, b: Block) => {
@@ -161,9 +181,10 @@ export const HeroBlock: React.FC<P> = ({b, t, k}) => {
   const breathe = b.loop === 'pulse' ? 1 + 0.03 * Math.sin(e * 3.2) : b.breathe === false ? 1 : 1 + 0.02 * Math.sin(e * 2 * Math.PI * 0.45);
   const cx = x, cy = y + float;
   const pal = (c: string, def: string) => (k.palette?.[c] !== undefined ? gray(k.palette[c]) : def);
-  const lime = pal('lime', '#e9ff1f');
+  const lime = b.glowColor ? colorOf(k, b.glowColor, '#e9ff1f') : pal('lime', '#e9ff1f');
   const dark = pal('dark', gray(k.dark));
-  const fill = hex(s.col);
+  const gid = s.stops ? idOf('hg', b) : '';
+  const fill = s.stops ? `url(#${gid})` : hex(s.col);
   const rad = outline(s, t, b);
   const pts = pointsOf(rad.map((v) => v * enter * breathe), s, cx, cy);
   const gemW = s.to === 'gem' ? cubicInOut(s.m) : s.from === 'gem' ? (s.to ? 1 - cubicInOut(s.m) : 1) : 0;
@@ -252,8 +273,10 @@ export const HeroBlock: React.FC<P> = ({b, t, k}) => {
   return (
     <g opacity={fade * s.num.opacity}>
       {s.num.glow > 0.01 && <circle cx={cx} cy={cy} r={r * 1.8} fill={lime} opacity={0.3 * s.num.glow} style={{filter: `blur(${Math.max(18, r * 0.5)}px)`}} />}
+      {s.stops && s.grad && <GradDef id={gid} g={s.grad} stops={s.stops.map(hex)} />}
       {ghosts}
       {body}
+      {s.num.rainbow > 0.01 && shat < 0.01 && <Rainbow id={idOf('hr', b)} d={toD(pts)} width={Math.max(3, r * 0.07)} amount={s.num.rainbow} angle={b.rainbowAngle ?? -35} />}
       {facets}
       {details}
       {marker}
