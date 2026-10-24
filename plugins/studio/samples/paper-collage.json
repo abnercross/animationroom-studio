@@ -1,0 +1,57 @@
+{
+ "style": "paper-collage",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {"id": "hook", "start": 0, "end": 2.75, "blocks": [
+    {"type": "cutout", "at": 0.45, "shape": "circle", "x": 540, "y": 800, "r": 410, "color": "sky", "pattern": "halftone", "jitter": 0.3},
+    {"type": "cutout", "at": 0.6, "enter": "rise", "d": "M150,1620 L150,1200 Q150,1110 240,1110 L840,1110 Q930,1110 930,1200 L930,1620 Z", "color": "teal", "pattern": "dots", "border": 9, "jitter": 0.3,
+     "blocks": [
+       {"type": "cutout", "at": 0.95, "shape": "rect", "x": 380, "y": 1350, "w": 170, "h": 160, "r": 14, "rotate": -3, "color": "mustard", "pattern": "lines", "border": 7, "jitter": 0.3},
+       {"type": "cutout", "at": 1.0, "shape": "circle", "x": 610, "y": 1270, "r": 21, "color": "white", "border": 0, "jitter": 0.2},
+       {"type": "cutout", "at": 1.06, "shape": "circle", "x": 610, "y": 1365, "r": 21, "color": "white", "border": 0, "jitter": 0.2},
+       {"type": "cutout", "at": 1.12, "shape": "circle", "x": 610, "y": 1460, "r": 21, "color": "white", "border": 0, "jitter": 0.2}
+     ]},
+    {"type": "cutout", "at": 0.7, "shape": "rect", "x": 540, "y": 1040, "w": 150, "h": 190, "color": "pink", "border": 7, "jitter": 0.3},
+    {"type": "cutout", "at": 0.75, "enter": "rise", "shape": "rect", "x": 520, "y": 1640, "w": 900, "h": 140, "rotate": -1, "color": "kraft", "pattern": "print", "border": 7, "jitter": 0.3},
+    {"type": "cutout", "at": 0.85, "enter": "drop", "shape": "ellipse", "x": 540, "y": 800, "rx": 192, "ry": 182, "color": "pink", "border": 9, "bob": true, "jitter": 0.5,
+     "blocks": [
+       {"type": "cutout", "at": 0.85, "enter": "none", "shape": "circle", "x": 352, "y": 815, "r": 34, "color": "pink", "border": 0, "shadow": false, "jitter": 0},
+       {"type": "cutout", "at": 0.85, "enter": "none", "shape": "circle", "x": 728, "y": 815, "r": 34, "color": "pink", "border": 0, "shadow": false, "jitter": 0},
+       {"type": "cutout", "at": 1.0, "d": "M352,742 Q350,560 540,558 Q730,560 728,742 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 q-23.5,26 -47,0 Z", "color": "navy", "pattern": "lines", "border": 7, "shadow": false, "jitter": 0.2},
+       {"type": "face", "at": 1.15, "x": 540, "y": 850, "size": 300, "mood": "wince", "moods": [{"t": "@meet", "mood": "smile"}, {"t": "@tight", "mood": "surprised"}, {"t": "@send", "mood": "wince"}, {"t": "@eases", "mood": "relief"}, {"t": "@follow", "mood": "grin"}]}
+     ]},
+    {"type": "ransom", "at": 0.25, "y": 300, "text": "HEADACHE?", "out": 2.7},
+    {"type": "cutout", "kind": "bolt", "at": "@headache", "x": 300, "y": 600, "size": 130, "rotate": -24, "color": "mustard", "border": 6, "out": 2.7, "exit": "peel"},
+    {"type": "cutout", "kind": "bolt", "at": "@headache+0.12", "x": 790, "y": 590, "size": 110, "rotate": 26, "color": "red", "border": 6, "out": 2.72, "exit": "peel"},
+    {"type": "cutout", "kind": "bolt", "at": "@headache+0.24", "x": 560, "y": 500, "size": 90, "rotate": 8, "color": "mustard", "border": 5, "out": 2.74, "exit": "peel"}
+  ]},
+  {"id": "meet", "start": 2.75, "end": 6.7, "blocks": [
+    {"type": "ransom", "at": "@trapezius", "y": 300, "size": 170, "text": "TRAPEZIUS", "out": 6.5},
+    {"type": "cutout", "at": "@trapezius+0.25", "enter": "slap", "d": "M400,1010 L120,1150 L196,1246 L540,1160 L884,1246 L960,1150 L680,1010 L640,1070 L540,1160 L440,1070 Z", "color": "red", "pattern": "lines", "border": 9, "tape": true, "jitter": 0.3},
+    {"type": "cutout", "at": "@trapezius+0.45", "d": "M440,1052 L640,1052 L540,1160 Z", "color": "white", "border": 0, "jitter": 0.2},
+    {"type": "cutout", "kind": "arrow", "at": "@big", "x": 360, "y": 980, "size": 150, "rotate": 14, "color": "mustard", "border": 6, "out": 6.5, "exit": "peel"}
+  ]},
+  {"id": "trigger", "start": 6.7, "end": 12.75, "blocks": [
+    {"type": "cutout", "at": "@tight", "shape": "circle", "x": 800, "y": 1180, "r": 62, "color": "red", "pattern": "halftone", "border": 7, "jitter": 0.3, "out": "@source", "exit": "pop"},
+    {"type": "path", "at": "@tight+0.2", "dur": 0.5, "width": 5, "color": "ink", "d": "M800,1180 m0,-6 a8,8 0 1,1 -8,8 a16,16 0 1,1 16,16 a24,24 0 1,1 -24,-24", "out": "@source"},
+    {"type": "mark", "kind": "burst", "at": "@forms", "x": 800, "y": 1180, "w": 150, "h": 150, "rays": 8, "len": 26, "width": "secondary", "out": "@source"},
+    {"type": "ransom", "at": "@trigger", "y": 290, "size": 150, "lines": ["TRIGGER", "POINT"], "out": "@it"},
+    {"type": "cutout", "kind": "bolt", "at": "@send", "x": 770, "y": 1080, "size": 86, "rotate": 12, "color": "mustard", "border": 5, "out": "@source", "exit": "peel"},
+    {"type": "cutout", "kind": "bolt", "at": "@send+0.25", "x": 762, "y": 980, "size": 86, "rotate": -8, "color": "mustard", "border": 5, "out": "@source+0.05", "exit": "peel"},
+    {"type": "cutout", "kind": "bolt", "at": "@send+0.5", "x": 756, "y": 880, "size": 86, "rotate": 10, "color": "mustard", "border": 5, "out": "@source+0.1", "exit": "peel"},
+    {"type": "cutout", "kind": "burst", "at": "@temple", "enter": "slap", "x": 742, "y": 730, "size": 150, "color": "red", "pattern": "halftone", "border": 7, "out": "@source+0.15", "exit": "peel", "accent": true}
+  ]},
+  {"id": "answer", "start": 12.75, "end": "end", "blocks": [
+    {"type": "ransom", "at": "@referred", "y": 290, "size": 160, "lines": ["REFERRED", "PAIN"], "out": "@treat-0.2"},
+    {"type": "cutout", "at": "@source", "enter": "slap", "shape": "rect", "x": 800, "y": 1180, "w": 250, "h": 104, "r": 52, "rotate": 32, "color": "plaster", "pattern": "dots", "border": 7, "jitter": 0.3,
+     "blocks": [{"type": "cutout", "at": "@source", "enter": "none", "shape": "rect", "x": 800, "y": 1180, "w": 86, "h": 78, "r": 10, "color": "kraft", "border": 0, "shadow": false, "jitter": 0}]},
+    {"type": "cutout", "kind": "heart", "at": "@eases", "x": 290, "y": 640, "size": 100, "rotate": -12, "color": "red", "border": 6, "bob": true},
+    {"type": "cutout", "kind": "heart", "at": "@eases+0.15", "x": 800, "y": 600, "size": 76, "rotate": 14, "color": "pink", "border": 5, "bob": true},
+    {"type": "ransom", "at": "@follow", "y": 300, "size": 180, "text": "FOLLOW"},
+    {"type": "cutout", "kind": "star", "at": "@more", "x": 170, "y": 1090, "size": 80, "rotate": -10, "color": "mustard", "border": 5},
+    {"type": "cutout", "kind": "star", "at": "@more+0.1", "x": 920, "y": 1060, "size": 70, "rotate": 16, "color": "teal", "border": 5},
+    {"type": "cutout", "kind": "star", "at": "@more+0.2", "x": 240, "y": 520, "size": 64, "rotate": 8, "color": "pink", "border": 5}
+  ]}
+ ]
+}

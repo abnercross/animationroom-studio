@@ -1,0 +1,35 @@
+{
+  "id": "blank-canvas",
+  "name": "Blank canvas",
+  "version": "1.0.0",
+  "minEngine": "1.10.0",
+  "summary": "A clean starting look: ink lines that draw themselves on a plain light ground, with three accent colours.",
+  "formats": ["9:16", "16:9"],
+  "tokens": {
+    "bg": "#f7f4ec", "gridMinor": "#eeeadf", "gridMajor": "#e4dfd1", "gridMinorStep": 40, "gridMajorStep": 200,
+    "ink": "#1f2433", "mid": "#5b6275", "soft": "#9aa0ae", "fill": "#ebe6d8", "dark": "#2c3246",
+    "palette": {"accent": "#e4572e", "accent2": "#2a9d8f", "highlight": "#e0a21b"},
+    "lineWidths": {"primary": 3.2, "secondary": 2, "construction": 1.4},
+    "dashes": {"construction": [14, 6, 3, 6], "dotted": [6, 7]},
+    "fonts": {"headline": "Poppins", "ui": "Inter", "mono": "JetBrains Mono"},
+    "monoTracking": 2,
+    "corners": {"inset": 56, "arm": 34},
+    "header": {"y": 214},
+    "margins": 96,
+    "motion": {"drawDefault": 1.1, "labelStagger": 0.4, "typeMsPerChar": 35, "revealDur": 0.55, "cameraPush": 0.03, "exitDur": 0.4},
+    "background": {"type": "plain"},
+    "chrome": {"corners": false, "header": false},
+    "type": {"headlineWeight": 700, "headlineTracking": -0.01, "headlineUnderline": "accent", "labelCase": "none"}
+  },
+  "variants": {
+    "dark": {"bg": "#171a24", "gridMinor": "#1e2230", "gridMajor": "#252a3a", "ink": "#f3efe4", "mid": "#b0b5c4", "soft": "#6d7384", "fill": "#262b3b", "dark": "#e8e4d8"}
+  },
+  "sound": {
+    "score": {"bpm": 84, "chords": [[45,52,57,60,64],[41,48,53,57,64],[43,50,55,59,62],[45,52,57,60,64]], "ctaLift": 12, "lowpass": 1800, "arpFromBar": 2, "reverb": 2.5, "level": -15},
+    "sfx": {
+      "gridIntro": "none", "path": "pencil", "label": "click+type", "text": "whoosh",
+      "sceneChange": "whoosh", "accent": "thump+bell", "counter": "ticks", "end": "bell"
+    },
+    "duck": 0.45
+  }
+}

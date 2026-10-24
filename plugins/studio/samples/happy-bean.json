@@ -1,0 +1,74 @@
+{
+  "style": "happy-bean",
+  "title": "Referred pain",
+  "duration": "auto",
+  "drawings": {
+    "trapezius": {"parts": [
+      {"d": "M0,-110 Q30,-40 120,-20 Q150,-10 140,20 Q60,30 0,110 Q-60,30 -140,20 Q-150,-10 -120,-20 Q-30,-40 0,-110 Z", "fill": "coral"},
+      {"d": "M0,-90 V95 M-30,-40 Q-60,0 -110,0 M30,-40 Q60,0 110,0", "line": true},
+      {"d": "M-20,-70 Q-10,-80 0,-85", "line": true, "stroke": "white", "width": 1.4}
+    ]}
+  },
+  "scenes": [
+    {"id": "hook", "start": 0, "end": 2.8, "camera": "still", "blocks": [
+      {"type": "beanTitle", "at": 0.05, "text": "Headache?", "sub": "it might not be coming from your head", "y": 300},
+      {"type": "beanProp", "kind": "ground", "at": 0, "y": 1300, "width": 900},
+      {"type": "beanProp", "kind": "cloud", "at": "@headache", "x": 560, "y": 760, "size": 0.7},
+      {"type": "bean", "at": 0.1, "enter": "drop", "x": 540, "y": 1300, "size": 320, "color": "teal", "mood": "worried", "keys": [
+        {"t": "@headache", "pose": "facepalm", "mood": "sad"},
+        {"t": "@not", "pose": "stand", "mood": "curious", "look": 1}
+      ], "spots": [{"part": "temple", "at": "@headache", "side": -1, "out": "@not"}]},
+      {"type": "beanProp", "kind": "bubble", "at": "@not", "x": 800, "y": 1000, "text": "?", "tail": -1, "size": 0.9}
+    ]},
+    {"id": "meet", "start": 2.8, "end": 6.8, "blocks": [
+      {"type": "beanTitle", "at": "@Meet", "text": "Meet your trapezius", "sub": "the big muscle across your neck and shoulders", "y": 300, "size": 70},
+      {"type": "beanProp", "kind": "ground", "at": 2.8, "y": 1300, "width": 900},
+      {"type": "beanDraw", "draw": "trapezius", "at": "@trapezius,", "enter": "draw", "x": 780, "y": 820, "size": 1.1, "anim": "float"},
+      {"type": "bean", "at": 2.9, "x": 400, "y": 1300, "size": 320, "color": "teal", "mood": "happy", "keys": [
+        {"t": "@Meet", "pose": "wave", "mood": "grin"},
+        {"t": "@big", "pose": "point", "face": 1, "mood": "curious"},
+        {"t": "@neck", "pose": "stand", "mood": "happy"}
+      ], "spots": [{"part": "neck", "at": "@neck", "side": 1}, {"part": "neck", "at": "@neck", "side": -1}, {"part": "shoulder", "at": "@shoulders.", "side": 1}, {"part": "shoulder", "at": "@shoulders.", "side": -1}]}
+    ]},
+    {"id": "trigger", "start": 6.8, "end": 12.8, "blocks": [
+      {"type": "beanTitle", "at": "@When", "text": "A trigger point", "sub": "a tight spot that sends pain up the neck", "y": 300},
+      {"type": "beanProp", "kind": "disc", "at": 6.85, "x": 540, "y": 1050, "r": 280},
+      {"type": "beanProp", "kind": "ground", "at": 6.8, "y": 1300, "width": 900},
+      {"type": "bean", "at": 6.9, "x": 540, "y": 1300, "size": 380, "color": "teal", "mood": "calm", "keys": [
+        {"t": "@tight", "mood": "worried"},
+        {"t": "@pain", "mood": "shocked"},
+        {"t": "@temple.", "mood": "crying"}
+      ], "spots": [{"part": "shoulder", "at": "@spot", "side": 1}], "pains": [{"from": "shoulder", "to": "neck", "at": "@send", "dur": 0.5}, {"from": "neck", "to": "temple", "at": "@into", "dur": 0.5}]},
+      {"type": "beanBadge", "kind": "tag", "at": "@trigger", "text": "TRIGGER POINT", "x": 820, "y": 860, "size": 30, "rotate": -8}
+    ]},
+    {"id": "referred", "start": 12.8, "end": 14.6, "blocks": [
+      {"type": "beanInfo", "kind": "myth", "at": "@That's", "y": 360, "myth": "Headache", "fact": "Referred pain", "mythAt": "@That's", "factAt": "@referred", "h": 240},
+      {"type": "beanProp", "kind": "ground", "at": 12.8, "y": 1360, "width": 900},
+      {"type": "bean", "at": 12.85, "x": 540, "y": 1360, "size": 260, "color": "teal", "mood": "thinking", "pose": "think", "keys": [
+        {"t": "@referred", "pose": "pointup", "mood": "surprised"}
+      ]}
+    ]},
+    {"id": "treat", "start": 14.6, "end": 17.2, "blocks": [
+      {"type": "beanTitle", "at": "@Treat", "text": "Treat the source", "sub": "and the headache often eases", "y": 300},
+      {"type": "beanProp", "kind": "sunburst", "at": "@eases.", "x": 540, "y": 1080, "r": 180},
+      {"type": "beanProp", "kind": "ground", "at": 14.6, "y": 1300, "width": 900},
+      {"type": "bean", "at": 14.65, "x": 300, "y": 1300, "size": 320, "color": "teal", "mood": "determined", "wear": "headband", "keys": [
+        {"t": "@source", "x": 540, "y": 1300},
+        {"t": "@eases.", "pose": "cheer", "mood": "joy"}
+      ], "spots": [{"part": "shoulder", "at": "@source", "side": 1, "color": "teal"}]}
+    ]},
+    {"id": "follow", "start": 17.2, "end": "end", "camera": "still", "blocks": [
+      {"type": "beanProp", "kind": "disc", "at": 17.25, "x": 600, "y": 1060, "r": 230},
+      {"type": "beanProp", "kind": "ground", "at": 17.2, "y": 1300, "width": 900},
+      {"type": "beanProp", "kind": "crowd", "at": "@more", "x": 140, "y": 1300, "count": 4, "from": 110, "grow": 20, "gap": 75},
+      {"type": "bean", "at": 17.25, "x": 640, "y": 1300, "size": 320, "color": "teal", "mood": "happy", "wear": "headband", "talk": true, "keys": [
+        {"t": "@Follow", "pose": "wave", "mood": "grin"},
+        {"t": "@surprises", "pose": "open", "mood": "surprised"},
+        {"t": "@you.", "mood": "wink"}
+      ]},
+      {"type": "beanProp", "kind": "gift", "at": "@body", "x": 900, "y": 1300, "size": 0.55, "openAt": "@surprises"},
+      {"type": "beanTitle", "at": "@ways", "text": "Your body surprises you", "align": "center", "y": 1440, "size": 58},
+      {"type": "beanBadge", "kind": "pill", "at": "@Follow", "text": "Follow", "x": 540, "y": 1530, "size": 30}
+    ]}
+  ]
+}

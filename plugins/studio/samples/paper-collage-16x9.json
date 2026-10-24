@@ -1,0 +1,517 @@
+{
+ "style": "paper-collage",
+ "format": "16:9",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "blocks": [
+    {
+     "type": "cutout",
+     "at": 0.45,
+     "shape": "circle",
+     "x": 620,
+     "y": 570,
+     "r": 307.5,
+     "color": "sky",
+     "pattern": "halftone",
+     "jitter": 0.3
+    },
+    {
+     "type": "cutout",
+     "at": 0.6,
+     "enter": "rise",
+     "d": "M 327.5,1185 L 327.5,870 Q 327.5,802.5 395,802.5 L 845,802.5 Q 912.5,802.5 912.5,870 L 912.5,1185 Z",
+     "color": "teal",
+     "pattern": "dots",
+     "border": 9,
+     "jitter": 0.3,
+     "blocks": [
+      {
+       "type": "cutout",
+       "at": 0.95,
+       "shape": "rect",
+       "x": 500,
+       "y": 982.5,
+       "w": 127.5,
+       "h": 120,
+       "r": 10.5,
+       "rotate": -3,
+       "color": "mustard",
+       "pattern": "lines",
+       "border": 7,
+       "jitter": 0.3
+      },
+      {
+       "type": "cutout",
+       "at": 1.0,
+       "shape": "circle",
+       "x": 672.5,
+       "y": 922.5,
+       "r": 15.8,
+       "color": "white",
+       "border": 0,
+       "jitter": 0.2
+      },
+      {
+       "type": "cutout",
+       "at": 1.06,
+       "shape": "circle",
+       "x": 672.5,
+       "y": 993.8,
+       "r": 15.8,
+       "color": "white",
+       "border": 0,
+       "jitter": 0.2
+      },
+      {
+       "type": "cutout",
+       "at": 1.12,
+       "shape": "circle",
+       "x": 672.5,
+       "y": 1065,
+       "r": 15.8,
+       "color": "white",
+       "border": 0,
+       "jitter": 0.2
+      }
+     ]
+    },
+    {
+     "type": "cutout",
+     "at": 0.7,
+     "shape": "rect",
+     "x": 620,
+     "y": 750,
+     "w": 112.5,
+     "h": 142.5,
+     "color": "pink",
+     "border": 7,
+     "jitter": 0.3
+    },
+    {
+     "type": "cutout",
+     "at": 0.75,
+     "enter": "rise",
+     "shape": "rect",
+     "x": 605,
+     "y": 1200,
+     "w": 675,
+     "h": 105,
+     "rotate": -1,
+     "color": "kraft",
+     "pattern": "print",
+     "border": 7,
+     "jitter": 0.3
+    },
+    {
+     "type": "cutout",
+     "at": 0.85,
+     "enter": "drop",
+     "shape": "ellipse",
+     "x": 620,
+     "y": 570,
+     "rx": 144,
+     "ry": 136.5,
+     "color": "pink",
+     "border": 9,
+     "bob": true,
+     "jitter": 0.5,
+     "blocks": [
+      {
+       "type": "cutout",
+       "at": 0.85,
+       "enter": "none",
+       "shape": "circle",
+       "x": 479,
+       "y": 581.2,
+       "r": 25.5,
+       "color": "pink",
+       "border": 0,
+       "shadow": false,
+       "jitter": 0
+      },
+      {
+       "type": "cutout",
+       "at": 0.85,
+       "enter": "none",
+       "shape": "circle",
+       "x": 761,
+       "y": 581.2,
+       "r": 25.5,
+       "color": "pink",
+       "border": 0,
+       "shadow": false,
+       "jitter": 0
+      },
+      {
+       "type": "cutout",
+       "at": 1.0,
+       "d": "M 479,526.5 Q 477.5,390 620,388.5 Q 762.5,390 761,526.5 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 q -17.6 19.5 -35.2 0 Z",
+       "color": "navy",
+       "pattern": "lines",
+       "border": 7,
+       "shadow": false,
+       "jitter": 0.2
+      },
+      {
+       "type": "face",
+       "at": 1.15,
+       "x": 620,
+       "y": 607.5,
+       "size": 225,
+       "mood": "wince",
+       "moods": [
+        {
+         "t": "@meet",
+         "mood": "smile"
+        },
+        {
+         "t": "@tight",
+         "mood": "surprised"
+        },
+        {
+         "t": "@send",
+         "mood": "wince"
+        },
+        {
+         "t": "@eases",
+         "mood": "relief"
+        },
+        {
+         "t": "@follow",
+         "mood": "grin"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "ransom",
+     "at": 0.25,
+     "y": 230,
+     "text": "HEADACHE?",
+     "out": 2.7,
+     "x": 960,
+     "size": 150
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@headache",
+     "x": 440,
+     "y": 420,
+     "size": 97.5,
+     "rotate": -24,
+     "color": "mustard",
+     "border": 6,
+     "out": 2.7,
+     "exit": "peel"
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@headache+0.12",
+     "x": 807.5,
+     "y": 412.5,
+     "size": 82.5,
+     "rotate": 26,
+     "color": "red",
+     "border": 6,
+     "out": 2.72,
+     "exit": "peel"
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@headache+0.24",
+     "x": 635,
+     "y": 345,
+     "size": 67.5,
+     "rotate": 8,
+     "color": "mustard",
+     "border": 5,
+     "out": 2.74,
+     "exit": "peel"
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "blocks": [
+    {
+     "type": "ransom",
+     "at": "@trapezius",
+     "y": 230,
+     "size": 150,
+     "text": "TRAPEZIUS",
+     "out": 6.5,
+     "x": 960
+    },
+    {
+     "type": "cutout",
+     "at": "@trapezius+0.25",
+     "enter": "slap",
+     "d": "M 515,727.5 L 305,832.5 L 362,904.5 L 620,840 L 878,904.5 L 935,832.5 L 725,727.5 L 695,772.5 L 620,840 L 545,772.5 Z",
+     "color": "red",
+     "pattern": "lines",
+     "border": 9,
+     "tape": true,
+     "jitter": 0.3
+    },
+    {
+     "type": "cutout",
+     "at": "@trapezius+0.45",
+     "d": "M 545,759 L 695,759 L 620,840 Z",
+     "color": "white",
+     "border": 0,
+     "jitter": 0.2
+    },
+    {
+     "type": "cutout",
+     "kind": "arrow",
+     "at": "@big",
+     "x": 485,
+     "y": 705,
+     "size": 112.5,
+     "rotate": 14,
+     "color": "mustard",
+     "border": 6,
+     "out": 6.5,
+     "exit": "peel"
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "blocks": [
+    {
+     "type": "cutout",
+     "at": "@tight",
+     "shape": "circle",
+     "x": 815,
+     "y": 855,
+     "r": 46.5,
+     "color": "red",
+     "pattern": "halftone",
+     "border": 7,
+     "jitter": 0.3,
+     "out": "@source",
+     "exit": "pop"
+    },
+    {
+     "type": "path",
+     "at": "@tight+0.2",
+     "dur": 0.5,
+     "width": 3.8,
+     "color": "ink",
+     "d": "M 815,855 m 0 -4.5 a 6,6 0 1,1 -6,6 a 12,12 0 1,1 12,12 a 18,18 0 1,1 -18,-18",
+     "out": "@source"
+    },
+    {
+     "type": "mark",
+     "kind": "burst",
+     "at": "@forms",
+     "x": 815,
+     "y": 855,
+     "w": 112.5,
+     "h": 112.5,
+     "rays": 8,
+     "len": 19.5,
+     "width": "secondary",
+     "out": "@source"
+    },
+    {
+     "type": "ransom",
+     "at": "@trigger",
+     "y": 430,
+     "size": 110,
+     "lines": [
+      "TRIGGER",
+      "POINT"
+     ],
+     "out": "@it",
+     "x": 1400
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@send",
+     "x": 792.5,
+     "y": 780,
+     "size": 64.5,
+     "rotate": 12,
+     "color": "mustard",
+     "border": 5,
+     "out": "@source",
+     "exit": "peel"
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@send+0.25",
+     "x": 786.5,
+     "y": 705,
+     "size": 64.5,
+     "rotate": -8,
+     "color": "mustard",
+     "border": 5,
+     "out": "@source+0.05",
+     "exit": "peel"
+    },
+    {
+     "type": "cutout",
+     "kind": "bolt",
+     "at": "@send+0.5",
+     "x": 782,
+     "y": 630,
+     "size": 64.5,
+     "rotate": 10,
+     "color": "mustard",
+     "border": 5,
+     "out": "@source+0.1",
+     "exit": "peel"
+    },
+    {
+     "type": "cutout",
+     "kind": "burst",
+     "at": "@temple",
+     "enter": "slap",
+     "x": 771.5,
+     "y": 517.5,
+     "size": 112.5,
+     "color": "red",
+     "pattern": "halftone",
+     "border": 7,
+     "out": "@source+0.15",
+     "exit": "peel",
+     "accent": true
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": "end",
+   "blocks": [
+    {
+     "type": "ransom",
+     "at": "@referred",
+     "y": 430,
+     "size": 110,
+     "lines": [
+      "REFERRED",
+      "PAIN"
+     ],
+     "out": "@treat-0.2",
+     "x": 1400
+    },
+    {
+     "type": "cutout",
+     "at": "@source",
+     "enter": "slap",
+     "shape": "rect",
+     "x": 815,
+     "y": 855,
+     "w": 187.5,
+     "h": 78,
+     "r": 39,
+     "rotate": 32,
+     "color": "plaster",
+     "pattern": "dots",
+     "border": 7,
+     "jitter": 0.3,
+     "blocks": [
+      {
+       "type": "cutout",
+       "at": "@source",
+       "enter": "none",
+       "shape": "rect",
+       "x": 815,
+       "y": 855,
+       "w": 64.5,
+       "h": 58.5,
+       "r": 7.5,
+       "color": "kraft",
+       "border": 0,
+       "shadow": false,
+       "jitter": 0
+      }
+     ]
+    },
+    {
+     "type": "cutout",
+     "kind": "heart",
+     "at": "@eases",
+     "x": 432.5,
+     "y": 450,
+     "size": 75,
+     "rotate": -12,
+     "color": "red",
+     "border": 6,
+     "bob": true
+    },
+    {
+     "type": "cutout",
+     "kind": "heart",
+     "at": "@eases+0.15",
+     "x": 815,
+     "y": 420,
+     "size": 57,
+     "rotate": 14,
+     "color": "pink",
+     "border": 5,
+     "bob": true
+    },
+    {
+     "type": "ransom",
+     "at": "@follow",
+     "y": 230,
+     "size": 150,
+     "text": "FOLLOW",
+     "x": 960
+    },
+    {
+     "type": "cutout",
+     "kind": "star",
+     "at": "@more",
+     "x": 342.5,
+     "y": 787.5,
+     "size": 60,
+     "rotate": -10,
+     "color": "mustard",
+     "border": 5
+    },
+    {
+     "type": "cutout",
+     "kind": "star",
+     "at": "@more+0.1",
+     "x": 905,
+     "y": 765,
+     "size": 52.5,
+     "rotate": 16,
+     "color": "teal",
+     "border": 5
+    },
+    {
+     "type": "cutout",
+     "kind": "star",
+     "at": "@more+0.2",
+     "x": 395,
+     "y": 360,
+     "size": 48,
+     "rotate": 8,
+     "color": "pink",
+     "border": 5
+    }
+   ]
+  }
+ ]
+}

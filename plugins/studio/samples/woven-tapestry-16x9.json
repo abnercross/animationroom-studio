@@ -1,0 +1,348 @@
+{
+ "style": "woven-tapestry",
+ "format": "16:9",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": 0.2,
+     "enter": "left",
+     "x": 620,
+     "y": 250,
+     "size": 207,
+     "color": "storm"
+    },
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": 0.3,
+     "enter": "right",
+     "x": 1340,
+     "y": 300,
+     "size": 153,
+     "color": "cloud"
+    },
+    {
+     "type": "shape",
+     "at": 0.3,
+     "enter": "stitch",
+     "dur": 0.9,
+     "d": "M 604.8,1344 L 604.8,744 Q 604.8,648 792,612 L 1128,612 Q 1315.2,648 1315.2,744 L 1315.2,1344 Z",
+     "color": "teal"
+    },
+    {
+     "type": "shape",
+     "at": 0.7,
+     "enter": "stitch",
+     "dur": 0.3,
+     "shape": "rect",
+     "x": 960,
+     "y": 572,
+     "w": 102.4,
+     "h": 104,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.8,
+     "enter": "stitch",
+     "dur": 0.2,
+     "shape": "ellipse",
+     "x": 844.8,
+     "y": 416,
+     "rx": 20.8,
+     "ry": 30.4,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.8,
+     "enter": "stitch",
+     "dur": 0.2,
+     "shape": "ellipse",
+     "x": 1075.2,
+     "y": 416,
+     "rx": 20.8,
+     "ry": 30.4,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.9,
+     "enter": "stitch",
+     "dur": 0.6,
+     "shape": "ellipse",
+     "x": 960,
+     "y": 400,
+     "rx": 120,
+     "ry": 144,
+     "color": "brown"
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "shape",
+     "at": "@trapezius",
+     "enter": "stitch",
+     "dur": 1.2,
+     "d": "M 902.4,568 L 1017.6,568 L 1040,596 L 1296,692 L 960,1072 L 624,692 L 880,596 Z",
+     "color": "red"
+    },
+    {
+     "type": "path",
+     "at": "@big",
+     "dur": 0.8,
+     "width": 4.8,
+     "color": "darkred",
+     "d": "M 960,544 L 960,1056"
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "shape",
+     "at": "@tight",
+     "shape": "circle",
+     "x": 1112,
+     "y": 648,
+     "r": 20.8,
+     "color": "darkred",
+     "loop": "beat"
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.3,
+     "dashed": true,
+     "width": 8,
+     "color": "red",
+     "d": "M 1107.2,624 L 1094.4,544 L 1088,448 L 1083.2,352",
+     "out": "@eases"
+    },
+    {
+     "type": "prop",
+     "kind": "star",
+     "at": "@temple",
+     "x": 1083.2,
+     "y": 320,
+     "size": 64,
+     "color": "red",
+     "loop": "pulse",
+     "accent": true,
+     "out": "@eases"
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": "end",
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "check",
+     "at": "@source",
+     "x": 1112,
+     "y": 648,
+     "size": 72,
+     "color": "cream"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "rect",
+     "x": 960,
+     "y": 540,
+     "w": 1880,
+     "h": 1040,
+     "color": "dawn",
+     "outline": false
+    },
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": "@eases",
+     "enter": "none",
+     "x": 1340,
+     "y": 300,
+     "size": 153,
+     "color": "cloud"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "d": "M 604.8,1344 L 604.8,744 Q 604.8,648 792,612 L 1128,612 Q 1315.2,648 1315.2,744 L 1315.2,1344 Z",
+     "color": "teal"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "rect",
+     "x": 960,
+     "y": 572,
+     "w": 102.4,
+     "h": 104,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 844.8,
+     "y": 416,
+     "rx": 20.8,
+     "ry": 30.4,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 1075.2,
+     "y": 416,
+     "rx": 20.8,
+     "ry": 30.4,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 960,
+     "y": 400,
+     "rx": 120,
+     "ry": 144,
+     "color": "brown"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "d": "M 902.4,568 L 1017.6,568 L 1040,596 L 1296,692 L 960,1072 L 624,692 L 880,596 Z",
+     "color": "gold"
+    },
+    {
+     "type": "prop",
+     "kind": "sun",
+     "at": "@eases+0.5",
+     "x": 1540,
+     "y": 300,
+     "size": 152,
+     "color": "gold",
+     "loop": "spin"
+    }
+   ]
+  }
+ ],
+ "overlay": [
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": 0.2,
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "HEADACHE",
+   "textSize": 50,
+   "out": 2.7
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@trapezius",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "TRAPEZIUS",
+   "textSize": 50,
+   "out": "@when"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@trigger",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "TRIGGER POINT",
+   "textSize": 50,
+   "out": "@send"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@send",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "TO THE TEMPLE",
+   "textSize": 50,
+   "out": "@referred-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@referred",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "REFERRED PAIN",
+   "textSize": 50,
+   "out": "@treat-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@treat",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "TREAT THE SOURCE",
+   "textSize": 50,
+   "out": "@follow-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@follow",
+   "x": 960,
+   "y": 140,
+   "size": 170,
+   "text": "FOLLOW FOR MORE",
+   "textSize": 50
+  }
+ ]
+}

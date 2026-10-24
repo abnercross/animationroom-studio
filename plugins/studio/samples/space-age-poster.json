@@ -1,0 +1,61 @@
+{
+  "style": "space-age-poster",
+  "title": "Kilograms and kilonewtons, all scene types",
+  "duration": "auto",
+  "scenes": [
+    {"id": "hook", "start": 0, "end": "@but-0.09", "tint": "cream", "camera": "still", "blocks": [
+      {"type": "posterTile", "at": 0.06, "x": 300, "y": 640, "tone": "teal", "kind": "cube", "phase": 0},
+      {"type": "posterTile", "at": 0.32, "x": 780, "y": 640, "tone": "orange", "kind": "cube", "phase": 2},
+      {"type": "posterWord", "at": 0.2, "mode": "kicker", "text": "TWO MEASUREMENTS", "y": 330, "color": "navy", "size": 50},
+      {"type": "posterWord", "at": "@one", "mode": "kicker", "text": "ONE CONFUSING WORD", "y": 1015, "color": "orange", "size": 50},
+      {"type": "posterSlots", "at": "@one+0.3", "until": "@kilo", "n": 4, "y": 1272},
+      {"type": "posterWord", "at": "@kilo", "mode": "stamp", "text": "KILO", "y": 1440, "size": 470, "w": 860, "len": 860, "color": "navy", "shadow": "mustard"},
+      {"type": "posterSparks", "at": "@kilo", "points": [[150, 1040, 3], [930, 1080, 4.2], [120, 1520, 2.6], [960, 1500, 3.4]], "colors": ["teal", "orange"]}
+    ]},
+    {"id": "split", "start": "@but-0.09", "end": "@a-0.08", "tint": "cream", "camera": "still", "blocks": [
+      {"type": "posterSplit", "at": "@but-0.09",
+        "top": {"label": "KILOGRAMS", "labelAt": "@kilograms", "word": "kg", "wordAt": "@kilograms+0.06"},
+        "bottom": {"label": "KILONEWTONS", "labelAt": "@kilonewtons", "word": "kN", "wordAt": "@kilonewtons+0.06"},
+        "badge": "neq", "badgeAt": "@different"}
+    ]},
+    {"id": "define", "start": "@a-0.08", "end": "@a#2-0.09", "tint": "navy", "transition": "iris", "camera": "still", "blocks": [
+      {"type": "posterWord", "at": "@kilogram", "mode": "pill", "text": "1 KILOGRAM", "y": 300, "color": "navy", "fill": "mustard"},
+      {"type": "posterWord", "at": "@mass-0.06", "mode": "ink", "text": "MASS", "y": 640, "size": 330, "w": 900, "color": "cream", "shadow": "orange"},
+      {"type": "posterHero", "at": "@a+0.12", "kind": "cube", "tone": "orange", "x": 540, "y": 1090, "s": 250, "pulse": 0.03, "fillAt": "@matter-0.17"},
+      {"type": "posterWord", "at": "@how", "mode": "kicker", "text": "HOW MUCH MATTER", "y": 1560, "color": "cream", "size": 54}
+    ]},
+    {"id": "gauge", "start": "@a#2-0.09", "end": "@imagine-0.11", "tint": "teal", "transition": "iris", "camera": "still", "blocks": [
+      {"type": "posterWord", "at": "@kilonewton", "mode": "pill", "text": "1 KILONEWTON", "y": 300, "color": "navy", "fill": "cream"},
+      {"type": "posterWord", "at": "@force", "mode": "ink", "text": "FORCE", "y": 640, "size": 330, "w": 900, "color": "cream", "shadow": "navy"},
+      {"type": "posterGauge", "at": "@a#2-0.09", "kind": "cube", "tone": "orange", "leanAt": 13.3, "pushAt": "@pushes", "pullAt": "@pulls"},
+      {"type": "posterWord", "at": "@how#2", "mode": "kicker", "text": "HOW HARD IT PUSHES OR PULLS", "y": 1560, "color": "cream", "size": 46}
+    ]},
+    {"id": "journey", "start": "@imagine-0.11", "end": "@same#2-0.12", "tint": "deep", "transition": "iris", "camera": "still", "blocks": [
+      {"type": "posterJourney", "at": "@imagine-0.11", "kind": "cube", "tone": "orange",
+        "kicker": "IMAGINE", "kickerAt": "@imagine", "pill": "1,000 kg", "pillAt": "@1,000-kilogram+0.1",
+        "fallAt": "@place+0.12", "gravityAt": "@gravity#2", "gravityLabel": "GRAVITY", "lowerLabel": "ON EARTH",
+        "readouts": [
+          {"label": "MASS", "value": "1,000 kg", "at": "@mass#2", "tickAt": "@same"},
+          {"label": "WEIGHT", "value": "0 kN", "at": "@weight", "countTo": 9.8, "unit": "kN", "decimals": 1, "countAt": "@9.8", "doneAt": "@kilonewtons#2-0.06"}
+        ]}
+    ]},
+    {"id": "compare", "start": "@same#2-0.12", "end": "@kilograms#2-0.09", "tint": "navy", "transition": "iris", "camera": "still", "blocks": [
+      {"type": "posterPanel", "fill": "deep", "y": 0, "h": 960, "stars": 26, "seed": 8},
+      {"type": "posterPanel", "fill": "navy", "y": 960, "h": 960},
+      {"type": "posterHero", "at": "@same#2-0.12", "kind": "cube", "tone": "orange", "x": 215, "y": 470, "s": 140, "bob": 1},
+      {"type": "posterHero", "at": "@same#2-0.12", "kind": "cube", "tone": "orange", "x": 215, "y": 1300, "s": 140},
+      {"type": "posterArrow", "at": "@same#2", "x": 215, "y": 1177, "dir": 90, "len": 150, "w": 52, "color": "mustard", "bounce": 8},
+      {"type": "posterWord", "at": "@same#2", "mode": "ink", "text": "1,000 kg", "x": 630, "y": 380, "size": 112, "w": 420, "dur": 0.3, "color": "cream", "shadow": "teal"},
+      {"type": "posterWord", "at": "@different#2", "mode": "pill", "text": "0 kN", "x": 630, "y": 555, "pw": 500, "h": 200, "size": 170, "color": "cream", "fill": "orange"},
+      {"type": "posterWord", "at": "@same#2+0.1", "mode": "ink", "text": "1,000 kg", "x": 630, "y": 1235, "size": 112, "w": 420, "dur": 0.3, "color": "cream", "shadow": "teal"},
+      {"type": "posterWord", "at": "@different#2+0.12", "mode": "pill", "text": "9.8 kN", "x": 630, "y": 1410, "pw": 500, "h": 200, "size": 170, "color": "cream", "fill": "orange"},
+      {"type": "posterBanner", "at": "@same#2", "y": 960, "texts": [{"text": "SAME MASS", "at": "@same#2"}, {"text": "DIFFERENT FORCE", "at": "@different#2"}]}
+    ]},
+    {"id": "recap", "start": "@kilograms#2-0.09", "end": "end", "tint": "cream", "transition": "iris", "camera": "still", "blocks": [
+      {"type": "posterRecap", "at": "@kilograms#2-0.09", "kind": "cube", "tone": "orange", "cards": [
+        {"label": "KILOGRAMS", "big": "kg", "word": "MASS", "wordAt": "@mass#4", "cardAt": "@kilograms#2"},
+        {"label": "KILONEWTONS", "big": "kN", "word": "FORCE", "wordAt": "@force#4", "cardAt": "@kilonewtons#3-0.12"}
+      ]}
+    ]}
+  ]
+}

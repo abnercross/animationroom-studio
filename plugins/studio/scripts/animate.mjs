@@ -5,9 +5,10 @@
 //   node animate.mjs style <id>                               fetch a style (style.json + guide.md)
 //   node animate.mjs transcribe <audio> [words.json] [--language pt]   word timings (language is detected when left out)
 //   node animate.mjs validate <storyboard.json> --words <words.json>
-//   node animate.mjs stills <storyboard.json> --words <w.json> [--at 1,4,8] [--out sheet.png] [--scale 1]
+//   node animate.mjs stills <storyboard.json> --words <w.json> [--at 1,4,8] [--out sheet.png] [--scale 1] [--keep <folder>]
 //   node animate.mjs review <video.mp4> [--count 10] [--out sheet.png]   frames of a finished video on one sheet
 //   node animate.mjs render <storyboard.json> --words <w.json> --vo <audio> --out <file.mp4>
+//   node animate.mjs mystyle new|check|sample|sheet|list|remove|reset|wish|wishes ...   the member's own styles (Style Maker)
 //
 // Every command takes --data <folder> (or reads CLAUDE_PLUGIN_DATA). The last lines printed are KEY=value.
 
@@ -23,6 +24,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { transcribeWords } from "./speech.mjs";
 import { SR, renderScore, renderSfx, envelope, rms, wav } from "./sound.mjs";
 import { expandChibi } from "./chibi-names.mjs";
+import { mystyleCommand, mineDir } from "./mystyle.mjs";
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const API = process.env.AR_API || "https://animationroom.app/api"; // Placeholder until the server is live.
@@ -137,18 +139,22 @@ function browser() {
 // ---------- styles: server, local dev folder, then cache ----------
 // Development: a local copy of the style library (config stylesDir, or AR_STYLES_DIR) instead of the server.
 const localStyles = () => readConfig().stylesDir || process.env.AR_STYLES_DIR || "";
-// Personal styles: a folder on this computer only (config personalStylesDir, or AR_PERSONAL_STYLES) with its own
-// catalog.json and styles/<id>/ files. They are never on the website; they sit next to the library styles and win on the same id.
+// Personal styles: folders on this computer only, each with its own catalog.json and styles/<id>/ files. They are never
+// on the website; they sit next to the library styles and win on the same id. Two kinds: Abner's own (config
+// personalStylesDir, or AR_PERSONAL_STYLES) and the member's own styles made with the Style Maker (<data>/my-styles).
 const personalStyles = () => readConfig().personalStylesDir || process.env.AR_PERSONAL_STYLES || "";
 function withPersonal(c) {
-  const dir = personalStyles();
-  if (!dir) return c;
-  let mine;
-  try {
-    mine = readJson(path.join(dir, "catalog.json")).styles.map((s) => ({ ...s, personal: true }));
-  } catch {
-    out("PERSONAL_STYLES", "unreadable");
-    return c;
+  const homes = [];
+  if (fs.existsSync(path.join(mineDir(DATA), "catalog.json"))) homes.push({ dir: mineDir(DATA), mine: true });
+  if (personalStyles()) homes.push({ dir: personalStyles(), mine: false });
+  if (!homes.length) return c;
+  const mine = [];
+  for (const h of homes) {
+    try {
+      for (const s of readJson(path.join(h.dir, "catalog.json")).styles) if (!mine.some((m) => m.id === s.id)) mine.push({ ...s, personal: true, home: h.dir, ...(h.mine ? { mine: true } : {}) });
+    } catch {
+      out("PERSONAL_STYLES", "unreadable");
+    }
   }
   return { ...c, styles: [...mine, ...c.styles.filter((s) => !mine.some((m) => m.id === s.id))] };
 }
@@ -192,7 +198,7 @@ async function getStyle(id) {
     fail(`the ${entry.name} style needs a newer studio (engine ${entry.minEngine}, you have ${ENGINE_VERSION}). Run /plugin update studio, restart Claude, then try again.`);
   }
   const dir = path.join(DATA, "styles", id, entry.version);
-  const src = entry.personal ? personalStyles() : localStyles();
+  const src = entry.home || (entry.personal ? personalStyles() : localStyles());
   if (src || !fs.existsSync(path.join(dir, "style.json"))) {
     fs.mkdirSync(dir, { recursive: true });
     for (const f of entry.files) {
@@ -672,6 +678,11 @@ async function stills(sb, style, times, outFile, scale = 0.5) {
   }
   const cols = Math.min(5, times.length), rows = Math.ceil(times.length / cols);
   ff(["-v", "error", "-y", "-i", path.join(tmp, "s%02d.png"), "-vf", `tile=${cols}x${rows}:padding=12:color=white`, "-frames:v", "1", outFile]);
+  // --keep <folder> also saves every frame on its own (s00.png, s01.png ...), for example pictures for the website.
+  if (opt.keep && opt.keep !== true) {
+    fs.mkdirSync(path.resolve(String(opt.keep)), { recursive: true });
+    for (const f of fs.readdirSync(tmp)) if (/^s\d+\.png$/.test(f)) fs.copyFileSync(path.join(tmp, f), path.join(path.resolve(String(opt.keep)), f));
+  }
   out("RESULT", "stills");
   out("TIMES", times.join(","));
   out("FILE", path.resolve(outFile));
@@ -766,28 +777,49 @@ async function render(sb, style, vo, outFile) {
   out("SECONDS", ((Date.now() - t0) / 1000).toFixed(1));
 }
 
+// The Style Maker's look test: the family's sample script, rendered as stills in the member's own style.
+async function mystyleSheet(id, sbPath, wordsPath, outFile) {
+  const { style } = await getStyle(id);
+  const sb = validate(sbPath, wordsPath, style);
+  const n = sb.scenes.length, pick = Math.min(10, n);
+  const times = Array.from({ length: pick }, (_, i) => {
+    const sc = sb.scenes[Math.min(n - 1, Math.round((i * (n - 1)) / Math.max(1, pick - 1)))];
+    return +(sc.start + (sc.end - sc.start) * 0.55).toFixed(2);
+  });
+  return stills(sb, style, times, outFile, 0.5);
+}
+
 // ---------- main ----------
 async function main() {
   const cmd = pos[0];
   if (cmd === "styles") {
     const c = await catalog();
-    c.styles.filter((s) => (s.modes || ["animate"]).includes("animate")).forEach((s) => console.log(`${s.id}  ${s.name}  v${s.version}  (${(s.modes || ["animate"]).join(", ")}${s.personal ? ", personal" : ""})  ${s.summary}`));
+    c.styles.filter((s) => (s.modes || ["animate"]).includes("animate")).forEach((s) => console.log(`${s.id}  ${s.name}  v${s.version}  (${(s.modes || ["animate"]).join(", ")}${s.mine ? ", yours" : s.personal ? ", personal" : ""})  ${s.summary}`));
     out("RESULT", "listed");
     out("COUNT", c.styles.filter((s) => (s.modes || ["animate"]).includes("animate")).length);
+    out("YOUR_STYLES", c.styles.filter((s) => s.mine).length);
     return;
   }
   if (cmd === "style") {
     const { dir, entry } = await getStyle(pos[1]);
     out("RESULT", "ready");
     out("STYLE", `${entry.id} ${entry.version}`);
-    if (entry.personal) out("PERSONAL", "yes");
+    if (entry.mine) out("YOURS", "yes");
+    else if (entry.personal) out("PERSONAL", "yes");
     out("GUIDE", path.join(dir, "guide.md"));
     return;
+  }
+  if (cmd === "mystyle") {
+    if (pos[1] === "sheet") requireRuntime();
+    return mystyleCommand(
+      { data: DATA, pluginRoot: PLUGIN_ROOT, engine: ENGINE_VERSION, semverGte, out, fail, libraryCatalog, getStyle, sheet: mystyleSheet },
+      pos[1] || "", pos, opt
+    );
   }
   if (["transcribe", "stills", "render", "review"].includes(cmd)) requireRuntime();
   if (cmd === "review") return review(pos[1], Number(opt.count) || 10, path.resolve(String(opt.out || String(pos[1]).replace(/\.[^.]+$/, ".review.png"))));
   if (cmd === "transcribe") return transcribe(pos[1], pos[2] || "words.json", opt.language ? String(opt.language) : undefined);
-  if (!["validate", "stills", "render"].includes(cmd)) fail("unknown command. Use: styles, style, transcribe, validate, stills, review, render");
+  if (!["validate", "stills", "render"].includes(cmd)) fail("unknown command. Use: styles, style, transcribe, validate, stills, review, render, mystyle");
   const sbPath = pos[1];
   if (!sbPath || !fs.existsSync(sbPath)) fail("storyboard file not found");
   const { style } = await getStyle(readJson(sbPath).style || "blueprint");

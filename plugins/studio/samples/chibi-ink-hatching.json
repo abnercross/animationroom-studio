@@ -1,0 +1,55 @@
+{
+  "style": "chibi-ink-hatching",
+  "title": "Referred pain",
+  "duration": "auto",
+  "cast": {
+    "hero": {"cap": true},
+    "gran": {"hair": "bun", "hairColor": "grey", "top": "red", "trousers": "slate"},
+    "pal": {"hair": "tuft", "glasses": true, "top": "light", "trousers": "mid"}
+  },
+  "scenes": [
+    {"id": "hook", "start": 0, "end": 2.75, "tint": "neutral", "cam": [{"t": 0, "zoom": 1.25, "y": 1010, "dur": 0.01}, {"t": 0.3, "zoom": 1.45, "y": 1040, "dur": 2.3}], "blocks": [
+      {"type": "person", "who": "hero", "at": 0, "x": 540, "y": 1330, "scale": 1.5, "eyes": "sad", "mouth": "wobble", "brows": "worried", "sweat": true,
+       "keys": [{"t": 0.35, "armR": 158, "elbowR": 38, "tilt": 5, "dur": 0.4, "ease": "back"}]},
+      {"type": "text", "at": 0.25, "y": 610, "size": 92, "lines": ["Headache?"]},
+      {"type": "prop", "kind": "cloud", "at": 0.2, "x": 540, "y": 760, "size": 150, "color": "dark", "loop": "float"},
+      {"type": "prop", "kind": "bolt", "at": "@headache", "x": 392, "y": 900, "size": 70, "color": "red", "rotate": -18, "loop": "pulse"},
+      {"type": "prop", "kind": "bolt", "at": "@headache+0.15", "x": 694, "y": 880, "size": 58, "color": "red", "rotate": 20, "loop": "pulse"}
+    ]},
+    {"id": "meet", "start": 2.75, "end": 6.7, "tint": "warm", "transition": "iris", "blocks": [
+      {"type": "prop", "kind": "chair", "at": 2.75, "enter": "none", "x": 150, "y": 1206, "size": 250},
+      {"type": "prop", "kind": "desk", "at": 2.75, "enter": "none", "x": 400, "y": 1224, "size": 220},
+      {"type": "prop", "kind": "books", "at": 2.75, "enter": "none", "x": 350, "y": 1160, "size": 130},
+      {"type": "prop", "kind": "plant", "at": 2.75, "enter": "none", "x": 500, "y": 1118, "size": 100},
+      {"type": "prop", "kind": "clock", "at": 2.9, "x": 250, "y": 540, "size": 120},
+      {"type": "prop", "kind": "ff", "at": 3.1, "x": 840, "y": 545, "size": 150},
+      {"type": "person", "who": "hero", "at": 2.75, "enter": "none", "x": 420, "y": 1332, "scale": 1.5, "eyes": "open", "mouth": "smile",
+       "keys": [{"t": 2.8, "x": 760, "dur": 1.2, "ease": "inout"}, {"t": "@big", "armL": 150, "elbowL": 60, "tilt": -5, "dur": 0.35, "ease": "back"}, {"t": "@big", "eyes": "squint", "mouth": "wobble", "brows": "worried"}]},
+      {"type": "prop", "kind": "sign", "at": "@trapezius", "x": 540, "y": 720, "size": 330, "text": "TRAPEZIUS", "sub": "BIG MUSCLE", "textSize": 34}
+    ]},
+    {"id": "trigger", "start": 6.7, "end": 12.75, "tint": "cool", "cam": [{"t": 6.7, "zoom": 2.3, "x": 560, "y": 1090, "dur": 0.01}], "blocks": [
+      {"type": "person", "who": "hero", "at": 6.7, "enter": "none", "x": 540, "y": 1330, "scale": 1.5, "eyes": "open", "mouth": "flat", "brows": "worried", "lookX": 1, "lookY": 1,
+       "keys": [{"t": "@temple", "eyes": "squint", "mouth": "grit", "sweat": true, "squash": 0.2, "dur": 0.15, "ease": "out"}, {"t": "@temple+0.15", "squash": 0, "dur": 0.4, "ease": "back"}]},
+      {"type": "shape", "at": "@tight", "shape": "circle", "x": 600, "y": 1136, "r": 13, "color": "red", "loop": "beat", "width": 4},
+      {"type": "prop", "kind": "sign", "at": "@trigger", "x": 380, "y": 900, "size": 190, "text": "TRIGGER", "sub": "POINT", "textSize": 36, "out": "@send"},
+      {"type": "path", "at": "@send", "dur": 1.4, "dashed": true, "color": "red", "arrow": true, "width": 4, "d": "M618,1126 C690,1100 700,1040 652,1012"},
+      {"type": "prop", "kind": "star", "at": "@temple", "x": 664, "y": 985, "size": 60, "color": "red", "loop": "pulse", "shake": true, "accent": true}
+    ]},
+    {"id": "answer", "start": 12.75, "end": 17.1, "tint": "lime", "transition": "iris", "cam": [{"t": 12.75, "zoom": 1.35, "y": 1010, "dur": 0.01}], "blocks": [
+      {"type": "person", "who": "hero", "at": 12.75, "enter": "none", "x": 540, "y": 1330, "scale": 1.5, "eyes": "wide", "mouth": "o", "brows": "up",
+       "keys": [{"t": "@eases", "eyes": "happy", "mouth": "big", "brows": "normal", "lift": 70, "armL": 150, "armR": 150, "dur": 0.22, "ease": "out"}, {"t": "@eases+0.22", "lift": 0, "dur": 0.45, "ease": "bounce"}]},
+      {"type": "text", "at": "@referred", "y": 690, "size": 84, "lines": ["Referred pain"], "out": "@treat-0.1"},
+      {"type": "prop", "kind": "bulb", "at": "@referred+0.3", "x": 540, "y": 800, "size": 110, "lit": false, "litAt": "@pain#2+0.2", "out": "@treat-0.1"},
+      {"type": "prop", "kind": "check", "at": "@source", "x": 540, "y": 720, "size": 130, "enter": "pop"}
+    ]},
+    {"id": "cta", "start": 17.1, "end": "end", "tint": "paper", "transition": "iris", "blocks": [
+      {"type": "person", "who": "gran", "at": 17.3, "x": 290, "y": 1332, "scale": 1.4, "eyes": "happy", "mouth": "smile"},
+      {"type": "person", "who": "pal", "at": 17.45, "x": 790, "y": 1332, "scale": 1.4, "eyes": "happy", "mouth": "big", "armR": 150},
+      {"type": "person", "who": "hero", "at": 17.1, "enter": "none", "x": 540, "y": 1332, "scale": 1.6, "eyes": "happy", "mouth": "smile", "talk": true, "armR": 150, "elbowR": -20,
+       "keys": [{"t": 17.5, "elbowR": 30, "dur": 0.3}, {"t": 17.8, "elbowR": -20, "dur": 0.3}, {"t": 18.1, "elbowR": 30, "dur": 0.3}, {"t": 18.4, "elbowR": -20, "dur": 0.3}, {"t": 18.7, "elbowR": 30, "dur": 0.3}, {"t": 19.0, "elbowR": -10, "dur": 0.3}]},
+      {"type": "text", "at": "@follow", "y": 640, "size": 96, "lines": ["Follow", "for more"]},
+      {"type": "prop", "kind": "heart", "at": "@more", "x": 400, "y": 880, "size": 80, "loop": "float"},
+      {"type": "prop", "kind": "heart", "at": "@more+0.2", "x": 690, "y": 900, "size": 60, "loop": "float"}
+    ]}
+  ]
+}

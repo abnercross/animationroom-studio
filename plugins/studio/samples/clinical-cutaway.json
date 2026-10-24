@@ -1,0 +1,225 @@
+{
+ "style": "clinical-cutaway",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "block",
+     "at": 0.2,
+     "enter": "rise",
+     "x": 520,
+     "y": 800,
+     "size": 340
+    },
+    {
+     "type": "text",
+     "at": 0.3,
+     "y": 1400,
+     "size": 80,
+     "kicker": "Every headache",
+     "lines": [
+      "Might not start",
+      "in your head"
+     ],
+     "out": 2.6
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "label",
+     "at": "@trapezius",
+     "text": "Trapezius",
+     "target": [
+      700,
+      1105
+     ],
+     "labelY": 1240,
+     "side": "right"
+    },
+    {
+     "type": "label",
+     "at": "@big",
+     "text": "Skin",
+     "target": [
+      140,
+      625
+     ],
+     "labelY": 520,
+     "side": "left"
+    },
+    {
+     "type": "label",
+     "at": "@muscle",
+     "text": "Fat",
+     "target": [
+      140,
+      990
+     ],
+     "labelY": 1240,
+     "side": "left"
+    },
+    {
+     "type": "text",
+     "at": "@meet",
+     "y": 1400,
+     "size": 80,
+     "kicker": "Under the skin",
+     "lines": [
+      "Your trapezius"
+     ],
+     "out": 6.5
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "shape",
+     "at": "@tight",
+     "shape": "circle",
+     "x": 430,
+     "y": 1105,
+     "r": 22,
+     "color": "deep",
+     "glow": "red",
+     "loop": "beat"
+    },
+    {
+     "type": "prop",
+     "kind": "lens",
+     "at": "@trigger",
+     "x": 300,
+     "y": 330,
+     "size": 230,
+     "to": [
+      430,
+      1105
+     ],
+     "text": "TRIGGER POINT",
+     "textSize": 17
+    },
+    {
+     "type": "shape",
+     "at": "@trigger+0.2",
+     "shape": "circle",
+     "x": 300,
+     "y": 318,
+     "r": 30,
+     "color": "deep",
+     "glow": "red",
+     "loop": "beat"
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.4,
+     "color": "gold",
+     "arrow": true,
+     "width": "primary",
+     "d": "M452,1100 C640,1090 700,900 690,640 C686,520 700,440 760,380"
+    },
+    {
+     "type": "label",
+     "at": "@temple",
+     "text": "To the temple",
+     "target": [
+      760,
+      380
+     ],
+     "labelY": 300,
+     "side": "right",
+     "accent": true
+    },
+    {
+     "type": "text",
+     "at": "@when",
+     "y": 1400,
+     "size": 80,
+     "kicker": "A tight spot forms",
+     "lines": [
+      "Trigger point"
+     ],
+     "out": 12.6
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": "end",
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "text",
+     "at": "@that's",
+     "y": 1400,
+     "size": 80,
+     "kicker": "That is called",
+     "lines": [
+      "Referred pain"
+     ],
+     "out": "@treat-0.15"
+    },
+    {
+     "type": "shape",
+     "at": "@source",
+     "shape": "circle",
+     "x": 430,
+     "y": 1105,
+     "r": 24,
+     "color": "sage",
+     "glow": true
+    },
+    {
+     "type": "shape",
+     "at": "@source",
+     "shape": "circle",
+     "x": 300,
+     "y": 318,
+     "r": 32,
+     "color": "sage",
+     "glow": true
+    },
+    {
+     "type": "text",
+     "at": "@treat",
+     "y": 1400,
+     "size": 80,
+     "kicker": "The fix",
+     "lines": [
+      "Treat the source"
+     ],
+     "out": "@follow-0.15"
+    },
+    {
+     "type": "text",
+     "at": "@follow",
+     "y": 1400,
+     "size": 80,
+     "kicker": "Follow",
+     "lines": [
+      "More ways your",
+      "body surprises you"
+     ]
+    }
+   ]
+  }
+ ]
+}

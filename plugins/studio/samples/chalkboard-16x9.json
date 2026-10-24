@@ -1,0 +1,216 @@
+{
+ "style": "chalkboard",
+ "format": "16:9",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "body",
+   "start": 0,
+   "end": 6.7,
+   "blocks": [
+    {
+     "type": "text",
+     "at": 0.15,
+     "y": 250,
+     "size": 116,
+     "lines": [
+      "Headache?"
+     ]
+    },
+    {
+     "type": "path",
+     "at": 0.9,
+     "dur": 0.9,
+     "d": "M 536,436 a 104,104 0 1,0 208,0 a 104,104 0 1,0 -208,0"
+    },
+    {
+     "type": "path",
+     "at": 1.5,
+     "dur": 0.9,
+     "d": "M 601.6,533.6 C 600,580 596.8,604 584,628 C 528,652 432,668 380,712 C 352,740 344,796 342.4,932"
+    },
+    {
+     "type": "path",
+     "at": 1.9,
+     "dur": 0.9,
+     "d": "M 678.4,533.6 C 680,580 683.2,604 696,628 C 752,652 848,668 900,712 C 928,740 936,796 937.6,932"
+    },
+    {
+     "type": "path",
+     "at": 2.5,
+     "dur": 0.5,
+     "dashed": true,
+     "d": "M 640,548 L 640,932"
+    },
+    {
+     "type": "path",
+     "at": "@trapezius",
+     "dur": 1.3,
+     "color": "cyan",
+     "fill": "hatch",
+     "width": "secondary",
+     "d": "M 640,548 C 624,612 528,668 396,704 C 480,732 584,788 640,916 C 696,788 800,732 884,704 C 752,668 656,612 640,548 Z"
+    },
+    {
+     "type": "note",
+     "at": "@big",
+     "text": "trapezius",
+     "color": "cyan",
+     "x": 215,
+     "y": 985
+    },
+    {
+     "type": "path",
+     "at": "@muscle",
+     "dur": 0.5,
+     "color": "cyan",
+     "width": "secondary",
+     "arrow": true,
+     "d": "M290,950 C330,905 390,860 470,815"
+    }
+   ]
+  },
+  {
+   "id": "problem",
+   "start": 6.7,
+   "end": 12.75,
+   "blocks": [
+    {
+     "type": "mark",
+     "kind": "cross",
+     "at": "@tight",
+     "color": "pink",
+     "x": 760,
+     "y": 682.4,
+     "w": 35.2,
+     "h": 35.2
+    },
+    {
+     "type": "mark",
+     "kind": "burst",
+     "at": "@forms",
+     "color": "pink",
+     "width": "secondary",
+     "x": 760,
+     "y": 682.4,
+     "w": 48,
+     "h": 48,
+     "rays": 8,
+     "len": 20.8,
+     "pulse": true
+    },
+    {
+     "type": "note",
+     "at": "@trigger",
+     "text": "trigger point",
+     "color": "pink",
+     "x": 920,
+     "y": 572,
+     "align": "right"
+    },
+    {
+     "type": "path",
+     "at": "@trigger+0.5",
+     "dur": 0.4,
+     "color": "pink",
+     "width": "secondary",
+     "arrow": true,
+     "d": "M 848,589.6 C 832,620 816,640 798.4,658.4"
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.5,
+     "color": "pink",
+     "dashed": true,
+     "arrow": true,
+     "d": "M 742.4,656.8 C 720,620 705.6,580 700.8,540 C 696,492 705.6,448 726.4,410.4"
+    },
+    {
+     "type": "mark",
+     "kind": "burst",
+     "at": "@temple",
+     "color": "pink",
+     "width": "secondary",
+     "x": 737.6,
+     "y": 386.4,
+     "w": 20.8,
+     "h": 20.8,
+     "rays": 7,
+     "len": 24,
+     "pulse": true,
+     "out": "@headache#2+0.3",
+     "accent": true
+    },
+    {
+     "type": "note",
+     "at": "@temple+0.3",
+     "text": "temple",
+     "x": 816,
+     "y": 364,
+     "align": "left",
+     "out": "@headache#2+0.3"
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": "end",
+   "blocks": [
+    {
+     "type": "text",
+     "at": "@referred",
+     "y": 540,
+     "size": 96,
+     "color": "yellow",
+     "underline": false,
+     "lines": [
+      "Referred pain"
+     ],
+     "x": 1400
+    },
+    {
+     "type": "mark",
+     "kind": "box",
+     "at": "@pain#2+0.2",
+     "color": "yellow",
+     "x": 1400,
+     "y": 510,
+     "w": 640,
+     "h": 130
+    },
+    {
+     "type": "mark",
+     "kind": "circle",
+     "at": "@source",
+     "color": "cyan",
+     "x": 760,
+     "y": 682.4,
+     "w": 96,
+     "h": 96
+    },
+    {
+     "type": "mark",
+     "kind": "tick",
+     "at": "@eases",
+     "color": "cyan",
+     "x": 768,
+     "y": 372,
+     "w": 56,
+     "h": 48
+    },
+    {
+     "type": "note",
+     "at": "@follow",
+     "text": "Follow for more",
+     "color": "yellow",
+     "size": 26,
+     "x": 1400,
+     "y": 700
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,347 @@
+{
+ "style": "woven-tapestry",
+ "title": "Referred pain",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": 0.2,
+     "enter": "left",
+     "x": 300,
+     "y": 400,
+     "size": 230,
+     "color": "storm"
+    },
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": 0.3,
+     "enter": "right",
+     "x": 620,
+     "y": 380,
+     "size": 170,
+     "color": "cloud"
+    },
+    {
+     "type": "shape",
+     "at": 0.3,
+     "enter": "stitch",
+     "dur": 0.9,
+     "d": "M96,1900 L96,1150 Q96,1030 330,985 L750,985 Q984,1030 984,1150 L984,1900 Z",
+     "color": "teal"
+    },
+    {
+     "type": "shape",
+     "at": 0.7,
+     "enter": "stitch",
+     "dur": 0.3,
+     "shape": "rect",
+     "x": 540,
+     "y": 935,
+     "w": 128,
+     "h": 130,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.8,
+     "enter": "stitch",
+     "dur": 0.2,
+     "shape": "ellipse",
+     "x": 396,
+     "y": 740,
+     "rx": 26,
+     "ry": 38,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.8,
+     "enter": "stitch",
+     "dur": 0.2,
+     "shape": "ellipse",
+     "x": 684,
+     "y": 740,
+     "rx": 26,
+     "ry": 38,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": 0.9,
+     "enter": "stitch",
+     "dur": 0.6,
+     "shape": "ellipse",
+     "x": 540,
+     "y": 720,
+     "rx": 150,
+     "ry": 180,
+     "color": "brown"
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "shape",
+     "at": "@trapezius",
+     "enter": "stitch",
+     "dur": 1.2,
+     "d": "M468,930 L612,930 L640,965 L960,1085 L540,1560 L120,1085 L440,965 Z",
+     "color": "red"
+    },
+    {
+     "type": "path",
+     "at": "@big",
+     "dur": 0.8,
+     "width": 6,
+     "color": "darkred",
+     "d": "M540,900 L540,1540"
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "shape",
+     "at": "@tight",
+     "shape": "circle",
+     "x": 730,
+     "y": 1030,
+     "r": 26,
+     "color": "darkred",
+     "loop": "beat"
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.3,
+     "dashed": true,
+     "width": 10,
+     "color": "red",
+     "d": "M724,1000 L708,900 L700,780 L694,660",
+     "out": "@eases"
+    },
+    {
+     "type": "prop",
+     "kind": "star",
+     "at": "@temple",
+     "x": 694,
+     "y": 620,
+     "size": 80,
+     "color": "red",
+     "loop": "pulse",
+     "accent": true,
+     "out": "@eases"
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": "end",
+   "tint": "dusk",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "check",
+     "at": "@source",
+     "x": 730,
+     "y": 1030,
+     "size": 90,
+     "color": "cream"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "rect",
+     "x": 540,
+     "y": 960,
+     "w": 1040,
+     "h": 1880,
+     "color": "dawn",
+     "outline": false
+    },
+    {
+     "type": "prop",
+     "kind": "cloud",
+     "at": "@eases",
+     "enter": "none",
+     "x": 620,
+     "y": 380,
+     "size": 170,
+     "color": "cloud"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "d": "M96,1900 L96,1150 Q96,1030 330,985 L750,985 Q984,1030 984,1150 L984,1900 Z",
+     "color": "teal"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "rect",
+     "x": 540,
+     "y": 935,
+     "w": 128,
+     "h": 130,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 396,
+     "y": 740,
+     "rx": 26,
+     "ry": 38,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 684,
+     "y": 740,
+     "rx": 26,
+     "ry": 38,
+     "color": "skin"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "shape": "ellipse",
+     "x": 540,
+     "y": 720,
+     "rx": 150,
+     "ry": 180,
+     "color": "brown"
+    },
+    {
+     "type": "shape",
+     "at": "@eases",
+     "enter": "stitch",
+     "dur": 1.0,
+     "d": "M468,930 L612,930 L640,965 L960,1085 L540,1560 L120,1085 L440,965 Z",
+     "color": "gold"
+    },
+    {
+     "type": "prop",
+     "kind": "sun",
+     "at": "@eases+0.5",
+     "x": 820,
+     "y": 470,
+     "size": 190,
+     "color": "gold",
+     "loop": "spin"
+    }
+   ]
+  }
+ ],
+ "overlay": [
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": 0.2,
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "HEADACHE",
+   "textSize": 58,
+   "out": 2.7
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@trapezius",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "TRAPEZIUS",
+   "textSize": 58,
+   "out": "@when"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@trigger",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "TRIGGER POINT",
+   "textSize": 58,
+   "out": "@send"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@send",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "TO THE TEMPLE",
+   "textSize": 58,
+   "out": "@referred-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@referred",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "REFERRED PAIN",
+   "textSize": 58,
+   "out": "@treat-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@treat",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "TREAT THE SOURCE",
+   "textSize": 58,
+   "out": "@follow-0.1"
+  },
+  {
+   "type": "prop",
+   "kind": "ribbon",
+   "at": "@follow",
+   "x": 540,
+   "y": 190,
+   "size": 200,
+   "text": "FOLLOW FOR MORE",
+   "textSize": 58
+  }
+ ]
+}

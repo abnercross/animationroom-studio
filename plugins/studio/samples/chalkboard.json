@@ -1,0 +1,33 @@
+{
+  "style": "chalkboard",
+  "title": "Referred pain",
+  "duration": "auto",
+  "scenes": [
+    {"id": "body", "start": 0, "end": 6.7, "blocks": [
+      {"type": "text", "at": 0.15, "y": 270, "size": 116, "lines": ["Headache?"]},
+      {"type": "path", "at": 0.9, "dur": 0.9, "d": "M410,560 a130,130 0 1,0 260,0 a130,130 0 1,0 -260,0"},
+      {"type": "path", "at": 1.5, "dur": 0.9, "d": "M492,682 C490,740 486,770 470,800 C400,830 280,850 215,905 C180,940 170,1010 168,1180"},
+      {"type": "path", "at": 1.9, "dur": 0.9, "d": "M588,682 C590,740 594,770 610,800 C680,830 800,850 865,905 C900,940 910,1010 912,1180"},
+      {"type": "path", "at": 2.5, "dur": 0.5, "dashed": true, "d": "M540,700 L540,1180"},
+      {"type": "path", "at": "@trapezius", "dur": 1.3, "color": "cyan", "fill": "hatch", "width": "secondary", "d": "M540,700 C520,780 400,850 235,895 C340,930 470,1000 540,1160 C610,1000 740,930 845,895 C680,850 560,780 540,700 Z"},
+      {"type": "note", "at": "@big", "text": "trapezius", "color": "cyan", "x": 300, "y": 1280},
+      {"type": "path", "at": "@muscle", "dur": 0.5, "color": "cyan", "width": "secondary", "arrow": true, "d": "M320,1250 C340,1180 380,1120 440,1070"}
+    ]},
+    {"id": "problem", "start": 6.7, "end": 12.75, "blocks": [
+      {"type": "mark", "kind": "cross", "at": "@tight", "color": "pink", "x": 690, "y": 868, "w": 44, "h": 44},
+      {"type": "mark", "kind": "burst", "at": "@forms", "color": "pink", "width": "secondary", "x": 690, "y": 868, "w": 60, "h": 60, "rays": 8, "len": 26, "pulse": true},
+      {"type": "note", "at": "@trigger", "text": "trigger point", "color": "pink", "x": 890, "y": 730, "align": "right"},
+      {"type": "path", "at": "@trigger+0.5", "dur": 0.4, "color": "pink", "width": "secondary", "arrow": true, "d": "M800,752 C780,790 760,815 738,838"},
+      {"type": "path", "at": "@send", "dur": 1.5, "color": "pink", "dashed": true, "arrow": true, "d": "M668,836 C640,790 622,740 616,690 C610,630 622,575 648,528"},
+      {"type": "mark", "kind": "burst", "at": "@temple", "color": "pink", "width": "secondary", "x": 662, "y": 498, "w": 26, "h": 26, "rays": 7, "len": 30, "pulse": true, "out": "@headache#2+0.3", "accent": true},
+      {"type": "note", "at": "@temple+0.3", "text": "temple", "x": 760, "y": 470, "align": "left", "out": "@headache#2+0.3"}
+    ]},
+    {"id": "answer", "start": 12.75, "end": "end", "blocks": [
+      {"type": "text", "at": "@referred", "y": 1420, "size": 96, "color": "yellow", "underline": false, "lines": ["Referred pain"]},
+      {"type": "mark", "kind": "box", "at": "@pain#2+0.2", "color": "yellow", "x": 540, "y": 1390, "w": 640, "h": 130},
+      {"type": "mark", "kind": "circle", "at": "@source", "color": "cyan", "x": 690, "y": 868, "w": 120, "h": 120},
+      {"type": "mark", "kind": "tick", "at": "@eases", "color": "cyan", "x": 700, "y": 480, "w": 70, "h": 60},
+      {"type": "note", "at": "@follow", "text": "Follow for more", "color": "yellow", "size": 26, "x": 540, "y": 1545}
+    ]}
+  ]
+}

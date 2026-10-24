@@ -1,0 +1,407 @@
+{
+ "style": "borderless-comic",
+ "format": "16:9",
+ "title": "Referred pain",
+ "duration": "auto",
+ "cast": {
+  "hero": {
+   "hair": "bob"
+  }
+ },
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "blocks": [
+    {
+     "type": "person",
+     "who": "hero",
+     "x": 620,
+     "y": 890,
+     "scale": 1.5,
+     "at": 0,
+     "eyes": "sad",
+     "mouth": "wobble",
+     "brows": "worried",
+     "keys": [
+      {
+       "t": 0.3,
+       "armR": 150,
+       "elbowR": 40,
+       "tilt": 5,
+       "dur": 0.4,
+       "ease": "back"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "bolt",
+     "at": "@headache",
+     "x": 734.4,
+     "y": 485.2,
+     "size": 79.2,
+     "color": "red",
+     "rotate": 18,
+     "loop": "pulse"
+    },
+    {
+     "type": "prop",
+     "kind": "thought",
+     "at": "@not",
+     "x": 408.8,
+     "y": 450,
+     "size": 167.2,
+     "text": "?",
+     "textSize": 70,
+     "flip": false
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "blocks": [
+    {
+     "type": "person",
+     "who": "hero",
+     "x": 620,
+     "y": 890,
+     "scale": 1.5,
+     "at": 2.75,
+     "enter": "none",
+     "eyes": "open",
+     "mouth": "smile",
+     "keys": [
+      {
+       "t": "@trapezius",
+       "lookX": 1,
+       "dur": 0.3
+      }
+     ]
+    },
+    {
+     "type": "shape",
+     "at": "@trapezius",
+     "d": "M 595.4,678.8 L 644.6,678.8 L 708,722.8 L 620,749.2 L 532,722.8 Z",
+     "color": "yellow",
+     "loop": "pulse"
+    },
+    {
+     "type": "text",
+     "at": "@trapezius",
+     "x": 1330,
+     "y": 560,
+     "size": 110,
+     "lines": [
+      "trapezius"
+     ]
+    },
+    {
+     "type": "path",
+     "at": "@trapezius+0.3",
+     "dur": 0.5,
+     "arrow": true,
+     "width": 5,
+     "d": "M1130,600 C980,640 800,700 700,760"
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "cam": [
+    {
+     "t": 6.7,
+     "zoom": 1.45,
+     "x": 640,
+     "y": 640,
+     "dur": 0.6
+    }
+   ],
+   "blocks": [
+    {
+     "type": "person",
+     "who": "hero",
+     "x": 620,
+     "y": 890,
+     "scale": 1.5,
+     "at": 6.7,
+     "enter": "none",
+     "eyes": "open",
+     "mouth": "flat",
+     "brows": "worried",
+     "keys": [
+      {
+       "t": "@temple",
+       "eyes": "x",
+       "mouth": "wobble",
+       "sweat": true,
+       "blush": true,
+       "squash": 0.15,
+       "dur": 0.15,
+       "ease": "out"
+      },
+      {
+       "t": "@temple+0.15",
+       "squash": 0,
+       "dur": 0.4,
+       "ease": "back"
+      }
+     ]
+    },
+    {
+     "type": "shape",
+     "at": 6.7,
+     "enter": "none",
+     "d": "M 595.4,678.8 L 644.6,678.8 L 708,722.8 L 620,749.2 L 532,722.8 Z",
+     "color": "yellow"
+    },
+    {
+     "type": "shape",
+     "at": "@tight",
+     "shape": "circle",
+     "x": 681.6,
+     "y": 714,
+     "r": 11.4,
+     "color": "red",
+     "loop": "beat",
+     "width": 3.5
+    },
+    {
+     "type": "prop",
+     "kind": "bubble",
+     "at": "@trigger",
+     "x": 1180,
+     "y": 470,
+     "size": 230,
+     "color": "yellow",
+     "text": "trigger point",
+     "textSize": 34,
+     "out": "@send"
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.3,
+     "dashed": true,
+     "color": "red",
+     "arrow": true,
+     "width": 3.5,
+     "d": "M 697.4,701.7 C 752,678.8 760.8,626 708,590.8"
+    },
+    {
+     "type": "prop",
+     "kind": "star",
+     "at": "@temple",
+     "x": 716.8,
+     "y": 566.2,
+     "size": 49.3,
+     "color": "red",
+     "loop": "pulse",
+     "shake": true,
+     "accent": true
+    }
+   ]
+  },
+  {
+   "id": "answer",
+   "start": 12.75,
+   "end": 17.1,
+   "blocks": [
+    {
+     "type": "person",
+     "who": "hero",
+     "x": 620,
+     "y": 890,
+     "scale": 1.5,
+     "at": 12.75,
+     "enter": "none",
+     "eyes": "wide",
+     "mouth": "o",
+     "keys": [
+      {
+       "t": "@eases",
+       "eyes": "happy",
+       "mouth": "big",
+       "glow": 1,
+       "lift": 50,
+       "armL": 140,
+       "armR": 140,
+       "dur": 0.22,
+       "ease": "out"
+      },
+      {
+       "t": "@eases+0.22",
+       "lift": 0,
+       "dur": 0.45,
+       "ease": "bounce"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "at": "@referred",
+     "y": 560,
+     "size": 110,
+     "lines": [
+      "referred pain"
+     ],
+     "out": "@treat-0.1",
+     "x": 1250
+    },
+    {
+     "type": "prop",
+     "kind": "buddy",
+     "at": "@referred+0.3",
+     "x": 1250,
+     "y": 860,
+     "size": 150,
+     "color": "sky"
+    },
+    {
+     "type": "prop",
+     "kind": "buddy",
+     "at": "@referred+0.4",
+     "x": 1560,
+     "y": 860,
+     "size": 150,
+     "color": "peach"
+    },
+    {
+     "type": "prop",
+     "kind": "bubble",
+     "at": "@treat",
+     "x": 1250,
+     "y": 610,
+     "size": 190,
+     "text": "oh!",
+     "textSize": 50
+    },
+    {
+     "type": "prop",
+     "kind": "check",
+     "at": "@source",
+     "x": 1560,
+     "y": 640,
+     "size": 110,
+     "color": "mint"
+    }
+   ]
+  },
+  {
+   "id": "cta",
+   "start": 17.1,
+   "end": "end",
+   "blocks": [
+    {
+     "type": "person",
+     "who": "hero",
+     "x": 620,
+     "y": 890,
+     "scale": 1.5,
+     "at": 17.1,
+     "enter": "none",
+     "eyes": "happy",
+     "mouth": "smile",
+     "armR": 150,
+     "elbowR": -20,
+     "glow": 1,
+     "keys": [
+      {
+       "t": 17.5,
+       "elbowR": 30,
+       "dur": 0.3
+      },
+      {
+       "t": 17.8,
+       "elbowR": -20,
+       "dur": 0.3
+      },
+      {
+       "t": 18.1,
+       "elbowR": 30,
+       "dur": 0.3
+      },
+      {
+       "t": 18.4,
+       "elbowR": -20,
+       "dur": 0.3
+      },
+      {
+       "t": 18.7,
+       "elbowR": 30,
+       "dur": 0.3
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "bubble",
+     "at": "@follow",
+     "x": 1180,
+     "y": 520,
+     "size": 250,
+     "color": "yellow",
+     "text": "follow!",
+     "textSize": 50,
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "heart",
+     "at": "@more",
+     "x": 408.8,
+     "y": 520.4,
+     "size": 70.4,
+     "loop": "float"
+    }
+   ]
+  }
+ ],
+ "overlay": [
+  {
+   "type": "caption",
+   "at": "@your",
+   "to": "@head",
+   "y": 960,
+   "size": 58,
+   "wrap": 62
+  },
+  {
+   "type": "caption",
+   "at": "@meet",
+   "to": "@big+2",
+   "y": 960,
+   "size": 58,
+   "wrap": 62
+  },
+  {
+   "type": "caption",
+   "at": "@when",
+   "to": "@temple",
+   "y": 960,
+   "size": 58,
+   "wrap": 62
+  },
+  {
+   "type": "caption",
+   "at": "@that's",
+   "to": "@eases",
+   "y": 960,
+   "size": 58,
+   "wrap": 62
+  },
+  {
+   "type": "caption",
+   "at": "@follow",
+   "to": "@follow+5",
+   "y": 960,
+   "size": 58,
+   "wrap": 62
+  }
+ ]
+}

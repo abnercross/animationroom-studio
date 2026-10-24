@@ -1,0 +1,76 @@
+{
+ "blueprint": {
+  "words": "referred-pain-words.json",
+  "9:16": "blueprint.json",
+  "16:9": "blueprint-16x9.json"
+ },
+ "chalkboard": {
+  "words": "referred-pain-words.json",
+  "9:16": "chalkboard.json",
+  "16:9": "chalkboard-16x9.json"
+ },
+ "paper-collage": {
+  "words": "referred-pain-words.json",
+  "9:16": "paper-collage.json",
+  "16:9": "paper-collage-16x9.json"
+ },
+ "chibi-flat-colour": {
+  "words": "referred-pain-words.json",
+  "9:16": "chibi-flat-colour.json",
+  "16:9": "chibi-flat-colour-16x9.json"
+ },
+ "happy-bean": {
+  "words": "referred-pain-words.json",
+  "9:16": "happy-bean.json",
+  "16:9": "happy-bean-16x9.json"
+ },
+ "chibi-ink-hatching": {
+  "words": "referred-pain-words.json",
+  "9:16": "chibi-ink-hatching.json",
+  "16:9": "chibi-ink-hatching-16x9.json"
+ },
+ "paper-cutout-storybook": {
+  "words": "referred-pain-words.json",
+  "9:16": "paper-cutout-storybook.json",
+  "16:9": "paper-cutout-storybook-16x9.json"
+ },
+ "borderless-comic": {
+  "words": "referred-pain-words.json",
+  "9:16": "borderless-comic.json",
+  "16:9": "borderless-comic-16x9.json"
+ },
+ "woven-tapestry": {
+  "words": "referred-pain-words.json",
+  "9:16": "woven-tapestry.json",
+  "16:9": "woven-tapestry-16x9.json"
+ },
+ "abstract-geometry": {
+  "words": "referred-pain-words.json",
+  "9:16": "abstract-geometry.json"
+ },
+ "sketchbook-ink": {
+  "words": "referred-pain-words.json",
+  "9:16": "sketchbook-ink.json",
+  "16:9": "sketchbook-ink-16x9.json"
+ },
+ "clinical-cutaway": {
+  "words": "referred-pain-words.json",
+  "9:16": "clinical-cutaway.json",
+  "16:9": "clinical-cutaway-16x9.json"
+ },
+ "comic-page-halftone": {
+  "words": "referred-pain-words.json",
+  "9:16": "comic-page-halftone.json",
+  "16:9": "comic-page-halftone-16x9.json"
+ },
+ "space-age-poster": {
+  "words": "space-age-poster-kilo-words.json",
+  "9:16": "space-age-poster.json",
+  "16:9": "space-age-poster-16x9.json"
+ },
+ "blank": {
+  "words": "referred-pain-words.json",
+  "9:16": "blank.json",
+  "16:9": "blank-16x9.json"
+ }
+}

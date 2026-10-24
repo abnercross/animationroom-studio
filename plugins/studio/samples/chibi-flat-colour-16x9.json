@@ -1,0 +1,64 @@
+{
+  "style": "chibi-flat-colour",
+  "title": "Referred pain",
+  "format": "16:9",
+  "duration": "auto",
+  "cast": {
+    "hero": {"cap": true},
+    "gran": {"hair": "bun", "hairColor": "grey", "top": "pink", "trousers": "slate"},
+    "pal": {"hair": "tuft", "glasses": true, "top": "green"}
+  },
+  "drawings": {
+    "ball": {"parts": [
+      {"d": "M-70,0 A70,70 0 1,0 70,0 A70,70 0 1,0 -70,0 Z", "fill": "orange", "main": true},
+      {"d": "M-30,-38 A9,9 0 1,0 -12,-38 A9,9 0 1,0 -30,-38 Z M14,-44 A9,9 0 1,0 32,-44 A9,9 0 1,0 14,-44 Z M-46,4 A9,9 0 1,0 -28,4 A9,9 0 1,0 -46,4 Z M-6,0 A9,9 0 1,0 12,0 A9,9 0 1,0 -6,0 Z M34,6 A9,9 0 1,0 52,6 A9,9 0 1,0 34,6 Z M-24,40 A9,9 0 1,0 -6,40 A9,9 0 1,0 -24,40 Z M18,42 A9,9 0 1,0 36,42 A9,9 0 1,0 18,42 Z", "fill": "yellow", "shade": false},
+      {"d": "M-44,-34 Q-36,-52 -16,-58", "line": true}
+    ]}
+  },
+  "scenes": [
+    {"id": "hook", "start": 0, "end": 2.75, "tint": "neutral", "cam": [{"t": 0, "zoom": 1.1, "x": 900, "y": 560, "dur": 0.01}, {"t": 0.3, "zoom": 1.25, "x": 900, "y": 580, "dur": 2.3}], "blocks": [
+      {"type": "person", "who": "hero", "at": 0, "x": 640, "y": 880, "scale": 1.1, "mood": "worried", "pose": "stand",
+       "keys": [{"t": 0.35, "pose": "handhead", "tilt": 5, "dur": 0.4, "ease": "back"}]},
+      {"type": "text", "at": 0.25, "x": 1260, "y": 560, "size": 110, "lines": ["Headache?"]},
+      {"type": "prop", "kind": "cloud", "at": 0.2, "x": 640, "y": 380, "size": 130, "color": "grey", "loop": "float"},
+      {"type": "prop", "kind": "bolt", "at": "@headache", "x": 530, "y": 560, "size": 60, "color": "red", "rotate": -18, "loop": "pulse"},
+      {"type": "prop", "kind": "bolt", "at": "@headache+0.15", "x": 752, "y": 548, "size": 50, "color": "red", "rotate": 20, "loop": "pulse"}
+    ]},
+    {"id": "meet", "start": 2.75, "end": 6.7, "tint": "peach", "transition": "iris", "blocks": [
+      {"type": "prop", "kind": "chair", "at": 2.75, "enter": "none", "x": 250, "y": 793, "size": 175},
+      {"type": "prop", "kind": "desk", "at": 2.75, "enter": "none", "x": 470, "y": 790, "size": 200},
+      {"type": "prop", "kind": "books", "at": 2.75, "enter": "none", "x": 420, "y": 736, "size": 120},
+      {"type": "prop", "kind": "plant", "at": 2.75, "enter": "none", "x": 560, "y": 708, "size": 90},
+      {"type": "prop", "kind": "clock", "at": 2.9, "x": 300, "y": 320, "size": 110},
+      {"type": "prop", "kind": "ff", "at": 3.1, "x": 620, "y": 325, "size": 130},
+      {"type": "person", "who": "hero", "at": 2.75, "enter": "none", "x": 480, "y": 880, "scale": 1.1, "mood": "happy", "pose": "stand",
+       "keys": [{"t": 2.8, "x": 1020, "dur": 1.5, "ease": "inout"}, {"t": "@big", "armL": 150, "elbowL": 60, "tilt": -5, "dur": 0.35, "ease": "back"}, {"t": "@big", "mood": "worried", "sweat": false}]},
+      {"type": "prop", "kind": "sign", "at": "@trapezius", "x": 1480, "y": 470, "size": 380, "text": "TRAPEZIUS", "sub": "BIG MUSCLE", "textSize": 34}
+    ]},
+    {"id": "trigger", "start": 6.7, "end": 12.75, "tint": "lilac", "cam": [{"t": 6.7, "zoom": 2.0, "x": 860, "y": 700, "dur": 0.01}], "blocks": [
+      {"type": "person", "who": "hero", "at": 6.7, "enter": "none", "x": 760, "y": 880, "scale": 1.1, "mood": "neutral", "brows": "worried", "lookX": 1, "lookY": 1,
+       "keys": [{"t": "@temple", "mood": "strain", "squash": 0.2, "dur": 0.15, "ease": "out"}, {"t": "@temple+0.15", "squash": 0, "dur": 0.4, "ease": "back"}]},
+      {"type": "shape", "at": "@tight", "shape": "circle", "x": 812, "y": 733, "r": 10, "color": "red", "loop": "beat", "width": 4},
+      {"type": "prop", "kind": "sign", "at": "@trigger", "x": 1100, "y": 640, "size": 170, "text": "TRIGGER", "sub": "POINT", "textSize": 36, "out": "@send"},
+      {"type": "path", "at": "@send", "dur": 1.4, "dashed": true, "color": "red", "arrow": true, "width": 4, "d": "M817,730 C870,712 877,668 846,648"},
+      {"type": "prop", "kind": "star", "at": "@temple", "x": 851, "y": 627, "size": 46, "color": "red", "loop": "pulse", "shake": true, "accent": true}
+    ]},
+    {"id": "answer", "start": 12.75, "end": 17.1, "tint": "gold", "transition": "iris", "cam": [{"t": 12.75, "zoom": 1.1, "x": 960, "y": 560, "dur": 0.01}], "blocks": [
+      {"type": "person", "who": "hero", "at": 12.75, "enter": "none", "x": 600, "y": 880, "scale": 1.1, "mood": "surprised", "pose": "stand",
+       "keys": [{"t": "@source", "pose": "present", "mood": "happy", "dur": 0.35, "ease": "back"}, {"t": "@eases", "mood": "joy", "pose": "cheer", "lift": 70, "dur": 0.22, "ease": "out"}, {"t": "@eases+0.22", "lift": 0, "dur": 0.45, "ease": "bounce"}]},
+      {"type": "text", "at": "@referred", "x": 1300, "y": 360, "size": 96, "lines": ["Referred pain"], "out": "@treat-0.1"},
+      {"type": "prop", "kind": "bulb", "at": "@referred+0.3", "x": 1300, "y": 600, "size": 130, "lit": false, "litAt": "@pain#2+0.2", "out": "@treat-0.1"},
+      {"type": "prop", "draw": "ball", "at": "@source", "x": 1220, "y": 620, "size": 200, "loop": "pulse"},
+      {"type": "text", "at": "@source+0.1", "x": 1220, "y": 400, "size": 80, "lines": ["Treat the source"]},
+      {"type": "prop", "kind": "check", "at": "@eases", "x": 1420, "y": 560, "size": 110}
+    ]},
+    {"id": "cta", "start": 17.1, "end": "end", "tint": "mint", "transition": "iris", "blocks": [
+      {"type": "person", "who": "gran", "at": 17.3, "x": 660, "y": 880, "scale": 1.0, "mood": "joy", "pose": "cheer"},
+      {"type": "person", "who": "pal", "at": 17.45, "x": 1260, "y": 880, "scale": 1.0, "mood": "excited", "pose": "fist"},
+      {"type": "person", "who": "hero", "at": 17.1, "enter": "none", "x": 960, "y": 880, "scale": 1.15, "mood": "happy", "pose": "wave", "talk": true},
+      {"type": "text", "at": "@follow", "y": 300, "size": 100, "lines": ["Follow for more"]},
+      {"type": "prop", "kind": "heart", "at": "@more", "x": 560, "y": 420, "size": 80, "loop": "float"},
+      {"type": "prop", "kind": "heart", "at": "@more+0.2", "x": 1360, "y": 440, "size": 64, "loop": "float"}
+    ]}
+  ]
+}

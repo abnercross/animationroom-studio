@@ -1,0 +1,423 @@
+{
+ "style": "space-age-poster",
+ "format": "16:9",
+ "title": "Kilograms and kilonewtons, wide",
+ "duration": "auto",
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": "@but-0.09",
+   "tint": "cream",
+   "blocks": [
+    {
+     "type": "posterTile",
+     "at": 0.06,
+     "x": 340,
+     "y": 560,
+     "tone": "teal",
+     "kind": "cube",
+     "phase": 0
+    },
+    {
+     "type": "posterTile",
+     "at": 0.32,
+     "x": 700,
+     "y": 560,
+     "tone": "orange",
+     "kind": "cube",
+     "phase": 2
+    },
+    {
+     "type": "posterWord",
+     "at": 0.2,
+     "mode": "kicker",
+     "text": "TWO MEASUREMENTS",
+     "x": 960,
+     "y": 240,
+     "color": "navy",
+     "size": 54
+    },
+    {
+     "type": "posterWord",
+     "at": "@one",
+     "mode": "kicker",
+     "text": "ONE CONFUSING WORD",
+     "x": 960,
+     "y": 900,
+     "color": "orange",
+     "size": 54
+    },
+    {
+     "type": "posterSlots",
+     "at": "@one+0.3",
+     "until": "@kilo",
+     "n": 4,
+     "x": 1040,
+     "w": 760,
+     "y": 560
+    },
+    {
+     "type": "posterWord",
+     "at": "@kilo",
+     "mode": "stamp",
+     "text": "KILO",
+     "x": 1420,
+     "y": 690,
+     "size": 420,
+     "w": 760,
+     "len": 760,
+     "color": "navy",
+     "shadow": "mustard"
+    },
+    {
+     "type": "posterSparks",
+     "at": "@kilo",
+     "points": [
+      [
+       1040,
+       300,
+       3.4
+      ],
+      [
+       1810,
+       330,
+       4.2
+      ],
+      [
+       1030,
+       830,
+       2.6
+      ],
+      [
+       1820,
+       820,
+       3.4
+      ]
+     ],
+     "colors": [
+      "teal",
+      "orange"
+     ]
+    }
+   ],
+   "camera": "still"
+  },
+  {
+   "id": "split",
+   "start": "@but-0.09",
+   "end": "@a-0.08",
+   "tint": "cream",
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "posterSplit",
+     "at": "@but-0.09",
+     "top": {
+      "label": "KILOGRAMS",
+      "labelAt": "@kilograms",
+      "word": "kg",
+      "wordAt": "@kilograms+0.06"
+     },
+     "bottom": {
+      "label": "KILONEWTONS",
+      "labelAt": "@kilonewtons",
+      "word": "kN",
+      "wordAt": "@kilonewtons+0.06"
+     },
+     "badge": "neq",
+     "badgeAt": "@different"
+    }
+   ]
+  },
+  {
+   "id": "define",
+   "start": "@a-0.08",
+   "end": "@a#2-0.09",
+   "tint": "navy",
+   "transition": "iris",
+   "blocks": [
+    {
+     "type": "posterWord",
+     "at": "@kilogram",
+     "mode": "pill",
+     "text": "1 KILOGRAM",
+     "x": 960,
+     "y": 240,
+     "color": "navy",
+     "fill": "mustard"
+    },
+    {
+     "type": "posterWord",
+     "at": "@mass-0.06",
+     "mode": "ink",
+     "text": "MASS",
+     "x": 540,
+     "y": 640,
+     "size": 330,
+     "w": 760,
+     "color": "cream",
+     "shadow": "orange"
+    },
+    {
+     "type": "posterHero",
+     "at": "@a+0.12",
+     "kind": "cube",
+     "tone": "orange",
+     "x": 1400,
+     "y": 560,
+     "s": 230,
+     "pulse": 0.03,
+     "fillAt": "@matter-0.17"
+    },
+    {
+     "type": "posterWord",
+     "at": "@how",
+     "mode": "kicker",
+     "text": "HOW MUCH MATTER",
+     "x": 960,
+     "y": 960,
+     "color": "cream",
+     "size": 54
+    }
+   ],
+   "camera": "still"
+  },
+  {
+   "id": "gauge",
+   "start": "@a#2-0.09",
+   "end": "@imagine-0.11",
+   "tint": "teal",
+   "transition": "iris",
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "posterWord",
+     "at": "@kilonewton",
+     "mode": "pill",
+     "text": "1 KILONEWTON",
+     "x": 340,
+     "y": 380,
+     "color": "navy",
+     "fill": "cream"
+    },
+    {
+     "type": "posterWord",
+     "at": "@force",
+     "mode": "ink",
+     "text": "FORCE",
+     "x": 340,
+     "y": 690,
+     "size": 300,
+     "w": 600,
+     "color": "cream",
+     "shadow": "navy"
+    },
+    {
+     "type": "posterGauge",
+     "at": "@a#2-0.09",
+     "kind": "cube",
+     "tone": "orange",
+     "leanAt": 13.3,
+     "pushAt": "@pushes",
+     "pullAt": "@pulls"
+    },
+    {
+     "type": "posterWord",
+     "at": "@how#2",
+     "mode": "kicker",
+     "text": "HOW HARD IT PUSHES OR PULLS",
+     "x": 960,
+     "y": 975,
+     "color": "cream",
+     "size": 46
+    }
+   ]
+  },
+  {
+   "id": "journey",
+   "start": "@imagine-0.11",
+   "end": "@same#2-0.12",
+   "tint": "deep",
+   "transition": "iris",
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "posterJourney",
+     "at": "@imagine-0.11",
+     "kind": "cube",
+     "tone": "orange",
+     "kicker": "IMAGINE",
+     "kickerAt": "@imagine",
+     "pill": "1,000 kg",
+     "pillAt": "@1,000-kilogram+0.1",
+     "fallAt": "@place+0.12",
+     "gravityAt": "@gravity#2",
+     "gravityLabel": "GRAVITY",
+     "lowerLabel": "ON EARTH",
+     "readouts": [
+      {
+       "label": "MASS",
+       "value": "1,000 kg",
+       "at": "@mass#2",
+       "tickAt": "@same"
+      },
+      {
+       "label": "WEIGHT",
+       "value": "0 kN",
+       "at": "@weight",
+       "countTo": 9.8,
+       "unit": "kN",
+       "decimals": 1,
+       "countAt": "@9.8",
+       "doneAt": "@kilonewtons#2-0.06"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "compare",
+   "start": "@same#2-0.12",
+   "end": "@kilograms#2-0.09",
+   "tint": "navy",
+   "transition": "iris",
+   "blocks": [
+    {
+     "type": "posterPanel",
+     "fill": "deep",
+     "y": 0,
+     "h": 540,
+     "stars": 18,
+     "seed": 8
+    },
+    {
+     "type": "posterPanel",
+     "fill": "navy",
+     "y": 540,
+     "h": 540
+    },
+    {
+     "type": "posterHero",
+     "at": "@same#2-0.12",
+     "kind": "cube",
+     "tone": "orange",
+     "x": 260,
+     "y": 270,
+     "s": 115,
+     "bob": 1
+    },
+    {
+     "type": "posterHero",
+     "at": "@same#2-0.12",
+     "kind": "cube",
+     "tone": "orange",
+     "x": 260,
+     "y": 810,
+     "s": 115
+    },
+    {
+     "type": "posterWord",
+     "at": "@same#2",
+     "mode": "ink",
+     "text": "1,000 kg",
+     "x": 820,
+     "y": 250,
+     "size": 130,
+     "w": 520,
+     "dur": 0.3,
+     "color": "cream",
+     "shadow": "teal"
+    },
+    {
+     "type": "posterWord",
+     "at": "@different#2",
+     "mode": "pill",
+     "text": "0 kN",
+     "x": 1400,
+     "y": 260,
+     "pw": 420,
+     "h": 170,
+     "size": 150,
+     "color": "cream",
+     "fill": "orange"
+    },
+    {
+     "type": "posterWord",
+     "at": "@same#2+0.1",
+     "mode": "ink",
+     "text": "1,000 kg",
+     "x": 820,
+     "y": 790,
+     "size": 130,
+     "w": 520,
+     "dur": 0.3,
+     "color": "cream",
+     "shadow": "teal"
+    },
+    {
+     "type": "posterWord",
+     "at": "@different#2+0.12",
+     "mode": "pill",
+     "text": "9.8 kN",
+     "x": 1400,
+     "y": 800,
+     "pw": 420,
+     "h": 170,
+     "size": 150,
+     "color": "cream",
+     "fill": "orange"
+    },
+    {
+     "type": "posterBanner",
+     "at": "@same#2",
+     "y": 540,
+     "texts": [
+      {
+       "text": "SAME MASS",
+       "at": "@same#2"
+      },
+      {
+       "text": "DIFFERENT FORCE",
+       "at": "@different#2"
+      }
+     ]
+    }
+   ],
+   "camera": "still"
+  },
+  {
+   "id": "recap",
+   "start": "@kilograms#2-0.09",
+   "end": "end",
+   "tint": "cream",
+   "transition": "iris",
+   "camera": "still",
+   "blocks": [
+    {
+     "type": "posterRecap",
+     "at": "@kilograms#2-0.09",
+     "kind": "cube",
+     "tone": "orange",
+     "cards": [
+      {
+       "label": "KILOGRAMS",
+       "big": "kg",
+       "word": "MASS",
+       "wordAt": "@mass#4",
+       "cardAt": "@kilograms#2"
+      },
+      {
+       "label": "KILONEWTONS",
+       "big": "kN",
+       "word": "FORCE",
+       "wordAt": "@force#4",
+       "cardAt": "@kilonewtons#3-0.12"
+      }
+     ],
+     "layout": "side"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,285 @@
+{
+ "style": "sketchbook-ink",
+ "title": "Referred pain",
+ "duration": "auto",
+ "overlay": [
+  {
+   "type": "morph",
+   "width": "secondary",
+   "keys": [
+    {
+     "t": 0.4,
+     "d": "M896,330 A34,34 0 1 1 964,330 A34,34 0 1 1 896,330"
+    },
+    {
+     "t": "@meet",
+     "d": "M896,360 L930,296 L964,360 Z"
+    },
+    {
+     "t": "@when",
+     "d": "M900,330 C900,290 960,290 960,330 C960,370 910,365 915,335 C918,318 945,318 944,333"
+    },
+    {
+     "t": "@that's",
+     "d": "M896,330 L964,330 M944,310 L966,330 L944,350"
+    },
+    {
+     "t": "@treat",
+     "d": "M896,330 A34,34 0 1 1 964,330 A34,34 0 1 1 896,330"
+    }
+   ]
+  }
+ ],
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0,
+   "end": 2.75,
+   "tint": "paper",
+   "blocks": [
+    {
+     "type": "frame",
+     "at": 0.1,
+     "family": "rough"
+    },
+    {
+     "type": "path",
+     "at": 0.3,
+     "dur": 0.9,
+     "d": "M350,760 A190,190 0 1 1 730,760 A190,190 0 1 1 350,760",
+     "fill": "wash"
+    },
+    {
+     "type": "dot",
+     "x": 470,
+     "y": 730,
+     "r": 8,
+     "at": "@headache",
+     "ring": false
+    },
+    {
+     "type": "dot",
+     "x": 610,
+     "y": 730,
+     "r": 8,
+     "at": "@headache",
+     "ring": false
+    },
+    {
+     "type": "path",
+     "at": "@headache",
+     "dur": 0.4,
+     "width": "secondary",
+     "d": "M480,830 Q540,800 600,835"
+    },
+    {
+     "type": "splat",
+     "x": 690,
+     "y": 610,
+     "r": 46,
+     "at": "@headache"
+    },
+    {
+     "type": "text",
+     "at": "@not",
+     "y": 1260,
+     "size": 120,
+     "lines": [
+      "not from your head?"
+     ],
+     "underline": true
+    }
+   ]
+  },
+  {
+   "id": "meet",
+   "start": 2.75,
+   "end": 6.7,
+   "tint": "paper",
+   "transition": "swipe",
+   "blocks": [
+    {
+     "type": "person",
+     "at": 2.9,
+     "x": 540,
+     "y": 1230,
+     "scale": 1.5,
+     "eyes": "open",
+     "mouth": "smile"
+    },
+    {
+     "type": "path",
+     "at": "@trapezius",
+     "dur": 0.9,
+     "width": "secondary",
+     "d": "M380,830 L540,740 L700,830 L640,960 L440,960 Z",
+     "fill": "wash"
+    },
+    {
+     "type": "text",
+     "at": "@trapezius",
+     "y": 1400,
+     "size": 130,
+     "lines": [
+      "trapezius"
+     ],
+     "underline": true
+    }
+   ]
+  },
+  {
+   "id": "trigger",
+   "start": 6.7,
+   "end": 12.75,
+   "tint": "warm",
+   "transition": "swipe",
+   "blocks": [
+    {
+     "type": "person",
+     "at": 6.7,
+     "x": 540,
+     "y": 1230,
+     "scale": 1.5,
+     "enter": "none",
+     "eyes": "sad",
+     "mouth": "flat"
+    },
+    {
+     "type": "path",
+     "at": "@tight",
+     "dur": 0.9,
+     "d": "M470,900 C430,860 520,830 540,880 C560,930 470,950 480,890 C486,860 520,860 525,885"
+    },
+    {
+     "type": "splat",
+     "x": 470,
+     "y": 905,
+     "r": 34,
+     "at": "@trigger",
+     "seed": 4
+    },
+    {
+     "type": "path",
+     "at": "@send",
+     "dur": 1.4,
+     "arrow": true,
+     "dashed": true,
+     "d": "M500,850 C470,700 480,600 560,520"
+    },
+    {
+     "type": "splat",
+     "x": 620,
+     "y": 470,
+     "r": 52,
+     "at": "@temple",
+     "seed": 9
+    },
+    {
+     "type": "text",
+     "at": "@pain",
+     "y": 1400,
+     "size": 110,
+     "lines": [
+      "pain travels"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "name",
+   "start": 12.75,
+   "end": 14.6,
+   "tint": "paper",
+   "transition": "swipe",
+   "blocks": [
+    {
+     "type": "stamp",
+     "kind": "square",
+     "x": 540,
+     "y": 820,
+     "size": 460,
+     "text": "referred pain",
+     "textSize": 58,
+     "at": "@pain#2",
+     "rotate": -7
+    }
+   ]
+  },
+  {
+   "id": "treat",
+   "start": 14.6,
+   "end": 17.15,
+   "tint": "grey",
+   "transition": "swipe",
+   "blocks": [
+    {
+     "type": "prop",
+     "kind": "bulb",
+     "x": 540,
+     "y": 780,
+     "size": 300,
+     "at": "@source",
+     "color": "wash"
+    },
+    {
+     "type": "mark",
+     "kind": "circle",
+     "x": 540,
+     "y": 780,
+     "w": 300,
+     "h": 300,
+     "at": "@eases"
+    },
+    {
+     "type": "text",
+     "at": "@treat",
+     "y": 1300,
+     "size": 110,
+     "lines": [
+      "treat the source"
+     ],
+     "underline": true
+    }
+   ]
+  },
+  {
+   "id": "cta",
+   "start": 17.15,
+   "end": "end",
+   "tint": "paper",
+   "transition": "swipe",
+   "blocks": [
+    {
+     "type": "frame",
+     "at": 17.3,
+     "family": "cloud",
+     "rect": [
+      90,
+      380,
+      900,
+      1000
+     ]
+    },
+    {
+     "type": "text",
+     "at": "@follow",
+     "y": 880,
+     "size": 150,
+     "lines": [
+      "follow",
+      "for more"
+     ],
+     "underline": true
+    },
+    {
+     "type": "splat",
+     "x": 820,
+     "y": 560,
+     "r": 40,
+     "at": "@surprises",
+     "seed": 2
+    }
+   ]
+  }
+ ]
+}
