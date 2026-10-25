@@ -1,5 +1,7 @@
 // Soft light for sleek looks: gradient fills that any shape or the hero may use, a rainbow edge like light caught
 // on glass, and the `ring` block (a glowing ring that draws itself, breathes, spins and may be an arc).
+// Engine 1.13: the style token `shimmer` keeps that light alive (gradients sway, a glint slides across gradient
+// shapes, a small light travels round rings, rainbow edges turn). Without the token nothing moves, exactly as before.
 import React from 'react';
 import type {Block} from './blocks';
 import {StyleTokens, clamp, cubicInOut, gray, progress} from './lib';
@@ -19,11 +21,49 @@ export const gradOf = (g: any): Grad | null => {
 export const colorOf = (k: StyleTokens, c: string | undefined, def: string) => (c && k.palette?.[c] !== undefined ? gray(k.palette[c]) : c && c.startsWith('#') ? c : def);
 
 // The same block always gets the same id, so a frame never depends on what was drawn before it.
-export const idOf = (prefix: string, b: Block) => {
+const fnv = (b: Block) => {
   const s = JSON.stringify(b);
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
-  return `${prefix}${(h >>> 0).toString(36)}`;
+  return h >>> 0;
+};
+export const idOf = (prefix: string, b: Block) => `${prefix}${fnv(b).toString(36)}`;
+
+// ---------- living light (token `shimmer`: sway, period, sheen, every, rainbow, orbit) ----------
+// Each block gets its own phase so nothing moves in step; `"shimmer": false` on a block keeps it still.
+const live = (k: StyleTokens, b: Block) => (k.shimmer && b.shimmer !== false ? k.shimmer : null);
+export const phaseOf = (b: Block) => fnv(b) / 4294967296;
+// degrees a gradient leans away from its own angle right now
+export const swayOf = (k: StyleTokens, b: Block, t: number) => {
+  const s = live(k, b);
+  return s ? (s.sway ?? 12) * Math.sin(2 * Math.PI * (t / (s.period ?? 8) + phaseOf(b))) : 0;
+};
+// degrees a rainbow edge has turned by now
+export const rainbowTurn = (k: StyleTokens, b: Block, t: number) => {
+  const s = live(k, b);
+  return s ? (s.rainbow ?? 12) * t + phaseOf(b) * 360 : 0;
+};
+
+// A glint: a soft white band that slides across the shape every `every` seconds, like light over glass.
+export const Sheen: React.FC<{id: string; d: string; k: StyleTokens; b: Block; t: number}> = ({id, d, k, b, t}) => {
+  const s = live(k, b);
+  if (!s || !s.sheen) return null;
+  const every = s.every ?? 5;
+  const local = (((t - (b.at ?? 0) + phaseOf(b) * every) % every) + every) % every / 1.1;
+  if (local > 1) return null;
+  const pos = -0.3 + 1.6 * cubicInOut(local);
+  // the gradient line runs from -0.5 to 1.5 of the box, so the band can enter and leave without its stops leaving 0..1
+  const o = (v: number) => `${(((v + 0.5) / 2) * 100).toFixed(2)}%`;
+  return (
+    <g opacity={s.sheen} style={{mixBlendMode: 'screen'}}>
+      <linearGradient id={id} x1="-0.5" y1="-0.3" x2="1.5" y2="0.7">
+        <stop offset={o(pos - 0.2)} stopColor="#ffffff" stopOpacity={0} />
+        <stop offset={o(pos)} stopColor="#ffffff" stopOpacity={0.85} />
+        <stop offset={o(pos + 0.2)} stopColor="#ffffff" stopOpacity={0} />
+      </linearGradient>
+      <path d={d} fill={`url(#${id})`} />
+    </g>
+  );
 };
 
 export const GradDef: React.FC<{id: string; g: Grad; stops: string[]; spin?: number}> = ({id, g, stops, spin = 0}) => {
@@ -103,13 +143,23 @@ export const RingBlock: React.FC<P> = ({b, t, k}) => {
   const d = arcD(cx, cy, r, sweep, rot);
   const glow = v.glow * breathe;
   const op = ps.opacity * fadeOut * v.opacity * (b.opacity ?? 1) * (b.enter === 'grow' ? clamp(e / 0.4) : 1);
+  // living light: a short bright arc travels round a whole ring, or glides to and fro along an arc
+  const sh = live(k, b);
+  let orbit: React.ReactNode = null;
+  if (sh && (sh.orbit ?? 0) !== 0 && glow > 0.01 && sweep >= v.sweep - 0.5) {
+    const span = Math.min(34, sweep * 0.3);
+    const centre = sweep >= 359.9 ? phaseOf(b) * 360 + (sh.orbit ?? 0) * e : rot + (sweep / 2 - span / 2) * Math.sin(2 * Math.PI * (e / (sh.period ?? 8) + phaseOf(b)));
+    orbit = <path d={arcD(cx, cy, r, span, centre)} fill="none" stroke="#ffffff" strokeWidth={w * 0.7} strokeLinecap="round" opacity={0.6 * Math.min(1, glow)} style={{filter: `blur(${Math.max(2, w * 0.35)}px)`}} />;
+  }
+  const rainbowBreath = sh ? 0.85 + 0.15 * Math.sin(2 * Math.PI * (e / 3.7 + phaseOf(b))) : 1;
   return (
     <g opacity={op}>
-      {g && <GradDef id={gid} g={g} stops={g.colors.map((c) => colorOf(k, c, base))} spin={rot} />}
+      {g && <GradDef id={gid} g={g} stops={g.colors.map((c) => colorOf(k, c, base))} spin={rot + swayOf(k, b, t)} />}
       {glow > 0.01 && <path d={d} fill="none" stroke={base} strokeWidth={w * 3.2} strokeLinecap="round" opacity={0.42 * glow} style={{filter: `blur(${Math.max(10, w * 1.7)}px)`}} />}
       {glow > 0.01 && <path d={d} fill="none" stroke={light} strokeWidth={w * 1.5} strokeLinecap="round" opacity={0.5 * glow} style={{filter: `blur(${Math.max(4, w * 0.6)}px)`}} />}
       <path d={d} fill="none" stroke={g ? `url(#${gid})` : base} strokeWidth={w} strokeLinecap="round" style={{filter: `blur(${Math.max(0.6, w * 0.12)}px)`}} />
-      <Rainbow id={rid} d={arcD(cx, cy, r + w * 0.42, sweep, rot)} width={Math.max(2, w * 0.32)} amount={v.rainbow} angle={(b.rainbowAngle ?? -35) + rot} />
+      {orbit}
+      <Rainbow id={rid} d={arcD(cx, cy, r + w * 0.42, sweep, rot)} width={Math.max(2, w * 0.32)} amount={v.rainbow * rainbowBreath} angle={(b.rainbowAngle ?? -35) + rot + rainbowTurn(k, b, t)} />
     </g>
   );
 };

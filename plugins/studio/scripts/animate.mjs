@@ -314,6 +314,8 @@ function validate(sbPath, wordsPath, style) {
   // the lowest things may sit: above the Instagram caption area in 9:16, above the bottom edge in 16:9
   const LOW = (sb.height ?? 1920) === 1920 ? 1560 : sb.height - 60, LOW_TEXT = (sb.height ?? 1920) === 1920 ? 1500 : sb.height - 80;
   const walk = (b, where, scene) => {
+    // a style may leave pieces out for good (style key noBlocks, for example a member who never wants a chapter counter)
+    if ((style.noBlocks ?? []).includes(b.type)) errors.push(`${where}: the ${style.name} style does not use "${b.type}" (it is in the style's noBlocks list). Leave it out.`);
     if (sb.format === "16:9" && (style.portraitOnly ?? []).includes(b.type)) errors.push(`${where}: the ${style.name} style draws "${b.type}" in 9:16 only for now. Use another scene type in 16:9 (the guide lists the ones that work).`);
     if (!BLOCK_TYPES.includes(b.type)) errors.push(`${where}: unknown block type "${b.type}" (engine ${ENGINE_VERSION} knows ${BLOCK_TYPES.join(", ")})`);
     if (b.at !== undefined) b.at = T(b.at, where);
@@ -628,7 +630,7 @@ function validate(sbPath, wordsPath, style) {
     if (b.type === "text" && b.y > LOW_TEXT) errors.push(`${where}: headline y ${b.y} is too low (keep above ${LOW_TEXT})`);
     if (scene && b.at !== undefined && (b.at < scene.start - 0.01 || b.at > scene.end))
       warnings.push(`${where}: starts at ${b.at}s, outside its scene (${scene.start} to ${scene.end})`);
-    if (b.type === "group") (b.blocks ?? []).forEach((c, i) => walk(c, `${where}.blocks[${i}]`, scene));
+    if (b.type === "group") (b.blocks ?? []).forEach((c, i) => { if (c.at === undefined) c.at = b.at; walk(c, `${where}.blocks[${i}]`, scene); });
   };
   checkText(sb.header?.left, "header.left");
   checkText(sb.header?.right, "header.right");
@@ -645,6 +647,9 @@ function validate(sbPath, wordsPath, style) {
     if (s.transition !== undefined && !TRANSITIONS.includes(s.transition)) errors.push(`scenes[${i}](${s.id}): transition must be one of ${TRANSITIONS.join(", ")}`);
     if (s.tint !== undefined && !style.tokens?.tints?.[s.tint]) errors.push(`scenes[${i}](${s.id}): tint "${s.tint}" is not in the ${style.name} style. Use one of ${Object.keys(style.tokens?.tints ?? {}).join(", ") || "none"}`);
     s.blocks.forEach((b, j) => walk(b, `scenes[${i}](${s.id}).blocks[${j}]`, s));
+    // chapter badges in one scene take turns: each one leaves when the next arrives, so numbers never stack
+    const badges = s.blocks.filter((b) => b.type === "badge" && typeof b.at === "number").sort((a, b) => a.at - b.at);
+    badges.forEach((b, j) => { if (b.out === undefined && badges[j + 1]) b.out = badges[j + 1].at; });
   });
   (sb.overlay ?? []).forEach((b, i) => walk(b, `overlay[${i}]`));
   const last = sb.scenes?.[sb.scenes.length - 1];
@@ -820,7 +825,7 @@ async function main() {
   if (cmd === "mystyle") {
     if (pos[1] === "sheet") requireRuntime();
     return mystyleCommand(
-      { data: DATA, pluginRoot: PLUGIN_ROOT, engine: ENGINE_VERSION, semverGte, out, fail, libraryCatalog, getStyle, sheet: mystyleSheet },
+      { data: DATA, pluginRoot: PLUGIN_ROOT, engine: ENGINE_VERSION, semverGte, out, fail, libraryCatalog, getStyle, sheet: mystyleSheet, blockTypes: BLOCK_TYPES },
       pos[1] || "", pos, opt
     );
   }

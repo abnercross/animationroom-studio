@@ -425,7 +425,8 @@ const voxSfx = {
 // `map` is the style's sound.sfx recipe. Anything it leaves out sounds the way engine 1.0 did.
 export function collectEvents(sb, map = {}) {
   const ev = [];
-  const draw = (which) => (map[which] === 'chalk' ? 'chalk' : 'pencil');
+  // drawn lines scratch like a pencil or chalk; "none" keeps them silent (glowing lines in sleek looks)
+  const draw = (which) => (map[which] === 'chalk' ? 'chalk' : map[which] === 'none' ? null : 'pencil');
 
   // Printed poster blocks (engine 1.6): a small sound for each thing that appears, in the poster's own voices.
   let pb = 0;
@@ -671,7 +672,7 @@ export function collectEvents(sb, map = {}) {
   else if (map.end === 'chime') ev.push({kind: 'chime', at: Math.max(0, sb.duration - 1.2)});
   else if (map.end !== 'none') ev.push({kind: 'bell', at: Math.max(0, sb.duration - 2.0), end: true});
   if (map.vox && map.end === 'none') V('chime', Math.max(0, sb.duration - 1.5), 0.7, 1760);
-  return ev;
+  return ev.filter((e) => e.kind !== null);
 }
 
 export function renderSfx(sb, map = {}) {
@@ -728,7 +729,7 @@ function pluck(midi, dur = 0.9, damp = 0.5, gain = 1) {
 // Whimsical pizzicato band: bass on 1 and 3, offbeat chord plucks, a simple tune after two bars, shaker, woodblock, soft kick.
 function renderPizzicato(sb, recipe) {
   const bpm = recipe.bpm ?? 112, beat = 60 / bpm, bar = beat * 4;
-  const chords = recipe.chords ?? [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]];
+  const chords = chordsFor('pizzicato', recipe.chords) ?? [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]];
   const D = sb.duration, n = Math.ceil(D * SR), out = new Float32Array(n);
   const bars = Math.ceil(D / bar);
   const tune = [4, 2, 0, 2, 4, 4, 2, -1, 0, 2, 4, 2, 0, -1, 2, -1]; // scale steps over each chord root, -1 rests
@@ -781,7 +782,7 @@ function renderPizzicato(sb, recipe) {
 // Soft electric piano band: Rhodes chords, warm bass, light kick, snap and shaker, a few plucked notes on top.
 function renderRhodes(sb, recipe) {
   const bpm = recipe.bpm ?? 92, beat = 60 / bpm, bar = beat * 4;
-  const chords = recipe.chords ?? [[53, 57, 60, 64], [50, 53, 57, 60], [46, 50, 53, 57], [48, 52, 55, 57]];
+  const chords = chordsFor('rhodes', recipe.chords) ?? [[53, 57, 60, 64], [50, 53, 57, 60], [46, 50, 53, 57], [48, 52, 55, 57]];
   const D = sb.duration, n = Math.ceil(D * SR), out = new Float32Array(n);
   const bars = Math.ceil(D / bar);
   const rhodes = (midi, dur, g) => {
@@ -843,7 +844,7 @@ function renderRhodes(sb, recipe) {
 // that plays a few notes and rests, a kazoo like glide now and then, swung eighths. It goes quiet when the scene changes.
 function renderQuirky(sb, recipe) {
   const bpm = recipe.bpm ?? 104, beat = 60 / bpm, bar = beat * 4, swing = beat * 0.18;
-  const chords = recipe.chords ?? [[48, 52, 55, 59], [45, 48, 52, 55], [41, 45, 48, 52], [43, 47, 50, 53]];
+  const chords = chordsFor('quirky', recipe.chords) ?? [[48, 52, 55, 59], [45, 48, 52, 55], [41, 45, 48, 52], [43, 47, 50, 53]];
   const D = sb.duration, n = Math.ceil(D * SR), out = new Float32Array(n);
   const bars = Math.ceil(D / bar);
   const changes = sb.scenes.slice(1).map((s) => s.start);
@@ -916,7 +917,7 @@ function renderQuirky(sb, recipe) {
 function renderVibes(sb, recipe) {
   const D = sb.duration, n = Math.ceil(D * SR), out = new Float32Array(n);
   const bpm = recipe.bpm ?? 96, beat = 60 / bpm, bar = beat * 4;
-  const chords = recipe.chords ?? [[48, [64, 67, 71, 74]], [45, [64, 67, 72, 76]], [50, [65, 69, 72, 76]], [43, [65, 69, 71, 74]]];
+  const chords = chordsFor('vibes', recipe.chords) ?? [[48, [64, 67, 71, 74]], [45, [64, 67, 72, 76]], [50, [65, 69, 72, 76]], [43, [65, 69, 71, 74]]];
   const put = (at, len, fn) => { const s0 = Math.floor(at * SR); for (let i = 0; i < len * SR && s0 + i < n; i++) if (s0 + i >= 0) out[s0 + i] += fn(i / SR, i); };
   const vibe = (at, m, g = 1, dur = 2.6) => { const f = mtof(m); put(at, dur, (t) => g * Math.min(1, t * 400) * (Math.sin(2 * Math.PI * f * t) * Math.exp(-t * 1.6) + 0.28 * Math.sin(2 * Math.PI * f * 4 * t) * Math.exp(-t * 6)) * (0.8 + 0.2 * Math.sin(2 * Math.PI * 5.2 * t))); };
   const bass = (at, m, g = 1) => { const f = mtof(m); put(at, 0.7, (t) => g * Math.min(1, t * 200) * Math.exp(-t * 4.5) * (Math.sin(2 * Math.PI * f * t) + 0.35 * Math.sin(4 * Math.PI * f * t))); };
@@ -950,13 +951,53 @@ function renderVibes(sb, recipe) {
   return out;
 }
 
+// ---------- chords: each score kind reads its own layout ----------
+// pad (the default): lists of five or more notes (its arpeggio climbs to the fifth note); pizzicato and rhodes: lists of
+// notes; quirky: lists of three or more notes; vibes: [bass note, [four or more notes]]. Notes are MIDI numbers.
+const CHORD_MIN = {pad: 5, pizzicato: 1, rhodes: 1, quirky: 3};
+export const CHORD_EXAMPLE = {
+  pad: '[[45, 52, 57, 60, 64], [41, 48, 53, 57, 64]]',
+  pizzicato: '[[48, 52, 55], [45, 48, 52]]',
+  rhodes: '[[53, 57, 60, 64], [50, 53, 57, 60]]',
+  quirky: '[[48, 52, 55, 59], [45, 48, 52, 55]]',
+  vibes: '[[48, [64, 67, 71, 74]], [45, [64, 67, 72, 76]]]',
+};
+const isNote = (n) => typeof n === 'number' && n >= 24 && n <= 108;
+const kindOf = (kind) => (kind === 'vibes' || CHORD_MIN[kind] !== undefined ? kind : 'pad');
+// What is wrong with a chord list for this score kind, in plain words, or null when it fits.
+export function chordProblem(kind, chords) {
+  if (chords === undefined) return null;
+  const k = kindOf(kind);
+  if (!Array.isArray(chords) || !chords.length) return 'must be a list of chords';
+  for (const c of chords) {
+    if (k === 'vibes') {
+      if (!Array.isArray(c) || c.length !== 2 || !isNote(c[0]) || !Array.isArray(c[1]) || c[1].length < 4 || !c[1].every(isNote))
+        return `the vibes score writes each chord as a bass note and a list of four or more notes, like ${CHORD_EXAMPLE.vibes}`;
+    } else if (!Array.isArray(c) || c.length < CHORD_MIN[k] || !c.every(isNote)) {
+      return `the ${k} score writes each chord as a list of ${CHORD_MIN[k] > 1 ? `${CHORD_MIN[k]} or more ` : ''}note numbers from 24 to 108, like ${CHORD_EXAMPLE[k]}`;
+    }
+  }
+  return null;
+}
+// Chords in the wrong layout for their kind (a hand edited style, or a kind changed without its chords) are rewritten
+// to fit instead of breaking the render. Chords that already fit come back untouched, so no style's music changes.
+export function chordsFor(kind, chords) {
+  if (chords === undefined || !chordProblem(kind, chords)) return chords;
+  const k = kindOf(kind);
+  const lists = (Array.isArray(chords) ? chords : []).map((c) => (Array.isArray(c) ? c.flat(2).filter(isNote) : [])).filter((c) => c.length);
+  if (!lists.length) return undefined; // nothing usable: the kind plays its own chords
+  const fill = (c, n) => { const o = [...c]; for (let i = 0; o.length < n; i++) o.push(c[i % c.length] + 12 * (1 + Math.floor(i / c.length))); return o; };
+  if (k === 'vibes') return lists.map((c) => [c[0], fill((c.length > 1 ? c.slice(1) : c).map((n) => { while (n < 60) n += 12; return n; }).sort((a, b) => a - b), 4)]);
+  return lists.map((c) => fill(c, CHORD_MIN[k]));
+}
+
 export function renderScore(sb, recipe = {}) {
   if (recipe.kind === 'vibes') return renderVibes(sb, recipe);
   if (recipe.kind === 'quirky') return renderQuirky(sb, recipe);
   if (recipe.kind === 'pizzicato') return renderPizzicato(sb, recipe);
   if (recipe.kind === 'rhodes') return renderRhodes(sb, recipe);
   const bpm = recipe.bpm ?? 75, beat = 60 / bpm, bar = beat * 4;
-  const chords = recipe.chords ?? [[45, 52, 57, 60, 64], [41, 48, 53, 57, 64], [43, 50, 55, 59, 62], [45, 52, 57, 60, 64]];
+  const chords = chordsFor('pad', recipe.chords) ?? [[45, 52, 57, 60, 64], [41, 48, 53, 57, 64], [43, 50, 55, 59, 62], [45, 52, 57, 60, 64]];
   const D = sb.duration, n = Math.ceil(D * SR), out = new Float32Array(n);
   const scenes = sb.scenes;
   const ctaStart = scenes[scenes.length - 1].start;

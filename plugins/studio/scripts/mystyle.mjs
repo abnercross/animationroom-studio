@@ -15,13 +15,14 @@
 //   mystyle wish --text "<what is missing>" [--style <id>]   and   mystyle wishes
 import fs from "node:fs";
 import path from "node:path";
+import { chordProblem } from "./sound.mjs";
 
 // Fonts that ship inside the render engine (runtime/src/fonts.ts). Anything else would silently fall back.
 export const FONTS = ["Inter", "JetBrains Mono", "Poppins", "STIX Two Text", "Big Shoulders", "Caveat", "Caveat Brush", "Bebas Neue", "Assistant"];
 const SCORE_KINDS = ["pad", "pizzicato", "rhodes", "vibes", "quirky"];
 const FORMATS = ["9:16", "16:9"];
 // Top level token names the engine reads (runtime/src/lib.ts StyleTokens). Others are ignored, which is almost always a typo.
-const TOKEN_KEYS = ["bg", "gridMinor", "gridMajor", "gridMinorStep", "gridMajorStep", "ink", "mid", "soft", "fill", "dark", "lineWidths", "dashes", "fonts", "monoTracking", "corners", "header", "margins", "motion", "palette", "background", "chrome", "stroke", "type", "scenes", "fade", "paper", "sheet", "jitter", "tail", "rig", "panel", "hatch", "tints", "boil", "camera", "cameraDrift", "finish", "page", "poster", "vox", "bean", "accentTints"];
+const TOKEN_KEYS = ["bg", "gridMinor", "gridMajor", "gridMinorStep", "gridMajorStep", "ink", "mid", "soft", "fill", "dark", "lineWidths", "dashes", "fonts", "monoTracking", "corners", "header", "margins", "motion", "palette", "background", "chrome", "stroke", "type", "scenes", "fade", "paper", "sheet", "jitter", "tail", "rig", "panel", "hatch", "tints", "boil", "camera", "cameraDrift", "finish", "page", "poster", "vox", "bean", "accentTints", "shimmer"];
 export const SUPPORT = "support@animationroom.app";
 
 export const mineDir = (data) => path.join(data, "my-styles");
@@ -140,7 +141,29 @@ export function checkStyle(ctx, id) {
   num("sound.score.bpm", sc.bpm, 40, 200);
   num("sound.score.level", sc.level, -40, -3);
   num("sound.duck", s.duck, 0, 1);
-  if (sc.chords !== undefined && (!Array.isArray(sc.chords) || sc.chords.some((c) => !Array.isArray(c) || c.some((n) => typeof n !== "number" || n < 24 || n > 96)))) problems.push("sound.score.chords must be a list of chords, each a list of note numbers from 24 to 96.");
+  // each score kind reads chords in its own layout; chords left over from another kind are the usual mistake
+  const chordIssue = chordProblem(sc.kind, sc.chords);
+  if (chordIssue) problems.push(`sound.score.chords: ${chordIssue}. Or delete "chords" and the ${sc.kind || "pad"} score plays its own.`);
+
+  // living light (engine 1.13): gradients sway, glints slide, ring lights travel, rainbow edges turn
+  const sh = t.shimmer;
+  if (sh !== undefined) {
+    if (!sh || typeof sh !== "object") problems.push("tokens.shimmer must be like {\"sway\": 12, \"period\": 8, \"sheen\": 0.4, \"every\": 5, \"rainbow\": 12, \"orbit\": 40}.");
+    else {
+      num("tokens.shimmer.sway", sh.sway, 0, 45);
+      num("tokens.shimmer.period", sh.period, 2, 30);
+      num("tokens.shimmer.sheen", sh.sheen, 0, 1);
+      num("tokens.shimmer.every", sh.every, 1.5, 30);
+      num("tokens.shimmer.rainbow", sh.rainbow, -90, 90);
+      num("tokens.shimmer.orbit", sh.orbit, -360, 360);
+    }
+  }
+
+  // pieces the member never wants (style key noBlocks): the storyboard check refuses them
+  if (st.noBlocks !== undefined) {
+    if (!Array.isArray(st.noBlocks) || st.noBlocks.some((b) => typeof b !== "string")) problems.push('noBlocks must be a list of block types, like ["badge"].');
+    else if (ctx.blockTypes) for (const b of st.noBlocks) if (!ctx.blockTypes.includes(b)) problems.push(`noBlocks lists "${b}", which is not a block type. Use names like badge, caption or ring.`);
+  }
 
   // can it be read? Only meaningful where the drawing sits straight on the ground colour (not on tinted scenes, sheets or tables).
   const bg = t.bg, ink = t.ink;

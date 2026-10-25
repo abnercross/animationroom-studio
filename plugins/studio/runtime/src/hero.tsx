@@ -6,7 +6,7 @@ import React from 'react';
 import type {Block} from './blocks';
 import {StyleTokens, clamp, cubicInOut, gray, hash, progress} from './lib';
 import {easeBack, easeIn, easeOut} from './paper';
-import {GradDef, Grad, Rainbow, colorOf, gradOf, idOf} from './glow';
+import {GradDef, Grad, Rainbow, Sheen, colorOf, gradOf, idOf, rainbowTurn, swayOf} from './glow';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
@@ -273,10 +273,11 @@ export const HeroBlock: React.FC<P> = ({b, t, k}) => {
   return (
     <g opacity={fade * s.num.opacity}>
       {s.num.glow > 0.01 && <circle cx={cx} cy={cy} r={r * 1.8} fill={lime} opacity={0.3 * s.num.glow} style={{filter: `blur(${Math.max(18, r * 0.5)}px)`}} />}
-      {s.stops && s.grad && <GradDef id={gid} g={s.grad} stops={s.stops.map(hex)} />}
+      {s.stops && s.grad && <GradDef id={gid} g={s.grad} stops={s.stops.map(hex)} spin={swayOf(k, b, t)} />}
       {ghosts}
       {body}
-      {s.num.rainbow > 0.01 && shat < 0.01 && <Rainbow id={idOf('hr', b)} d={toD(pts)} width={Math.max(3, r * 0.07)} amount={s.num.rainbow} angle={b.rainbowAngle ?? -35} />}
+      {s.stops && shat < 0.01 && <Sheen id={idOf('hs', b)} d={toD(pts)} k={k} b={b} t={t} />}
+      {s.num.rainbow > 0.01 && shat < 0.01 && <Rainbow id={idOf('hr', b)} d={toD(pts)} width={Math.max(3, r * 0.07)} amount={s.num.rainbow} angle={(b.rainbowAngle ?? -35) + rainbowTurn(k, b, t)} />}
       {facets}
       {details}
       {marker}

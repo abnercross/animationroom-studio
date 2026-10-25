@@ -2,7 +2,7 @@
 // Styles are data (tokens + rules). The engine owns the block types.
 import React from 'react';
 
-export const ENGINE_VERSION = '1.12.1';
+export const ENGINE_VERSION = '1.13.0';
 
 // Things every block in a storyboard may need: the cast of characters, when the voice is speaking and the frame size
 // (1080 x 1920 or 1920 x 1080). Blocks that centre or align to an edge read the size here instead of assuming portrait.
@@ -93,6 +93,10 @@ export type StyleTokens = {
   // keys: each scene may move the camera with "cam" keyframes; cuts get a small zoom punch.
   camera?: 'push' | 'keys';
   cameraDrift?: number; // px of slow camera drift for keyed cameras
+  // ----- engine 1.13: living light -----
+  // Gradients sway `sway` degrees over `period` s, a glint (`sheen` 0 to 1) slides across gradient shapes every `every` s,
+  // a small light travels `orbit` degrees a second round rings, and rainbow edges turn `rainbow` degrees a second.
+  shimmer?: {sway?: number; period?: number; sheen?: number; every?: number; rainbow?: number; orbit?: number};
   // Paper grain and corner darkening laid over the finished frame.
   finish?: {grain?: number; vignette?: number; rough?: number; stitch?: number};
   // ----- engine 1.5: raw ink on paper -----

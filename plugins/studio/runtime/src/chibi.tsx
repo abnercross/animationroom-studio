@@ -9,7 +9,7 @@ import {fontsReady} from './fonts';
 import {ScreenContext, StoryContext, StyleTokens, clamp, cubicInOut, gray, hash, progress, useFrame} from './lib';
 import {easeBack, easeIn, easeOut, pose, seedOf, shapeD} from './paper';
 import {BrushStroke} from './sketch';
-import {GradDef, colorOf, gradOf, idOf} from './glow';
+import {GradDef, Sheen, colorOf, gradOf, idOf, swayOf} from './glow';
 
 type P = {b: Block; t: number; k: StyleTokens};
 
@@ -74,6 +74,7 @@ const loopOf = (b: Block, t: number) => {
   if (b.loop === 'beat') return {y: 0, s: 1 + 0.12 * Math.pow(Math.max(0, Math.sin(e * 6.6)), 6), r: 0};
   if (b.loop === 'spin') return {y: 0, s: 1, r: e * 70};
   if (b.loop === 'sway') return {y: 0, s: 1, r: Math.sin(e * 2.4) * 6};
+  if (b.loop === 'twinkle') return {y: 0, s: 1 + 0.14 * Math.sin(e * 4.6), r: Math.sin(e * 1.7) * 9};
   return {y: 0, s: 1, r: 0};
 };
 
@@ -119,9 +120,10 @@ export const ShapeBlock: React.FC<P> = ({b, t, k}) => {
           <rect x={geo.bb.x1 - 20} y={geo.bb.y1 - 20} width={geo.bb.x2 - geo.bb.x1 + 40} height={Math.round(((geo.bb.y2 - geo.bb.y1 + 40) * rows) / 8) * 8} />
         </clipPath>
       )}
-      {g && <GradDef id={gid} g={g} stops={g.colors.map((c) => colorOf(k, c, gray(k.fill)))} />}
+      {g && <GradDef id={gid} g={g} stops={g.colors.map((c) => colorOf(k, c, gray(k.fill)))} spin={swayOf(k, b, t)} />}
       {b.glow && <circle cx={cx} cy={cy} r={Math.max(geo.bb.x2 - geo.bb.x1, geo.bb.y2 - geo.bb.y1) * 0.9} fill={pal(k, typeof b.glow === 'string' ? b.glow : b.color ?? g?.colors[0], '#ffe680')} opacity={0.34} style={{filter: `blur(${Math.max(14, (geo.bb.x2 - geo.bb.x1) * 0.3)}px)`}} />}
       <Flat k={k} d={geo.d} fill={g ? `url(#${gid})` : b.color === 'none' ? 'none' : pal(k, b.color, gray(k.fill))} ow={b.outline === false || (b.outline === undefined && k.rig?.outline === false) ? 0 : widthFor(k, b.width)} shade={b.shade ?? b.color !== 'none'} />
+      {g && <Sheen id={`${gid}s`} d={geo.d} k={k} b={b} t={t} />}
     </g>
   );
 };
