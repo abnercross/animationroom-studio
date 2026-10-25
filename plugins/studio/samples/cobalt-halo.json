@@ -1,0 +1,377 @@
+{
+ "style": "cobalt-halo",
+ "title": "Cobalt Halo look test",
+ "duration": 12,
+ "scenes": [
+  {
+   "id": "all",
+   "start": 0,
+   "end": 12,
+   "tint": "dark",
+   "cam": [
+    {
+     "t": 0,
+     "zoom": 1,
+     "y": 900,
+     "dur": 0.1
+    },
+    {
+     "t": 2.6,
+     "zoom": 1.06,
+     "y": 880,
+     "dur": 3
+    },
+    {
+     "t": 8.6,
+     "zoom": 1.12,
+     "y": 880,
+     "dur": 3
+    }
+   ],
+   "blocks": [
+    {
+     "type": "ring",
+     "at": 0.2,
+     "out": 3.2,
+     "x": 540,
+     "y": 820,
+     "r": 230,
+     "width": 30,
+     "gradient": {
+      "colors": [
+       "ice",
+       "sky",
+       "blue",
+       "deep"
+      ],
+      "angle": 200
+     },
+     "glow": 1,
+     "rainbow": 0.85,
+     "spin": 18,
+     "keys": [
+      {
+       "t": 2.6,
+       "r": 170,
+       "dur": 0.6
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "at": 0.5,
+     "out": 2.6,
+     "x": 540,
+     "y": 1320,
+     "size": 60,
+     "text": "you ask once"
+    },
+    {
+     "type": "shape",
+     "at": 3,
+     "out": 5,
+     "enter": "rise",
+     "shape": "rect",
+     "x": 540,
+     "y": 820,
+     "w": 500,
+     "h": 620,
+     "r": 56,
+     "gradient": [
+      "blue",
+      "blue",
+      "sky",
+      "ice"
+     ]
+    },
+    {
+     "type": "shape",
+     "at": 3.3,
+     "out": 5,
+     "shape": "rect",
+     "x": 540,
+     "y": 760,
+     "w": 300,
+     "h": 110,
+     "r": 55,
+     "color": "deep",
+     "opacity": 0.45
+    },
+    {
+     "type": "text",
+     "at": 3.4,
+     "out": 5,
+     "x": 540,
+     "y": 780,
+     "size": 56,
+     "text": "agent"
+    },
+    {
+     "type": "text",
+     "at": 3.6,
+     "out": 5,
+     "x": 540,
+     "y": 1320,
+     "size": 60,
+     "text": "the agent plans"
+    },
+    {
+     "type": "hero",
+     "at": 5,
+     "x": 540,
+     "y": 640,
+     "r": 82,
+     "shape": "hexagon",
+     "glowColor": "blue",
+     "gradient": [
+      "ice",
+      "sky",
+      "blue"
+     ],
+     "rainbow": 0.6,
+     "keys": [
+      {
+       "t": 5,
+       "glow": 0.7,
+       "dur": 0.6
+      },
+      {
+       "t": 6.6,
+       "spike": 0.6,
+       "color": "coral",
+       "rainbow": 0,
+       "dur": 0.3
+      },
+      {
+       "t": 7.6,
+       "spike": 0,
+       "gradient": [
+        "ice",
+        "sky",
+        "blue"
+       ],
+       "rainbow": 0.6,
+       "dur": 0.5
+      },
+      {
+       "t": 9,
+       "y": 720,
+       "r": 120,
+       "shape": "star",
+       "core": 1,
+       "glow": 1,
+       "dur": 1,
+       "ease": "spring"
+      }
+     ]
+    },
+    {
+     "type": "path",
+     "at": 5.2,
+     "out": 8.8,
+     "d": "M540,720 C540,820 300,860 300,960",
+     "arrow": true,
+     "color": "blue"
+    },
+    {
+     "type": "path",
+     "at": 5.3,
+     "out": 8.8,
+     "d": "M540,720 L540,960",
+     "arrow": true,
+     "color": "blue"
+    },
+    {
+     "type": "path",
+     "at": 5.4,
+     "out": 8.8,
+     "d": "M540,720 C540,820 780,860 780,960",
+     "arrow": true,
+     "color": "blue"
+    },
+    {
+     "type": "shape",
+     "at": 5.4,
+     "out": 8.8,
+     "shape": "rect",
+     "x": 300,
+     "y": 1050,
+     "w": 130,
+     "h": 130,
+     "r": 30,
+     "gradient": [
+      "panel",
+      "deep"
+     ],
+     "enter": "rise"
+    },
+    {
+     "type": "shape",
+     "at": 5.5,
+     "out": 8.8,
+     "shape": "rect",
+     "x": 540,
+     "y": 1050,
+     "w": 130,
+     "h": 130,
+     "r": 30,
+     "gradient": [
+      "panel",
+      "deep"
+     ],
+     "enter": "rise"
+    },
+    {
+     "type": "shape",
+     "at": 5.6,
+     "out": 8.8,
+     "shape": "rect",
+     "x": 780,
+     "y": 1050,
+     "w": 130,
+     "h": 130,
+     "r": 30,
+     "gradient": [
+      "panel",
+      "deep"
+     ],
+     "enter": "rise"
+    },
+    {
+     "type": "shape",
+     "at": 5.7,
+     "out": 8.8,
+     "shape": "circle",
+     "x": 300,
+     "y": 1050,
+     "r": 24,
+     "color": "sky",
+     "glow": true
+    },
+    {
+     "type": "shape",
+     "at": 5.8,
+     "out": 8.8,
+     "shape": "circle",
+     "x": 540,
+     "y": 1050,
+     "r": 24,
+     "color": "blue",
+     "glow": true,
+     "loop": "pulse"
+    },
+    {
+     "type": "shape",
+     "at": 5.9,
+     "out": 8.8,
+     "shape": "circle",
+     "x": 780,
+     "y": 1050,
+     "r": 24,
+     "color": "sky",
+     "glow": true
+    },
+    {
+     "type": "text",
+     "at": 5.5,
+     "out": 6.6,
+     "x": 540,
+     "y": 1320,
+     "size": 60,
+     "text": "calls tools"
+    },
+    {
+     "type": "path",
+     "at": 6.6,
+     "out": 7.8,
+     "d": "M755,925 L805,975 M805,925 L755,975",
+     "color": "coral"
+    },
+    {
+     "type": "text",
+     "at": 6.6,
+     "out": 8.6,
+     "x": 540,
+     "y": 1320,
+     "size": 60,
+     "text": "checks mistakes",
+     "color": "coral"
+    },
+    {
+     "type": "ring",
+     "at": 9,
+     "enter": "grow",
+     "x": 540,
+     "y": 1200,
+     "r": 300,
+     "width": 40,
+     "sweep": 150,
+     "gradient": [
+      "sky",
+      "blue"
+     ],
+     "glow": 0.9,
+     "rainbow": 0.7
+    },
+    {
+     "type": "ring",
+     "at": 9.15,
+     "enter": "grow",
+     "x": 540,
+     "y": 1240,
+     "r": 220,
+     "width": 36,
+     "sweep": 150,
+     "gradient": [
+      "sky",
+      "blue"
+     ],
+     "glow": 0.8,
+     "rainbow": 0.6
+    },
+    {
+     "type": "ring",
+     "at": 9.3,
+     "enter": "grow",
+     "x": 540,
+     "y": 1280,
+     "r": 140,
+     "width": 32,
+     "sweep": 150,
+     "gradient": [
+      "sky",
+      "blue"
+     ],
+     "glow": 0.7,
+     "rainbow": 0.5
+    },
+    {
+     "type": "text",
+     "at": 9,
+     "x": 540,
+     "y": 1380,
+     "size": 64,
+     "text": "and delivers",
+     "color": "blue"
+    },
+    {
+     "type": "shape",
+     "at": 9.5,
+     "d": "M720,580 C724,612 728,616 760,620 C728,624 724,628 720,660 C716,628 712,624 680,620 C712,616 716,612 720,580 Z",
+     "color": "blue",
+     "glow": true,
+     "loop": "pulse"
+    },
+    {
+     "type": "shape",
+     "at": 9.7,
+     "d": "M360,650 C364,682 368,686 400,690 C368,694 364,698 360,730 C356,698 352,694 320,690 C352,686 356,682 360,650 Z",
+     "color": "sky",
+     "glow": true,
+     "loop": "pulse",
+     "scale": 0.6
+    }
+   ]
+  }
+ ]
+}

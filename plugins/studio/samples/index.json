@@ -46,7 +46,13 @@
  },
  "abstract-geometry": {
   "words": "referred-pain-words.json",
-  "9:16": "abstract-geometry.json"
+  "9:16": "abstract-geometry.json",
+  "16:9": "abstract-geometry-16x9.json"
+ },
+ "cobalt-halo": {
+  "words": "cobalt-halo-look-words.json",
+  "9:16": "cobalt-halo.json",
+  "16:9": "cobalt-halo-16x9.json"
  },
  "sketchbook-ink": {
   "words": "referred-pain-words.json",
