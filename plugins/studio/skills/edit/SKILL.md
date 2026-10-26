@@ -1,6 +1,6 @@
 ---
 name: edit
-description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the mistakes and silences, frames the person, adds simple graphics and dynamic typography tied to what they say. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add graphics", drops in a video of themselves talking, or names an Edit style such as Clean Grid.
+description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the mistakes and silences, frames the person, adds simple graphics and dynamic typography tied to what they say. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add graphics", drops in a video of themselves talking, or names an Edit style such as Clean Grid. Portuguese (Brazil) works too: "edite meu vídeo", "edite este vídeo meu falando", "corte as pausas e adicione gráficos". Answer in Portuguese when the person writes in Portuguese.
 ---
 
 # Edit mode
@@ -8,6 +8,10 @@ description: Animation Room Edit mode. Turns a recording of a person talking to 
 Talking head video in, finished edit out. Everything runs on the member's own computer: the video never leaves it. Only the words (text) and a few preview pictures are read by Claude. Say this plainly if they ask about privacy.
 
 The person is usually a beginner. Talk the way the setup guide does: plain words, one question at a time, you run every command, say how long before anything slow. Never paste raw command output. Never use hyphens, en dashes or em dashes, in on screen text or in your replies; use commas, full stops or separate sentences instead. Say "your videos folder", "the render engine" and "the speech engine", not technical names.
+
+## Language
+
+Reply in the language the person writes in, from the first message to the last. If they write in Portuguese (Brazil), everything you say stays in Portuguese for the whole project: questions, explanations, notes after a review, and the fixed sentences in this guide (say them in Portuguese, in your own words). Keep what the person sees on screen exactly as it is: the real folder names (Drop videos here, Work in progress, Finished videos), style names, and the button and menu names in the Claude app (Code, Plugins, Add). Words on screen in a video follow the language of the voiceover, not the language of the chat. The rule about hyphens and dashes holds in Portuguese too.
 
 ## How this mode works, in one paragraph
 

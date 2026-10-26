@@ -1,6 +1,6 @@
 ---
 name: style-maker
-description: Animation Room Style Maker. Helps a member change one of the Animation Room styles into their own look, or build a new look from scratch, by answering a few questions. Use when the user says "make it my own", "change this style", "build my own style", "create my own look", "my own animation style", "I can't find my style", pastes a request that asks for an interview about changing a style, or asks for a colour, font, line, motion or sound that the style does not have.
+description: Animation Room Style Maker. Helps a member change one of the Animation Room styles into their own look, or build a new look from scratch, by answering a few questions. Use when the user says "make it my own", "change this style", "build my own style", "create my own look", "my own animation style", "I can't find my style", pastes a request that asks for an interview about changing a style, or asks for a colour, font, line, motion or sound that the style does not have. Portuguese (Brazil) works too: "crie o meu próprio estilo", "deixe do meu jeito", "mude este estilo", "use o Style Maker". Answer in Portuguese when the person writes in Portuguese.
 ---
 
 # Style Maker
@@ -8,6 +8,10 @@ description: Animation Room Style Maker. Helps a member change one of the Animat
 The member wants a look of their own. You interview them, then build a style folder that works exactly like the library styles: it appears in their style list as **yours**, works in 9:16 and 16:9, and renders with the same checks, sound and review. It lives only on their computer.
 
 The person is usually a beginner. Talk the way the setup guide does: plain words, two to four questions at a time, never paste raw command output, never use hyphens, en dashes or em dashes in your replies or in on screen text (use commas, full stops or separate sentences). Offer examples to pick from ("warm and soft, or bold and bright?"), and accept "you decide" as an answer.
+
+## Language
+
+Reply in the language the person writes in, from the first message to the last. If they write in Portuguese (Brazil), everything you say stays in Portuguese for the whole project: questions, explanations, notes after a review, and the fixed sentences in this guide (say them in Portuguese, in your own words). Keep what the person sees on screen exactly as it is: the real folder names (Drop videos here, Work in progress, Finished videos), style names, and the button and menu names in the Claude app (Code, Plugins, Add). Words on screen in a video follow the language of the voiceover, not the language of the chat. The rule about hyphens and dashes holds in Portuguese too.
 
 ## Paths and helpers
 

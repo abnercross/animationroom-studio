@@ -1,11 +1,15 @@
 ---
 name: animate
-description: Animation Room Animate mode. Turns a voiceover into a finished animation in one of the member's Animation Room styles. Use when the user says "animate this voiceover", "make an animation in Blueprint style" (or any style name), "make a reel from this audio", pastes a request copied from the members page, or drops in a voiceover and names a style.
+description: Animation Room Animate mode. Turns a voiceover into a finished animation in one of the member's Animation Room styles. Use when the user says "animate this voiceover", "make an animation in Blueprint style" (or any style name), "make a reel from this audio", pastes a request copied from the members page, or drops in a voiceover and names a style. Portuguese (Brazil) works too: "anime esta narração no estilo ...", "faça uma animação com este áudio", or a request pasted from the Portuguese members page. Answer in Portuguese when the person writes in Portuguese.
 ---
 
 # Animate mode
 
 Voiceover in, finished animation out. The person is usually a beginner. Talk the way the setup guide does: plain words, one question at a time, you run every command, say how long before anything slow. Never paste raw command output. Never use hyphens, en dashes or em dashes, in on screen text or in your replies; use commas, full stops or separate sentences instead.
+
+## Language
+
+Reply in the language the person writes in, from the first message to the last. If they write in Portuguese (Brazil), everything you say stays in Portuguese for the whole project: questions, explanations, notes after a review, and the fixed sentences in this guide (say them in Portuguese, in your own words). Keep what the person sees on screen exactly as it is: the real folder names (Drop videos here, Work in progress, Finished videos), style names, and the button and menu names in the Claude app (Code, Plugins, Add). Words on screen in a video follow the language of the voiceover, not the language of the chat. The rule about hyphens and dashes holds in Portuguese too.
 
 ## Paths and helpers
 
