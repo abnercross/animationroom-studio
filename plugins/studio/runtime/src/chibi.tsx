@@ -838,6 +838,9 @@ export const PopHeadline: React.FC<P> = ({b, t, k}) => {
 export const TintSet: React.FC<{k: StyleTokens; t: number; W: number; H: number; tint: string; floor: number | false}> = ({k, W, H, tint, floor}) => {
   const c = gray(k.tints?.[tint] ?? k.bg);
   const dark = tint === 'night';
+  // The set lives inside the scene's camera, so it reaches well past the frame: a camera that moves or zooms out never
+  // shows its edge. bx is a whole number of dashes, so the dashed floor lines keep their place.
+  const bx = -19 * Math.ceil(W / 19), bw = W - bx * 2, floorH = floor === false ? 0 : H * 2 - floor;
   return (
     <g>
       <defs>
@@ -846,33 +849,35 @@ export const TintSet: React.FC<{k: StyleTokens; t: number; W: number; H: number;
           <stop offset="100%" stopColor="#fff" stopOpacity={0} />
         </radialGradient>
       </defs>
-      <rect width={W} height={H} fill={c} />
-      <rect width={W} height={H} fill="url(#setGlow)" />
-      {k.background?.dots && <rect width={W} height={floor === false ? H : floor} fill="url(#benday)" opacity={k.background.dots} />}
+      <rect x={bx} y={-H} width={bw} height={H * 3} fill={c} />
+      <rect x={bx} y={-H} width={bw} height={H * 3} fill="url(#setGlow)" />
+      {k.background?.dots && <rect x={bx} y={-H} width={bw} height={floor === false ? H * 3 : floor + H} fill="url(#benday)" opacity={k.background.dots} />}
       {floor !== false && (
         <g>
           {k.background?.dots ? (
             <>
-              <rect x={0} y={floor} width={W} height={H - floor} fill="#000" opacity={0.1} />
-              <rect x={0} y={floor} width={W} height={H - floor} fill="url(#benday)" opacity={k.background.dots * 0.35} />
+              <rect x={bx} y={floor} width={bw} height={floorH} fill="#000" opacity={0.1} />
+              <rect x={bx} y={floor} width={bw} height={floorH} fill="url(#benday)" opacity={k.background.dots * 0.35} />
             </>
           ) : k.hatch ? (
             <>
-              <mask id="hatchFloorMask" maskUnits="userSpaceOnUse" x={0} y={floor} width={W} height={H - floor}>
-                <rect x={0} y={floor} width={W} height={H - floor} fill="url(#hatchFloor)" />
+              <mask id="hatchFloorMask" maskUnits="userSpaceOnUse" x={bx} y={floor} width={bw} height={floorH}>
+                {/* the fade is measured on the floor inside the frame; below it the last tone carries on */}
+                <rect x={bx} y={floor} width={bw} height={H - floor} fill="url(#hatchFloor)" />
+                <rect x={bx} y={H} width={bw} height={H} fill="#fff" opacity={0.8} />
               </mask>
-              <rect x={0} y={floor} width={W} height={H - floor} fill="url(#inkLine)" mask="url(#hatchFloorMask)" opacity={dark ? 0.9 : 0.7} />
+              <rect x={bx} y={floor} width={bw} height={floorH} fill="url(#inkLine)" mask="url(#hatchFloorMask)" opacity={dark ? 0.9 : 0.7} />
               {[0.14, 0.34, 0.6].map((f) => (
-                <line key={f} x1={0} y1={floor + (H - floor) * f} x2={W} y2={floor + (H - floor) * f} stroke={gray(k.ink)} strokeWidth={2.5} strokeDasharray="10 9" opacity={0.3} />
+                <line key={f} x1={bx} y1={floor + (H - floor) * f} x2={W - bx} y2={floor + (H - floor) * f} stroke={gray(k.ink)} strokeWidth={2.5} strokeDasharray="10 9" opacity={0.3} />
               ))}
             </>
           ) : (
             <>
-              <rect x={0} y={floor} width={W} height={H - floor} fill="#000" opacity={0.07} />
-              <rect x={0} y={floor} width={W} height={60} fill="url(#floorFade)" opacity={0.05} />
-              <line x1={0} y1={floor} x2={W} y2={floor} stroke={gray(k.ink)} strokeWidth={3} opacity={0.1} />
+              <rect x={bx} y={floor} width={bw} height={floorH} fill="#000" opacity={0.07} />
+              <rect x={bx} y={floor} width={bw} height={60} fill="url(#floorFade)" opacity={0.05} />
+              <line x1={bx} y1={floor} x2={W - bx} y2={floor} stroke={gray(k.ink)} strokeWidth={3} opacity={0.1} />
               {[0.17, 0.4, 0.7].map((f) => (
-                <line key={f} x1={0} y1={floor + (H - floor) * f} x2={W} y2={floor + (H - floor) * f} stroke={gray(k.ink)} strokeWidth={2.5} opacity={0.045} />
+                <line key={f} x1={bx} y1={floor + (H - floor) * f} x2={W - bx} y2={floor + (H - floor) * f} stroke={gray(k.ink)} strokeWidth={2.5} opacity={0.045} />
               ))}
             </>
           )}

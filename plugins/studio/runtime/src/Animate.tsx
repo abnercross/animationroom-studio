@@ -411,7 +411,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
             </>
           )}
           {k.finish?.rough && (
-            <filter id="roughInk" x="0" y="0" width="100%" height="100%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+            <filter id="roughInk" x={-W / 2} y={-H / 2} width={W * 2} height={H * 2} filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
               <feTurbulence type="fractalNoise" baseFrequency={0.035} numOctaves={2} seed={7} result="n" />
               <feDisplacementMap in="SourceGraphic" in2="n" scale={k.finish.rough} xChannelSelector="R" yChannelSelector="G" />
             </filter>
