@@ -44,8 +44,13 @@ export type Storyboard = {
 };
 export type AnimateProps = {style: Style; storyboard: Storyboard; silent?: boolean};
 
+// Under the stitch filter a block past its `out` still costs a lot of time, though it draws nothing. 0.6 s is longer than any exit.
+// Only stitched styles skip it: the rough filter's lines depend on the size of everything in the scene, hidden blocks included.
+const OUT_MARGIN = 0.6;
+
 const renderBlock = (b: Block, t: number, k: StyleTokens): React.ReactNode => {
   if (b.at !== undefined && t < b.at - 0.001 && b.type !== 'group' && b.type !== 'morph') return null;
+  if (k.finish?.stitch && typeof b.out === 'number' && t > b.out + OUT_MARGIN) return null;
   switch (b.type) {
     case 'path':
       return <PathBlock b={b} t={t} k={k} />;
