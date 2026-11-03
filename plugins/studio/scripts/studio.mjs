@@ -177,6 +177,8 @@ async function cmdRuntime() {
     const src = path.join(PLUGIN_ROOT, EDIT ? "edit-runtime" : "runtime");
     if (!fs.existsSync(path.join(src, "package.json"))) fail(`runtime template missing at ${src}`);
     const want = JSON.parse(fs.readFileSync(path.join(src, "package.json"), "utf8")).version;
+    // The Edit engine's own pages are replaced whole, so pages of an older Edit never linger (Animate's are left as they were).
+    if (EDIT) for (const sub of ["src", "public"]) fs.rmSync(path.join(RUNTIME, sub), { recursive: true, force: true });
     copyDir(src, RUNTIME);
     // Use the shipped lockfile when there is one, so every member gets exactly the tested versions.
     const hasLock = fs.existsSync(path.join(src, "package-lock.json"));
@@ -213,7 +215,7 @@ async function cmdRuntime() {
     const outFile = path.resolve(String(opt.out || path.join(os.homedir(), "animationroom-test.mp4")));
     fs.mkdirSync(path.dirname(outFile), { recursive: true });
     const props = path.join(RUNTIME, ".test-props.json");
-    fs.writeFileSync(props, JSON.stringify(EDIT ? { plan: { duration: 2, video: { src: "", width: 720, height: 1280 }, face: { x: 0.5, y: 0.4 }, words: [], moments: [] } } : { name: opt.name ? String(opt.name) : "" }));
+    fs.writeFileSync(props, JSON.stringify(EDIT ? {} : { name: opt.name ? String(opt.name) : "" }));
     const t0 = Date.now();
     const args = [remotionCli(), "render", "src/index.ts", EDIT ? "Edit" : "Hello", outFile, `--props=${props}`, "--log=error"];
     const browserExe = readConfig().browserExecutable;

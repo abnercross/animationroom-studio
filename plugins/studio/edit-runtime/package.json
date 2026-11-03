@@ -1,18 +1,22 @@
 {
   "name": "animationroom-edit-runtime",
   "private": true,
-  "version": "0.6.0",
-  "description": "Render runtime for Animation Room Studio Edit mode: talking head video in, finished edit out. Separate from the Animate runtime. Installed once into the plugin data folder as runtime-edit.",
+  "version": "0.9.0",
+  "description": "Render engine for Animation Room Studio Edit mode. Each Edit video is its own small Remotion project (edit-starter) that uses these packages. Separate from the Animate runtime. Installed once into the plugin data folder as runtime-edit.",
   "dependencies": {
+    "@mediapipe/tasks-vision": "0.10.35",
     "@remotion/bundler": "4.0.533",
     "@remotion/cli": "4.0.533",
     "@remotion/fonts": "4.0.533",
+    "@remotion/google-fonts": "4.0.533",
     "@remotion/install-whisper-cpp": "4.0.533",
     "@remotion/media": "4.0.533",
+    "@remotion/paths": "4.0.533",
     "@remotion/renderer": "4.0.533",
+    "@remotion/transitions": "4.0.533",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "remotion": "4.0.533"
   },
-  "studioEditEngine": "0.6.0"
+  "studioEditEngine": "1.0.0"
 }

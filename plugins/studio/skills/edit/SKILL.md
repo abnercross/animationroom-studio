@@ -1,6 +1,6 @@
 ---
 name: edit
-description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the mistakes and silences, frames the person, adds simple graphics and dynamic typography tied to what they say. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add graphics", drops in a video of themselves talking, or names an Edit style such as Clean Grid. Portuguese (Brazil) works too: "edite meu vídeo", "edite este vídeo meu falando", "corte as pausas e adicione gráficos". Answer in Portuguese when the person writes in Portuguese.
+description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the silences, then animates the idea of each sentence with the real characters, props and drawings of any Animation Room style, in one of three layouts: Cutout Above, Cutout Around or Frame. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add animation", or drops in a video of themselves talking. Portuguese (Brazil) works too: "edite meu vídeo", "edite este vídeo meu falando", "corte as pausas e adicione animação". Answer in Portuguese when the person writes in Portuguese.
 ---
 
 # Edit mode
@@ -15,7 +15,7 @@ Reply in the language the person writes in, from the first message to the last. 
 
 ## How this mode works, in one paragraph
 
-A ready made engine draws everything. You do not write video code. You fill in a short plan file (cuts, then moments), the scripts check it and render it. The work moves through gates, and **nothing moves past a gate until the member has approved it**: the cuts, then an 8 to 12 second sample, then the full video. Fixes change one entry in the plan and remake only that stretch. The original recording is never touched.
+The person gets two things: a clean edit of their recording, then a style applied to it. You write the scenes for this one video in Remotion, following Remotion's own official skills, inside a small project that already has the layers, captions, sound and checks. The work moves through gates, and **nothing moves past a gate until the member has approved it**: the cuts, then the scene table, then a sample of about 10 seconds, then the full video. The original recording is never touched. If they ask for Clean Grid (an older editing look), tell them kindly it was replaced by this one, and offer a calm style such as Blueprint instead.
 
 ## Paths and helpers
 
@@ -23,6 +23,7 @@ A ready made engine draws everything. You do not write video code. You fill in a
 - Find the Node to use by running the setup check (`skills/setup/scripts/check.sh`, or `check.ps1` on Windows) and reading `NODE_USE`.
 - `EDIT` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/edit.mjs"` and `STUDIO` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/studio.mjs"`. Always add `--data "${CLAUDE_PLUGIN_DATA}"`.
 - Scripts end with `KEY=value` lines. `RESULT=failed` comes with a `REASON` written for the person; pass it on in your own words and do what it says. Lines starting `warning:` or `problem:` are for you to act on, not to read out.
+- Commands below run the same way: `EDIT prepare`, `EDIT cutout`, `EDIT project`, and so on, always with `--data`.
 - Video tools (ffmpeg): the studio looks after them. The scripts find a full copy or install one into the studio folder by themselves (one line on screen, about a minute, once). Never install ffmpeg yourself (no brew, winget or downloads) and never ask the person about it. If you need to cut or convert a file yourself, run `STUDIO ffmpeg install` and use the `FFMPEG_PATH` it prints.
 
 ## Step 0. Is everything ready?
@@ -32,22 +33,26 @@ A ready made engine draws everything. You do not write video code. You fill in a
 3. The speech engine: if the check says `SPEECH_ENGINE=not_yet`, tell them it is a one time 1.5 GB download (10 to 20 minutes) that understands every language, and run `STUDIO transcriber install`. If it prints `NEEDS_APPLE_TOOLS=yes`, follow the setup guide (Step 6), otherwise say nothing about developer tools.
 4. Their videos folder: if `STUDIO config get videosFolder` is empty, run `STUDIO folders`, then tell them in plain words where it is (`VIDEOS_FOLDER`) and that it has three folders: **Drop videos here**, **Finished videos** and **Work in progress**. If it says the folder is in a synced place such as iCloud, use the suggested one instead.
 
+5. **First use of the new Edit.** Run `EDIT prepare`. It is quick and only does work once: it brings the edit engine up to date and fetches Remotion's official skills into the studio's own folder, where they stay out of the person's list of skills. If it did anything slow, say in one line "getting the editor ready, this only happens once". Its `REMOTION_SKILLS_FOLDER` is where you read them from in Step 7. If it prints `REMOTION_SKILLS=missing`, read https://www.remotion.dev/docs/ai/skills and try the procedure it gives in that same folder; if that fails too, carry on without them and do not mention it to the person.
+
 ## Step 1. The brief (ask only what is missing)
 
-Ask one question at a time and skip anything they already told you:
+One question at a time, skipping anything they already told you:
 
 1. What is the video for, and who watches it? (one sentence)
-2. **Which shape: vertical (9:16, for Reels, TikTok and Shorts) or horizontal (16:9, for YouTube or a website)?** Put it in the plan as `"format"`. If they are unsure, suggest vertical for social media and horizontal for a lesson or a website. Both can be made from the same recording later (a second plan with the other format). A vertical recording made into a horizontal video shows the person as a tall strip beside the graphics; say so if it applies.
-3. What should the viewer do at the end? (follow, save, book, nothing)
-4. Which style? Offer **Clean Grid** unless they name another from `STUDIO` catalog listing.
-5. **Do you want animated drawings too? None, a few, or lots.** A drawing is a small line picture that draws itself beside the words when the person says something it can show (a magnifier, a bottle and dropper, a target). Put the answer in the plan as `"drawings": "none"`, `"few"` or `"lots"`. If they are unsure, suggest a few.
-6. Anything to keep exactly as it is? (a phrase, a pause, a name)
+2. **Which style?** Show the names from `node animate.mjs styles` (in the scripts folder of the plugin), or take the one they named.
+3. **Which layout: Cutout Above, Cutout Around or Frame?** (In Portuguese say Recorte Acima, Recorte ao Redor and Quadro.) Offer all three in one short line each:
+   - **Cutout Above**: the person is cut out, and the animation plays in the free space above their head, like a strip of story over them. Calm, and the person stays the centre.
+   - **Cutout Around**: the person is cut out and stands inside the style's world: characters beside them, things walking behind them, a few pieces in front of them (a heart on their chest). The most immersive.
+   - **Frame**: the person sits in a frame that moves and changes shape with the story, and the animations live around it. A little faster to make, and suits videos with a lot of information.
+   If they are unsure, suggest Cutout Around. A request from the members page may already say. Never pick for them without saying so: the layout changes the whole video.
+4. Anything to keep exactly as it is? (a phrase, a pause, a name)
 
-Everything that appears on screen must come from what the person says. Never add prices, numbers, results or promises. If they want a name and role shown at the end, ask for them and use exactly that.
-
-If they have used Edit mode before, run `EDIT prefs show`. If it has saved looks, say so in one line and use them.
+The first version is vertical 9:16. Everything on screen must come from what the person says: no invented prices, numbers, results or promises.
 
 ## Step 2. Pick the video
+
+**Tip to give them once, in one line, before you start:** the edit uses the recording as it is, so they get the best result from one clean, final take. If they said a line twice or stumbled, they can trim it on their phone first or record that part again. Pauses and black frames are taken care of.
 
 `EDIT start` (or `EDIT start "<path>"` if they gave a path; a file from elsewhere is copied into Drop videos here, never moved). It prints `VIDEO`, `PROJECT` (the project's folder name, like `20261013 Skin treatment`), `WORK_FOLDER` and `FINISHED_FOLDER`. Work in `WORK_FOLDER` from now on. The same name is used in both places: drafts and plans in Work in progress, every exported version in Finished videos. If they dropped the file into the chat instead of the folder, tell them kindly that the file stays on the computer: ask them to put it in Drop videos here.
 
@@ -59,126 +64,120 @@ If they have used Edit mode before, run `EDIT prefs show`. If it has saved looks
 
 `EDIT cuts "<WORK_FOLDER>/analysis.json"`, then `EDIT cut "<VIDEO>" "<WORK_FOLDER>/cuts.json" --analysis "<WORK_FOLDER>/analysis.json" --out "<WORK_FOLDER>/edited.mp4"`.
 
-What the cuts do: drop earlier tries when a phrase was said again (the last try wins), shorten long silences to a natural pause, cut only inside quiet moments, and fade the sound for a split second at every cut so nothing clicks.
+What the cuts do: shorten long silences to a natural pause, remove black frames (phones leave one where the person trimmed the video), cut only inside quiet moments, and fade the sound for a split second at every cut so nothing clicks. Every word they said stays: their recording is their final take. Nothing is judged a retake, because a repeat is often said on purpose.
 
-Read the list that `cuts` prints. The speech engine can be wrong about timing, so use your judgement:
-- If a dropped part looks like it contains something the person wanted to keep, set `"keep": true` for it in `cuts.json`.
-- `cut` listens to its own result. Lines starting `warning:` tell you about a silence left over, or a phrase said twice. A phrase heard at the start of a part usually means the cut should start later. Open `analysis.json`, find the silence that ends just after the unwanted words, move that part's `from` to just before the silence ends (about 0.1 s earlier), and run `cut` again. Repeat until `CHECK=clean`.
+Read the list that `cuts` prints. Dropped parts are only silences and black pictures; a silence is measured from the sound itself, so leave them dropped.
+- `cut` listens to its own result. Lines starting `warning:` tell you about a silence or black picture left over: look at that spot in `analysis.json`, adjust the part's edge, and run `cut` again until `CHECK=clean`.
 - The words for everything that follows are in `edited.words.json` (made from the cut video itself, so they are exact).
 
-**Tell the member what was cut, in plain words** ("I removed three false starts and 18 seconds of pauses, the video is now 42 seconds"), then ask them to watch `edited.mp4` (open it with `STUDIO open`). Wait for their yes. Nothing visual happens before that. If they say a cut is wrong, set that part back to keep or move its edge, and run `cut` again.
+**Tell the member what was cut, in plain words** ("I shortened the pauses, 6 seconds in all, and removed three black frames; the video is now 42 seconds"), then ask them to watch `edited.mp4` (open it with `STUDIO open`). Wait for their yes. Nothing visual happens before that. If they hear a false start or a line said twice that they do not want, offer two ways: record that part again, or tell you the words to remove, and you mark that stretch `"keep": false` in `cuts.json` (split a part at the silence around those words if needed) and run `cut` again. Only remove words they asked you to remove.
 
 ## Step 5. Find the face
 
-`EDIT face "<WORK_FOLDER>/edited.mp4" --at 5` makes `face.png` with a red grid (10 by 10, heavier lines at the middle). Look at it and read, as fractions of the picture from the top left: `x` and `y` of the middle of the face (between the eyes and the nose) and `w`, how wide the head is. Write them into the plan as `"face": {"x": 0.55, "y": 0.52, "w": 0.33}`. After the plan exists, `EDIT track "<plan.json>"` follows the face through the video so the frame stays on the person if they move. If it warns that the face was lost often, check the numbers again.
+`EDIT face "<WORK_FOLDER>/edited.mp4" --at 5` makes `face.png` with a red grid (10 by 10, heavier lines at the middle). Look at it and read, as fractions of the picture from the top left: `x` and `y` of the middle of the face (between the eyes and the nose) and `w`, how wide the head is. You give these to `EDIT project` in the next step as `--face x,y,w`, and it follows the face through the video. If it warns that the face was lost often, check the numbers again.
 
-## Step 6. The plan (the creative part)
+## Step 6. Set up the stage
 
-Tell them the idea in 4 to 6 short lines first: what shows when, and how it ends. Then write `plan.json` in the work folder.
+For **Cutout Above** and **Cutout Around**: run `EDIT cutout "<WORK_FOLDER>/edited.mp4"`. Say first that it takes a few minutes. If it prints `QUALITY=poor` or fails, do not push on: look at a frame or two, and tell them in plain words that this recording is hard to cut out (for example busy background, or the person moves a lot), and suggest the Frame layout for this video. If they want a Cutout anyway, carry on and say what to expect.
 
-```json
-{
-  "style": "clean-grid",
-  "format": "9:16",
-  "video": "edited.mp4",
-  "face": { "x": 0.55, "y": 0.52, "w": 0.33 },
-  "moments": [
-    { "type": "title", "from": "@why", "to": "@back+0.9", "kicker": "3 reasons", "text": "Why I always reassess a client" },
-    { "type": "list", "from": 18.5, "to": 25.0, "heading": "I find out", "items": [
-      { "text": "Nothing changed", "at": "@nothing" } ] }
-  ]
-}
-```
+Then `EDIT project "<WORK_FOLDER>" --mode above --style <id> --face x,y,w` (or `--mode around`, or `--mode frame`). It makes the project in `<WORK_FOLDER>/remotion`, sharing the installed engine, and prints the files you need. You only ever write `src/scenes.tsx` and `src/sound.json`. You may restyle `src/Captions.tsx`. Leave `Edit.tsx`, `kit.tsx`, `pieces.tsx`, `data.ts`, `Root.tsx` and the `src/animate` folder alone.
 
-Times are seconds on the edited video, or word references from `edited.words.json`: `"@reasons"`, `"@back+0.9"`, `"@know#2"` (second time that word is said).
+## Step 7. Read before writing
 
-**Moments (Clean Grid)**
+1. Read `<REMOTION_SKILLS_FOLDER>/remotion-best-practices/SKILL.md` and the parts it points you to for what this video needs (markup, and video if you touch it). Follow them.
+2. Read the whole style guide (`STYLE_GUIDE`): its look and feel (colours, shapes, light, movement, sound, what things mean) and its pieces (cast, moods, poses, props, drawings). Open the reference sheets it names when it has them. You use the style's real pieces, see below.
+3. Read the words in `src/data.ts`.
 
-| type | what it is | fields |
-|---|---|---|
-| `title` | the idea of this part, big | `text`, optional `kicker` (small label above) |
-| `key` | one strong statement, one phrase underlined | `text`, optional `mark` (words from `text`), `kicker` |
-| `list` | up to 3 short points in vertical (4 in horizontal) that build as they are said | `items` (each with `text` and `at`), optional `heading` |
-| `number` | a figure counting up | `value`, optional `prefix`, `suffix`, `decimals`, `label` |
-| `cta` | the ask at the end | `text`, optional `action`, `name`, `role` |
-| `visual` | a line drawing that draws itself on a spoken word | `draw` (a name from the library), `at` (the word it appears on), optional `text` with `kicker` and `mark` (a headline beside it), `label` |
+## The style's own pieces
 
-Common fields: `layout` is `"window"` (default: the person moves into a frame and the graphic fills the page) or `"full"` (the person stays full screen and the text sits on a soft fade at the bottom, good for the ending). `tag` is a tiny label top left in window layout ("01"). 
+An Edit video uses the same characters, props and drawings as Animate, so the member's hero looks the same in both modes and in every video. Never draw a style's character or one of its ready made props again by hand.
 
-**Typography rule (always).** There is visible typography on screen at every moment, and it always comes from the voiceover. Where a graphic is up, the graphic is the typography. Everywhere else the system fills the stretch automatically with the spoken words as large, changing type: a phrase at a time, every word of it, each word lighting up as it is spoken, the key word underlined. You never write these. The layouts change from phrase to phrase (a big phrase low on the person, stacked lines, one huge key word, a phrase in the grid area beside the frame, and the ordinary subtitle strip as one option among them), and the person's frame opens for some stretches and not others. A new phrase takes over from the last with no gap, so nothing blinks. So plan graphics for the ideas that deserve one, and leave the rest to the typography; do not try to cover every second with a graphic. `"typography": {"strip": false}` at the top of the plan turns the ordinary subtitle strip layout off if the member does not want it. Do not write a `captions` field (it is no longer used).
+- `<Pieces blocks={[...]} />` from `pieces.tsx` draws Animate pieces. Write each block exactly as in an Animate storyboard (`person`, `prop`, `shape`, `path` and the style's own blocks, with `mood`, `pose`, `keys`, `enter`, `loop`, `out`), with times in seconds from `sec("word")` or `sec("word", 2)` instead of `@word`. Put it in `Behind` (passes behind the person or the frame) or `Stage`. `x`, `y` and `scale` on `Pieces` move a whole set, for example to follow the frame.
+- The cast, drawings and choices go in `scenes.tsx` as `export const CAST = {...}`, `DRAWINGS = {...}` (draw anything, in the guide's format), and `VARIANT` or `PALETTE` when the member chose one. Follow the guide for the member's choices: the female hero, the male hero, colours.
+- `<Scenery tint="peach" floor={555} />` is the style's own set (its chapter tint, soft glow and floor) for styles with tints. Use it in `Stage`, with `opacity` to fade one tint into the next.
+- `colour("coral")` gives a palette colour by name for anything you draw yourself, and for `<Say>` text.
+- Draw by hand only what no piece covers, in the style's look, and say so in your notes. Text still goes through `<Say>` in `Front`, never as text inside a piece.
+- Styles without characters (Blueprint, Cobalt Halo and others) work the same way: their paths, rings, hero shapes and drawings are pieces too.
+- Pieces are drawn in list order: something that sits on a character (a heart on the chest) comes after the character in the list.
+- When the frame moves, a character changes place like a cut in Animate: end its block with `out` just before the move and start a new block for the new place once the frame has landed. A character keyed across the screen slides behind the frame.
+- Pieces are as big as Animate makes them. Characters read well at `scale` 1 to 1.3.
+- `<Pieces follow blocks={[...]} />` moves the pieces with the person's face: place them for the face where `FACE` in `data.ts` says it is (x times 1080, y times 1920), and they stay on the person as they move. The text check leaves pieces out, so pieces in `Front` are fine.
 
-**Drawings (only if the member asked for them).** A `visual` moment puts one drawing from the library on the page beside the person's frame. `EDIT drawings --words "<WORK_FOLDER>/edited.words.json"` lists every drawing with what it stands for, and prints `suggest:` lines: the spoken words that match a drawing, already written as word references. They are suggestions only. You decide, and you may pick a drawing the list did not suggest when the link to what is said is plain to see.
+## Step 8. The scene table (gate 2)
 
-```json
-{ "type": "visual", "from": 3.2, "to": 7.0, "draw": "magnifier", "at": "@actually", "kicker": "One", "text": "What's actually going on with your skin", "mark": "actually going on" }
-{ "type": "visual", "from": 7.0, "to": 9.8, "draw": "branches", "at": "@concern" }
-```
+Before any code, show a short table: when, the words said, what happens on screen, and which background. Invent the metaphors from this script: every element must answer "why does this belong to this sentence?", never reuse something from another video. Name the ending. Ask for their yes.
 
-- With `text` the drawing sits next to its headline (use it in place of a `title` or `key` for that idea). Without `text` it stands alone and the spoken words run beside it on their own, so there is still type on screen.
-- `at` is the spoken word the drawing appears on. It must be a word said inside the moment, and the drawing needs at least 1.5 seconds on screen after that, so choose an early word of the phrase and end the moment late enough.
-- A drawing is always chosen from something the person says. Never use one to add an idea, and never invent a `label`: a label may only use the person's own words, and most drawings need none.
-- How many: none means none. A few is about one every 10 to 15 seconds, for the main ideas only. Lots is up to about one every 5 seconds. Use each drawing once in a video.
-- Drawings never cover the person and stay in the safe area. They are not available in the `full` layout.
+Good habits from earlier videos:
+- In the Cutout layouts, alternate backgrounds: the real room for most of it and a full style stage for the three or four biggest moments, joined by fades of about half a second. The room stays dimmed (`LOOK.room`, brightness only). Darken its top, where light graphics and text live.
+- Keep one thing that travels through the video instead of a new object per sentence, when the style allows.
 
-How to plan it well:
-- Read the whole transcript first. Find the ideas, one per moment. Use the person's own words on screen, short ones.
-- Aim for a graphic every 4 to 8 seconds, for the ideas that deserve one. The stretches in between are filled with the spoken words as dynamic typography, so they are never empty.
-- Keep each moment on screen at least 2 seconds, long enough to read. Vary the types; do not use the same type three times in a row.
-- Neighbouring window moments should touch or leave at least 1.8 seconds, so the frame does not close and reopen.
-- Start full screen (the hook) when the first seconds are the person just saying hello, and end full screen when there is a closing line.
-- Use a `number` only for a figure the person actually says. Never invent one.
+## The two Cutout layouts
 
-Run `EDIT validate "<plan.json>" --words "<WORK_FOLDER>/edited.words.json"`. Fix every `problem:`. Read every `warning:` and decide: change the plan, or accept it knowingly. Validate also reports how much typography was generated (`TYPOGRAPHY_PHRASES`, `TYPOGRAPHY_LAYOUTS`). The checks cover:
-- pace, frames closing and reopening, and graphics too short to read;
-- any word or number on screen that the person did not say;
-- text that will not fit its space, and list lines that would shrink too small;
-- captions or graphics past the safe line where the app's buttons sit;
-- the head cut off by the frame (top, sides or chin) at any point of the video, following the face track;
-- end text, and any generated typography on full screen, sitting over the chin or face;
-- drawings: tied to a spoken word, on screen long enough, inside the safe area, clear of the person and of their own text, words beside a drawing that stands alone, and no more drawings than the member asked for. Validate prints the count as `DRAWINGS`.
+Look at `face.png` first: where the head and shoulders are tells you where the free space is.
 
-The fixes for layout warnings are look settings in the plan's `tokens`, for example `"tokens": {"window": {"anchorY": 0.5, "zoom": 1.0}}` for the head in the frame, or `"caption": {"y": 1450}` for the subtitle strip layout, or shorter text. Positions have separate starting values for each shape, so a change only affects the shape the plan is in. Look settings for 16:9 and 9:16 are saved separately.
+**Cutout Above.** The story plays in the free band above the head. Put a floor line (`Scenery` `floor`) a little above the hair, characters at `scale` 1 to 1.3 standing on it, props beside them, and short titles at the very top. Everything sits in `Behind`, so it passes behind the head if the person rises. Keep the band busy enough that it reads as a little stage, not as icons floating.
 
-## Step 7. Sample (gate 2)
+**Cutout Around.** The person stands inside the style's world:
+- The set fills the whole picture and the floor runs behind their shoulders (about where the shoulders start in `face.png`), so it shows at both sides.
+- Characters stand on both sides of the head, at `scale` about 1.3, partly hidden behind the person where they overlap. The band above the head is the sky: things that are thought of or named (a house, a laptop, a star, a heart) float there.
+- Use the person as part of the scene: a character leaves by walking behind them (a key on `x` from one side to the other side and out), or crosses to the other side the same way. Check a still in the middle of the walk.
+- Two or three moments come in front of the person, in `Front` with `follow`: a heart on their chest, sparkles at their hand. Keep these few and short, clear of the face and above the captions.
+- Their face stays clear of every piece.
 
-`EDIT sample "<plan.json>" --words "<WORK_FOLDER>/edited.words.json"` makes a 10 second sample of the most varied stretch (`SAMPLE_FROM`, `SAMPLE_TO`; or add `--range 12,22` for a stretch they ask about). It takes under a minute. Open it for them and ask them to watch it on a phone if they can: is the person well framed, is the text easy to read, is it calm enough? Wait for their answer. A sample they approve is the pattern for the whole video.
+## The Frame look is a dance, not a layout
 
-If they want a change, make it in `plan.json` (or in `tokens` for the look, for example `"tokens": {"window": {"zoom": 1.25}, "caption": {"size": 66}}`), and make the sample again. Change only what they asked.
+The frame is a character. It must move and change shape with the story, and the animations must always look attached to it. A frame parked in one place with graphics floating far away is the mistake to avoid.
 
-## Step 8. The full video (gate 3)
+- **Move it on the story's beats**, about every 4 to 8 seconds, with `FRAMES`: full screen on the opening hook and on strong personal lines, `bottom` when graphics need the top, `narrow` when things come in from both sides, `round` inside a ring, a clock or a lens, `left` or `right` for comparisons, your own `box` for anything else. Name these moves in the scene table.
+- **Never type a position for a graphic** that has to follow the frame. Place it from where the frame is right now (pieces too: plan each move of the frame and put the pieces in the space it leaves): `frameBox(f)` gives its box, `spaceAt(f, "above")` the free space on a side, and `<Around side="above" w={600} h={400}>` holds a drawing against that edge, following the frame and fitting the space.
+- **Keep things touching.** Graphics sit within about 30 to 60 pixels of the frame, or actually touch it: a line that ends on its edge, an arrow landing on its top, a ring around it, cards sliding out from behind it. Draw things in `Stage` or `Behind` to pass behind the frame, in `Front` to overlap its edge.
+- **Let the frame act on things**: it pushes a graphic aside as it grows, swallows a shape, or reveals one when it moves away.
+- Big empty areas far from the frame mean the frame is the wrong size or in the wrong place. Change `FRAMES` first.
 
-Make a draft first when they might want changes: `EDIT render "<plan.json>" --words "<...edited.words.json>"` (a draft in the work folder, checked as a file). When they are happy, make the final:
+## Step 9. Write the scenes
 
-`EDIT render "<plan.json>" --words "<...edited.words.json>" --final --name "<short name of the video>" --note "<what this version is>"`
+Fill `src/scenes.tsx`, keeping its exports: `TAIL_SECONDS` (a few seconds of ending without the person, or 0), `LOOK`, `FRAMES` (Frame look: where the frame goes), `Stage`, `Behind`, `Front`.
 
-If the recording was quiet (phone recordings often are), the export raises the sound to a normal phone level on its own and prints `LOUDNESS=raised`; mention it in one line. It saves the plan as the next version (V01, V02, and so on, in the work folder), writes the video into this project's folder in **Finished videos** (`FINISHED_FOLDER`) as `<name> V01.mp4`, and then checks the file itself: length, sound, long silences, black frames, loudness, and it listens to the result for any phrase said twice. `CHECK=clean` means it passed. Any `warning:` lines are yours to fix before you hand it over, or to mention honestly.
+- Time everything from the words with `cue("word")` or `cue("word", 2)` from `kit.tsx`, never with a typed frame number that nobody can check. Each thing enters on its word. Call `cue` and `sec` inside components or functions, never at the top of the file: `FRAMES` is read while `kit.tsx` loads, so for it look the word up in `WORDS` from `data.ts` yourself.
+- `useCurrentFrame()` drives all movement. No CSS animations, no timers, no `Math.random` (use Remotion's `random`).
+- **All text goes through `<Say>` in `Front`**, plus `<Captions />`. Never put text in `Behind` or draw it in SVG: the check cannot see it there, and in the Cutout layouts it would pass behind the person.
+- `faceAt(frame)` tells you where the face is, to keep graphics clear of it.
+- In a tail, cover the video yourself in `Front` with a full page, before the footage runs out, and put `<NoPerson />` from `kit.tsx` inside it while the person is hidden.
+- `src/sound.json` is a list such as `[{ "kind": "pop", "at": 3.2 }]` in seconds on the words: `pop`, `whoosh`, `thump`, `chime`, with an optional `g` to make it softer. The music comes from the style by itself. Use effects sparingly; whooshes are heard more than you expect.
+- No hyphens, en dashes or em dashes in any on screen text.
 
-Tell them where the file is, how long it is, and open it for them. Ask them to watch it from start to end once.
+## Step 10. Check, look, sample (gate 3)
 
-**Timeline preview (optional, offer it after the final).** `EDIT preview "<plan.json>" --words "<...edited.words.json>"` opens the edit on the Remotion timeline and prints `PREVIEW_URL`. Open that address (in the built in browser, or tell them to open it in their own). They see the video with its sound waveform, every graphic and every phrase of typography as its own named bar, and can scrub, pause and play. It shows the plan, not the exported file, so playback can be a little slower than the final video. If you change the plan, run `preview` again and ask them to reload the page. When they are done, `EDIT preview --stop`.
+1. `EDIT scenecheck "<WORK_FOLDER>"` compiles the code and measures all text against the face and the phone's buttons. Fix every `problem:` line, and code errors, by yourself. Repeat until `RESULT=clean`. The person never sees this part.
+2. `EDIT scenestills "<WORK_FOLDER>" --at <times>`, with times in the middle of your key moments, and look at the sheet honestly: does each moment match its sentence, does anything overlap, does it look like the style? Fix what you see.
+3. `EDIT scenesample "<WORK_FOLDER>" --range a,b` for about 10 seconds with the most going on, open it with `STUDIO open`, and ask if they like the direction.
 
-## Step 9. Fixes (only the part that is wrong)
+## Step 11. The full video (gate 4)
 
-Ask for each fix as: where, what is wrong, what it should be. Change only that entry in `plan.json` and make that stretch only:
+`EDIT scenerender "<WORK_FOLDER>" --final --name "<short name>" --note "<what this version is>"`. It saves the code as the next version and writes `<name> V01.mp4` in this project's **Finished videos** folder, then checks the file (length, sound, black frames, and it listens for repeated phrases). Fix any `warning:` line or mention it honestly. Tell them where the file is, and ask them to watch it once from start to end.
 
-`EDIT render "<plan.json>" --words "<...>" --range 12.5,20`
+If they want to see or adjust it on a timeline, `EDIT sceneopen "<WORK_FOLDER>"` opens Remotion Studio and prints the address; `EDIT sceneopen --stop` closes it.
 
-It remakes those seconds, plus a second either side so the joins can be judged. Show it. If the same problem comes back, stop trying things: look for the cause (the validate warnings, the face guide, the cuts) and make the smallest change. When approved, make a new final; it becomes the next version and the earlier one stays untouched.
+## Step 12. The colour grade is their choice (always ask, never apply by yourself)
 
-If a fix is to the cuts (a clipped word, a leftover pause), change `cuts.json`, run `cut` again, and then run `EDIT track` and `validate` again before rendering, because the times moved.
+The footage keeps its own colours through the whole process. Never put a colour change in `LOOK`, and never grade without a clear yes. When they are happy with the full video, make this the last offer:
 
-## Step 10. Keep what worked
+1. Pick the style's main colour from its guide or tokens, and run `EDIT scenegrade "<WORK_FOLDER>" --tint "#hex" --at <a time when the person is well in view>`. It makes one picture: the same frame without the colour grade on the left and with it on the right. Show it to them.
+2. Ask one question with three answers: **blend the video with the style** (the picture they just saw), **my own colour grade** (they describe it in words, such as warmer, cooler, less saturated, or show a reference), or **no colour grade**.
+3. Own colour grade: translate their words into `--tint`, `--strength` (the first picture uses 1, which is subtle; 1.6 is clearer, 2.5 is strong) and `--saturate` (1 is unchanged), make a new picture and ask again until they like it.
+4. On a yes, `EDIT scenegrade "<WORK_FOLDER>" --tint "#hex" --strength <n> --saturate <n> --apply` (the same numbers they approved; for the first picture they saw, leave both out), then `scenerender --final`: it becomes the next version and the earlier one stays. With no colour grade nothing changes and no new render is needed; `--none` takes one away later.
 
-When they approve the final, ask: "Would you like me to remember this look for your next videos?" If yes, put the look changes they approved into the plan's `"tokens"` and run `EDIT prefs save "<plan.json>"`. This saves only the look (caption size, frame size and position), never the words or facts of this video. Next time, `EDIT prefs show` and use them.
+## Step 13. Fixes
 
-Saved looks are kept separately for each shape (9:16 and 16:9). Offer once, in one line, to make a variation: `EDIT variant "<plan.json>" --name B --set moments.0.text="Another title" --note "testing a different opening"` makes a copy with that one change and records it in `variations.csv` in the work folder. Render it as its own final. Say honestly that a preview cannot tell them which version will perform better.
+Ask where, what is wrong, what it should be. Change only that part of `scenes.tsx` or `sound.json`, run `scenecheck`, then `scenesample --range` around it. A sound only change still needs `scenerender`. When approved, make a new final: it becomes the next version and the earlier one stays. If a fix is to the cuts, run `cut` again, then `cutout` for the Cutout layouts and `project` again, because the times moved; check every `cue` still lands.
 
-When they are done with the project, tell them in one line that Drop videos here can be kept empty and offer: "Shall I move your original recording into the project folder so Drop videos here stays empty?" Only after a yes, run `STUDIO project --project "<PROJECT>" --original "<VIDEO>"`; it moves the recording into `Original` inside the project's Finished videos folder. If they ask for a fix later that needs the recording again (a new cut), use it from there. Then offer to clear the work folder for this job (the cut video and drafts are large). Only delete after they say yes, and never touch the original or Finished videos.
+When they are done with the project, tell them in one line that Drop videos here can be kept empty and offer: "Shall I move your original recording into the project folder so Drop videos here stays empty?" Only after a yes, run `STUDIO project --project "<PROJECT>" --original "<VIDEO>"`.
 
 ## Rules that always hold
 
 - The original recording is never changed or deleted. It is only moved, with their yes, from Drop videos here into the project's own Finished videos folder, never anywhere else.
 - Everything on screen comes from what the person said. No invented numbers, names, prices or results. For health, money or similar topics, add no promises and no advice.
-- Nothing past a gate without the member's yes: cuts, then sample, then the full video.
+- Nothing past a gate without the member's yes: cuts, then scene table, then sample, then the full video.
+- The colour grade is offered at the end and is never applied without their yes.
 - One change at a time when fixing, and say what you left alone.
 - Be honest about what you could not check. You have not watched the video play, you have seen still pictures and read the checks. Say so, and ask them to watch it.

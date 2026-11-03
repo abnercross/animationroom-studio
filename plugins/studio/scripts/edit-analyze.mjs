@@ -34,6 +34,12 @@ export function energyCurve(video) {
   return curve;
 }
 
+// Black frames anywhere in the picture, even a single one: phones leave them where the member trimmed the video.
+export function findBlack(video) {
+  const r = ff(["-hide_banner", "-i", video, "-an", "-vf", "blackdetect=d=0:pix_th=0.10", "-f", "null", "-"], { allowFail: true }).stderr;
+  return [...r.matchAll(/black_start:([\d.]+) black_end:([\d.]+)/g)].map((m) => ({ from: +(+m[1]).toFixed(3), to: +(+m[2]).toFixed(3) })).filter((b) => b.to > b.from);
+}
+
 // The speech engine sometimes stamps several words with the same moment. Where that happens, transcribe just
 // that stretch of sound again (between the silences around it) and use its timings instead.
 async function repairWords(video, words, silences, duration) {
@@ -78,7 +84,7 @@ export async function analyze(video, workDir, prefix = "") {
   const language = words.language;
   words = fixed.words;
   if (fixed.repaired) out("TIMING_REPAIRED", fixed.repaired);
-  const a = { video: path.basename(video), ...meta, language, noiseDb: sil.level, silences: sil.list, words, energy: energyCurve(video) };
+  const a = { video: path.basename(video), ...meta, language, noiseDb: sil.level, silences: sil.list, black: findBlack(video), words, energy: energyCurve(video) };
   fs.mkdirSync(workDir, { recursive: true });
   writeJson(path.join(workDir, `${prefix}analysis.json`), a);
   writeJson(path.join(workDir, `${prefix}words.json`), words);

@@ -1,57 +1,20 @@
 // Edit mode step 2: decide what to keep, and make the cuts. Everything is on video time.
 //
 // Rules, in plain words:
-//  1. A restart (the same words said again soon after) drops the earlier try and keeps the last one.
+//  1. Every word stays. The member records (or trims) their final, good take; nothing is judged a retake
+//     (Abner, 3 Nov 2026: a repeat said on purpose was being cut, and detecting retakes was not worth the risk).
 //  2. Silences longer than a natural pause are shortened. A pause after a sentence stays a little longer.
-//  3. A cut always lands inside a silence or between two words, never inside a word, and every cut
+//  3. Black frames (left at the joins when the member trimmed the video on their phone) are cut out.
+//  4. A cut always lands inside a silence or between two words, never inside a word, and every cut
 //     has a tiny sound fade so it cannot click.
-import fs from "node:fs";
-import path from "node:path";
 import { ALIGN, ff, fail, probe } from "./edit-core.mjs";
 
-const norm = (s) => s.toLowerCase().replace(/[‘’]/g, "'").replace(/[^\p{L}\p{N}']/gu, "");
 const endsSentence = (w) => /[.?!]["')]*$/.test(w[2]);
-
-// Words to drop because the speaker said them again afterwards. The last try always wins.
-export function findRestarts(words, silences) {
-  const n = words.map((w) => norm(w[2]));
-  const drop = new Map(); // word index -> reason
-  const pauseBetween = (j) => j > 0 && silences.some((s) => s.from >= words[j - 1][0] - 0.05 && s.to <= words[j][1] + 0.15 && s.to - s.from >= 0.25);
-  const FILLER = new Set(["okay", "ok", "so", "um", "uh", "well", "like", "and", "right", "yeah"]);
-  // The same word twice in a row ("three three"): drop the first.
-  for (let i = 0; i + 1 < n.length; i++) if (n[i] && n[i] === n[i + 1] && words[i + 1][0] - words[i][1] < 0.5) drop.set(i, "word said twice");
-  const matchLen = (i, j) => { let k = 0; while (j + k < n.length && n[i + k] && n[i + k] === n[j + k] && !drop.has(i + k) && i + k < j) k++; return k; };
-  // A second try opens a phrase when it starts right after a breath (at most two filler words before it).
-  const opensPhrase = (j) => { let b = j; while (b > 0 && b > j - 3 && FILLER.has(n[b - 1])) b--; return j === 0 || pauseBetween(b) || endsSentence(words[b - 1]); };
-  // An aborted try stops within a few words and is followed by a pause.
-  const abortedAfter = (i, k) => { for (let x = i + k; x <= i + k + 3 && x < n.length; x++) if (pauseBetween(x)) return true; return false; };
-  for (let i = 0; i < n.length; i++) {
-    if (drop.has(i)) continue;
-    let best = null;
-    for (let j = i + 1; j < n.length && words[j][0] - words[i][0] < 20; j++) {
-      const k = matchLen(i, j);
-      if (k < 2) continue;
-      const long = k >= 3;
-      const short = k === 2 && n[i].length + n[i + 1].length >= 6 && opensPhrase(j) && abortedAfter(i, k);
-      if ((long || short) && (!best || k > best.k)) best = { j, k };
-    }
-    if (best) {
-      let from = i;
-      // Fillers that opened the earlier try ("okay so") go with it.
-      while (from > 0 && !drop.has(from - 1) && FILLER.has(n[from - 1]) && words[from][0] - words[from - 1][1] < 0.6) from--;
-      // ...and fillers that open the later try stay with the later try.
-      let end = best.j;
-      while (end - 1 > from && FILLER.has(n[end - 1]) && words[end][0] - words[end - 1][1] < 0.6) end--;
-      for (let x = from; x < end; x++) if (!drop.has(x)) drop.set(x, "said again later");
-    }
-  }
-  return drop;
-}
 
 export function proposeCuts(a, { pause = 0.3, sentencePause = 0.5, lead = 0.1, maxPause = 0.6, keepPause = 0.35 } = {}) {
   const { words, duration } = a;
   const sil = a.silences.filter((s) => s.to - s.from >= 0.3);
-  const restarts = findRestarts(words, sil);
+  const restarts = new Map(); // nothing is dropped for being said again; kept so the piece logic stays one shape
   // Real onset and offset of a word: snap to the silence edge when one is right there.
   const onset = (w) => { const s = sil.find((x) => Math.abs(x.to - w[0]) < 0.3); return s ? s.to : w[0]; };
   const offset = (w) => { const s = sil.find((x) => Math.abs(x.from - w[1]) < 0.3 || (x.from <= w[1] && x.to >= w[1])); return s ? Math.max(w[0] + 0.05, s.from) : w[1]; };
@@ -145,15 +108,29 @@ export function proposeCuts(a, { pause = 0.3, sentencePause = 0.5, lead = 0.1, m
       if (c.to < duration - 0.05) c.to = snap(c.to, c.from + 0.5, next ? next.from - 0.05 : duration);
     });
   }
+  // Black frames are carved out of whatever is kept around them, to the frame (three decimals, not two).
+  for (const b of a.black || []) {
+    for (let i = cuts.length - 1; i >= 0; i--) {
+      const c = cuts[i];
+      if (b.to <= c.from || b.from >= c.to) continue;
+      const parts = [];
+      if (b.from - c.from > 0.05) parts.push({ ...c, to: +b.from.toFixed(3) });
+      if (c.to - b.to > 0.05) parts.push({ ...c, from: +b.to.toFixed(3) });
+      parts.forEach((p) => { p.text = words.filter((w) => (w[0] + w[1]) / 2 >= p.from && (w[0] + w[1]) / 2 < p.to).map((w) => w[2]).join(" "); });
+      cuts.splice(i, 1, ...parts);
+    }
+  }
   // Fill the timeline: whatever is not kept is listed with its reason, so nothing disappears silently.
   const all = [];
   let t = 0;
   const dropText = (from, to) => words.filter((w) => w[0] >= from - 0.01 && w[0] < to).map((w) => w[2]).join(" ");
+  const isBlack = (from, to) => (a.black || []).some((b) => b.from < to && b.to > from);
   cuts.forEach((c) => {
-    if (c.from > t + 0.02) {
-      const said = dropText(t, c.from);
-      const why = said ? (pieces.find((p) => p.drop && p.words.some((w) => w[2] === said.split(" ")[0]))?.drop || "said again later") : "silence";
-      all.push({ from: +t.toFixed(2), to: c.from, keep: false, reason: said ? why : `silence ${(c.from - t).toFixed(1)} s`, text: said });
+    if (c.from > t + 0.005) {
+      // A silence is measured from the sound, so a word the speech engine stamped inside it is a timing slip:
+      // listing it would only invite putting it back.
+      const black = isBlack(t, c.from);
+      all.push({ from: +t.toFixed(3), to: c.from, keep: false, reason: black ? "black picture" : `silence ${(c.from - t).toFixed(1)} s`, text: black ? dropText(t, c.from) : "" });
     }
     all.push(c);
     t = c.to;
