@@ -221,14 +221,17 @@ async function sceneStills(work) {
   const times = opt.at ? String(opt.at).split(",").map(Number) : Array.from({ length: 12 }, (_, i) => +(((i + 0.5) / 12) * dur).toFixed(2));
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "ar-stills-"));
   const browser = await openBrowser("chrome", { browserExecutable, logLevel: "error" });
+  // Stitched styles (Woven Tapestry) draw through a filter of one pixel points that vanishes when the frame is drawn
+  // small, so their stills are drawn at half size, as Animate does, and made small afterwards.
+  const stitched = /"stitch":\s*\d/.test(fs.readFileSync(path.join(work, "remotion", "src", "data.ts"), "utf8"));
   let i = 0;
   try {
-    for (const t of times) await renderStill({ composition, serveUrl, puppeteerInstance: browser, output: path.join(tmp, `s${String(i++).padStart(3, "0")}.png`), frame: Math.min(composition.durationInFrames - 1, Math.round(t * composition.fps)), scale: 0.3, logLevel: "error" });
+    for (const t of times) await renderStill({ composition, serveUrl, puppeteerInstance: browser, output: path.join(tmp, `s${String(i++).padStart(3, "0")}.png`), frame: Math.min(composition.durationInFrames - 1, Math.round(t * composition.fps)), scale: stitched ? 0.5 : 0.3, logLevel: "error" });
   } catch (e) { fail(`the scene code stops with an error: ${String(e.message || e).split("\n")[0]}`); }
   await browser.close({ silent: true });
   const file = path.resolve(String(opt.out || path.join(work, "scene stills.png")));
   const cols = Math.min(times.length, 6);
-  ff(["-v", "error", "-y", "-i", path.join(tmp, "s%03d.png"), "-vf", `tile=${cols}x${Math.ceil(times.length / cols)}:padding=8:color=white`, "-frames:v", "1", file]);
+  ff(["-v", "error", "-y", "-i", path.join(tmp, "s%03d.png"), "-vf", `${stitched ? "scale=324:-2," : ""}tile=${cols}x${Math.ceil(times.length / cols)}:padding=8:color=white`, "-frames:v", "1", file]);
   fs.rmSync(tmp, { recursive: true, force: true });
   out("RESULT", "stills");
   out("TIMES", times.join(","));
