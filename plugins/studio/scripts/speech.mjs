@@ -30,6 +30,42 @@ function detectLanguage(whisperDir, wav16) {
   return m ? m[1] : null;
 }
 
+// Signs that the speech engine looped instead of listening: a run of 8 or more words said again straight away,
+// word for word, or a word that ends before it starts. A person rarely repeats 8 words in a row exactly; when
+// they did, listening again gives the same repeat, so the first version is kept.
+export function looksWrong(words) {
+  const norm = words.map((w) => w[2].toLowerCase().replace(/[^\p{L}\p{N}]/gu, ""));
+  if (words.some((w) => w[1] < w[0] - 0.05)) return true;
+  for (let k = 8; k * 2 <= norm.length; k++) {
+    for (let i = 0; i + 2 * k <= norm.length; i++) {
+      let same = true;
+      for (let j = 0; j < k && same; j++) same = norm[i + j] === norm[i + k + j];
+      if (same) return true;
+    }
+  }
+  return false;
+}
+
+// Where to cut a recording for listening again: in the middle of pauses, so no word is split, with pieces of
+// at least 6 seconds (enough for the engine to follow a sentence) and at most 25 (inside one listening window).
+function piecesAtPauses(ff, wav16) {
+  const r = ff(["-hide_banner", "-i", wav16, "-af", "silencedetect=noise=-35dB:d=0.25", "-f", "null", "-"]);
+  const log = String(r.stderr);
+  const total = +(/Duration: (\d+):(\d+):([\d.]+)/.exec(log) || [0, 0, 0, 0]).slice(1).reduce((s, v, i) => s + v * [3600, 60, 1][i], 0);
+  const starts = [...log.matchAll(/silence_start: (-?[\d.]+)/g)].map((m) => Math.max(0, +m[1]));
+  const ends = [...log.matchAll(/silence_end: ([\d.]+)/g)].map((m) => +m[1]);
+  const mids = starts.map((s, i) => (s + (ends[i] ?? total)) / 2);
+  const cuts = [];
+  let from = 0;
+  for (const m of mids) {
+    while (m - from > 25) { cuts.push(from + 25); from += 25; }
+    if (m - from >= 6 && total - m >= 1) { cuts.push(m); from = m; }
+  }
+  while (total - from > 25) { cuts.push(from + 25); from += 25; }
+  const edges = [0, ...cuts, total];
+  return edges.slice(1).map((b, i) => [+edges[i].toFixed(3), +b.toFixed(3)]);
+}
+
 // input: any audio or video file. ff(args) runs ffmpeg. Returns [[start, end, word], ...] in seconds, with the
 // spoken language on the result as words.language. language: a code like "pt" to skip the check.
 export async function transcribeWords({ input, data: DATA, ff, fail, out, language }) {
@@ -71,37 +107,59 @@ export async function transcribeWords({ input, data: DATA, ff, fail, out, langua
     const DTW_OK = ["tiny", "tiny.en", "base", "base.en", "small", "small.en", "medium", "medium.en", "large-v1", "large-v2", "large-v3"];
     const exact = DTW_OK.includes(model);
     if (!exact) out("TRANSCRIBER_UPGRADE", `the ${model} model gives slightly looser word timing. For exact timing run: studio.mjs transcriber install --model medium.en`);
-    const res = await w.transcribe({
-      inputPath: wav16,
-      whisperPath: path.join(whisperDir, "whisper.cpp"),
-      whisperCppVersion: ready.whisperCpp,
-      model,
-      modelFolder: models,
-      language: lang,
-      tokenLevelTimestamps: exact,
-      splitOnWord: !exact,
-      tokensPerItem: 1,
-      printOutput: false,
-    });
+    const listen = async (additionalArgs, inputPath = wav16) => {
+      const res = await w.transcribe({
+        inputPath,
+        whisperPath: path.join(whisperDir, "whisper.cpp"),
+        whisperCppVersion: ready.whisperCpp,
+        model,
+        modelFolder: models,
+        language: lang,
+        tokenLevelTimestamps: exact,
+        splitOnWord: !exact,
+        tokensPerItem: 1,
+        printOutput: false,
+        additionalArgs,
+      });
+      const { captions } = w.toCaptions({ whisperCppOutput: res });
+      // Tokens that start with a space begin a new word; the rest attach to the previous word.
+      const list = [];
+      for (const c of captions) {
+        const txt = c.text;
+        if (!txt.trim() || /^\s*\[.*\]\s*$/.test(txt)) continue;
+        if (/^\s/.test(txt) || !list.length) list.push([c.startMs / 1000, c.endMs / 1000, txt.trim()]);
+        else {
+          const last = list[list.length - 1];
+          last[1] = c.endMs / 1000;
+          last[2] += txt.trim();
+        }
+      }
+      return { res, words: list.map(([a, b, t]) => [+a.toFixed(2), +b.toFixed(2), t]) };
+    };
+    let { res, words: heard } = await listen();
+    // The speech engine can fall into a loop: on one 17 s phone video it replaced the first 8 seconds with a copy
+    // of the sentence that follows. When the words look like that, listen again in pieces cut at the pauses (each
+    // piece the usual way, and one guess at a time if a piece still loops), and keep that version if it is clean.
+    if (looksWrong(heard)) {
+      const again = [];
+      for (const [a, b] of piecesAtPauses(ff, wav16)) {
+        const piece = path.join(tmp, `piece-${a.toFixed(2)}.wav`);
+        ff(["-v", "error", "-y", "-i", wav16, "-af", `atrim=start=${a}:end=${b},asetpts=PTS-STARTPTS`, "-c:a", "pcm_s16le", piece]);
+        let part = (await listen(undefined, piece)).words;
+        if (looksWrong(part)) part = (await listen(["--beam-size", "1", "--best-of", "1"], piece)).words;
+        again.push(...part.map(([s, e, t]) => [+(s + a).toFixed(2), +(e + a).toFixed(2), t]));
+      }
+      if (again.length && !looksWrong(again)) {
+        heard = again;
+        out("SPEECH_RETRIED", "yes");
+      }
+    }
     if (lang === "auto") {
       lang = (res.result && res.result.language) || "en";
       out("LANGUAGE", lang);
       out("LANGUAGE_NAME", languageName(lang));
     }
-    const { captions } = w.toCaptions({ whisperCppOutput: res });
-    // Tokens that start with a space begin a new word; the rest attach to the previous word.
-    words = [];
-    for (const c of captions) {
-      const txt = c.text;
-      if (!txt.trim() || /^\s*\[.*\]\s*$/.test(txt)) continue;
-      if (/^\s/.test(txt) || !words.length) words.push([c.startMs / 1000, c.endMs / 1000, txt.trim()]);
-      else {
-        const last = words[words.length - 1];
-        last[1] = c.endMs / 1000;
-        last[2] += txt.trim();
-      }
-    }
-    words = words.map(([a, b, t]) => [+a.toFixed(2), +b.toFixed(2), t]);
+    words = heard;
     words.language = lang;
   } else {
     // Claude's cloud workspace: faster whisper, when Python has it.
@@ -129,7 +187,9 @@ print(json.dumps({"language": lang, "words": [[round(x.start,2),round(x.end,2),x
   }
   // Drop sound tags like [BLANK_AUDIO] that the speech engine adds, and anything left empty.
   const spoken = words.language;
-  words = words.map((w) => [w[0], w[1], w[2].replace(/\s*[\[(][A-Za-z_ ]+[\])]/g, "").trim()]).filter((w) => w[2]);
+  // Letters with accents count too: in Portuguese the tag is [silêncio]. A word with no letter or digit (a music
+  // note the engine writes over a sound it cannot place) is dropped too.
+  words = words.map((w) => [w[0], w[1], w[2].replace(/\s*[\[(][\p{L}_ ]+[\])]/gu, "").trim()]).filter((w) => /[\p{L}\p{N}]/u.test(w[2]));
   words.language = spoken;
   return words;
 }
