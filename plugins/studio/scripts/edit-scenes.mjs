@@ -60,11 +60,12 @@ function stageVideo(edited, file) {
 }
 
 function project(work) {
-  // Three layouts the member picks from: above and around both cut the person out (scenes above their head, or
-  // around and behind them, with a few pieces in front); frame puts them in a moving frame. "cutout" is the old name of around.
+  // Three layouts the member picks from: split and around both cut the person out (split: the style plays in a band
+  // above their head and their own picture stays as it was below it; around: around and behind them, with a few pieces
+  // in front); frame puts them in a moving frame. Old names: "cutout" is around, "above" is split (Abner, 6 Nov 2026).
   const asked = String(opt.mode || ""), styleId = String(opt.style || "");
-  const layout = asked === "cutout" ? "around" : asked;
-  if (!["above", "around", "frame"].includes(layout)) fail("project needs --mode above, --mode around or --mode frame");
+  const layout = asked === "cutout" ? "around" : asked === "above" ? "split" : asked;
+  if (!["split", "around", "frame"].includes(layout)) fail("project needs --mode split, --mode around or --mode frame");
   const mode = layout === "frame" ? "frame" : "cutout";
   if (!styleId) fail("project needs --style <id>");
   const edited = path.join(work, "edited.mp4"), wordsFile = path.join(work, "edited.words.json");
@@ -110,7 +111,7 @@ function project(work) {
   const fps = Math.round(m.fps) || 30;
   fs.writeFileSync(path.join(dir, "src", "data.ts"), `// Made by edit.mjs project. Do not edit: it is remade from the cut video.
 export const MODE: "cutout" | "frame" = ${JSON.stringify(mode)};
-export const LAYOUT: "above" | "around" | "frame" = ${JSON.stringify(layout)};
+export const LAYOUT: "split" | "around" | "frame" = ${JSON.stringify(layout)};
 export const FPS = ${fps};
 export const WIDTH = 1080;
 export const HEIGHT = 1920;

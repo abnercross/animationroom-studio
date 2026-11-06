@@ -1,6 +1,6 @@
 ---
 name: edit
-description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the silences, then animates the idea of each sentence with the real characters, props and drawings of any Animation Room style, in one of three layouts: Cutout Above, Cutout Around or Frame. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add animation", or drops in a video of themselves talking. Portuguese (Brazil) works too: "edite meu vídeo", "edite este vídeo meu falando", "corte as pausas e adicione animação". Answer in Portuguese when the person writes in Portuguese.
+description: Animation Room Edit mode. Turns a recording of a person talking to camera into a finished edit: cuts the silences, then animates the idea of each sentence with the real characters, props and drawings of any Animation Room style, in one of three layouts: Split Screen, Cutout Around or Frame. Use when the user says "edit my video", "edit this talking head", "cut the pauses and add animation", or drops in a video of themselves talking. Portuguese (Brazil) works too: "edite meu vídeo", "edite este vídeo meu falando", "corte as pausas e adicione animação". Answer in Portuguese when the person writes in Portuguese.
 ---
 
 # Edit mode
@@ -41,8 +41,8 @@ One question at a time, skipping anything they already told you:
 
 1. What is the video for, and who watches it? (one sentence)
 2. **Which style?** Show the names from `node animate.mjs styles` (in the scripts folder of the plugin), or take the one they named.
-3. **Which layout: Cutout Above, Cutout Around or Frame?** (In Portuguese say Recorte Acima, Recorte ao Redor and Quadro.) Offer all three in one short line each:
-   - **Cutout Above**: the person is cut out, and the animation plays in the free space above their head, like a strip of story over them. Calm, and the person stays the centre.
+3. **Which layout: Split Screen, Cutout Around or Frame?** (In Portuguese say Tela Dividida, Recorte ao Redor and Quadro.) Offer all three in one short line each:
+   - **Split Screen**: the screen is split in two. The animation plays in a band at the top, and below it the person's own video stays exactly as they filmed it, background and all. Calm, and the person stays the centre. A request that says Cutout Above or Recorte Acima (the old name) means Split Screen.
    - **Cutout Around**: the person is cut out and stands inside the style's world: characters beside them, things walking behind them, a few pieces in front of them (a heart on their chest). The most immersive.
    - **Frame**: the person sits in a frame that moves and changes shape with the story, and the animations live around it. A little faster to make, and suits videos with a lot of information.
    If they are unsure, suggest Cutout Around. A request from the members page may already say. Never pick for them without saying so: the layout changes the whole video.
@@ -78,9 +78,9 @@ Read the list that `cuts` prints. Dropped parts are only silences and black pict
 
 ## Step 6. Set up the stage
 
-For **Cutout Above** and **Cutout Around**: run `EDIT cutout "<WORK_FOLDER>/edited.mp4"`. Say first that it takes a few minutes. If it prints `QUALITY=poor` or fails, do not push on: look at a frame or two, and tell them in plain words that this recording is hard to cut out (for example busy background, or the person moves a lot), and suggest the Frame layout for this video. If they want a Cutout anyway, carry on and say what to expect.
+For **Split Screen** and **Cutout Around**: run `EDIT cutout "<WORK_FOLDER>/edited.mp4"`. Say first that it takes a few minutes. If it prints `QUALITY=poor` or fails, do not push on: look at a frame or two, and tell them in plain words that this recording is hard to cut out (for example busy background, or the person moves a lot), and suggest the Frame layout for this video. If they want a Cutout anyway, carry on and say what to expect.
 
-Then `EDIT project "<WORK_FOLDER>" --mode above --style <id> --face x,y,w` (or `--mode around`, or `--mode frame`). It makes the project in `<WORK_FOLDER>/remotion`, sharing the installed engine, and prints the files you need. You only ever write `src/scenes.tsx` and `src/sound.json`. You may restyle `src/Captions.tsx`. Leave `Edit.tsx`, `kit.tsx`, `pieces.tsx`, `data.ts`, `Root.tsx` and the `src/animate` folder alone.
+Then `EDIT project "<WORK_FOLDER>" --mode split --style <id> --face x,y,w` (or `--mode around`, or `--mode frame`). It makes the project in `<WORK_FOLDER>/remotion`, sharing the installed engine, and prints the files you need. You only ever write `src/scenes.tsx` and `src/sound.json`. You may restyle `src/Captions.tsx`. Leave `Edit.tsx`, `kit.tsx`, `pieces.tsx`, `data.ts`, `Root.tsx` and the `src/animate` folder alone.
 
 ## Step 7. Read before writing
 
@@ -108,14 +108,19 @@ An Edit video uses the same characters, props and drawings as Animate, so the me
 Before any code, show a short table: when, the words said, what happens on screen, and which background. Invent the metaphors from this script: every element must answer "why does this belong to this sentence?", never reuse something from another video. Name the ending. Ask for their yes.
 
 Good habits from earlier videos:
-- In the Cutout layouts, alternate backgrounds: the real room for most of it and a full style stage for the three or four biggest moments, joined by fades of about half a second. The room stays dimmed (`LOOK.room`, brightness only). Darken its top, where light graphics and text live.
+- In Cutout Around, alternate backgrounds: the real room for most of it and a full style stage for the three or four biggest moments, joined by fades of about half a second. The room stays dimmed (`LOOK.room`, brightness only). Darken its top, where light graphics and text live.
+- In Split Screen the person's background never changes (see below): only the band at the top changes its set.
 - Keep one thing that travels through the video instead of a new object per sentence, when the style allows.
 
-## The two Cutout layouts
+## Split Screen and Cutout Around
 
 Look at `face.png` first: where the head and shoulders are tells you where the free space is.
 
-**Cutout Above.** The story plays in the free band above the head. Put a floor line (`Scenery` `floor`) a little above the hair, characters at `scale` 1 to 1.3 standing on it, props beside them, and short titles at the very top. Everything sits in `Behind`, so it passes behind the head if the person rises. Keep the band busy enough that it reads as a little stage, not as icons floating.
+**Split Screen** (Abner, 6 Nov 2026: the person's own background stays the same from start to end). The screen is two parts, and they never mix:
+- **Bottom: the person's video exactly as filmed.** `LOOK.room` and `LOOK.person` are `"none"`: no dimming, no glow, no stage, no tint and no darkened top over the room, ever. Nothing is drawn over the room below the split except the captions and short pieces that sit on the person in `Front`.
+- **Top: the style's band.** Pick the split line a little above the hair at its highest (about 20 to 40 pixels clear of it in `face.png`), so the band is about a third of the screen. In `Stage`, put the style's set in a box from the top to that line with `overflow: hidden` (a soft shadow along its lower edge reads as a clean split), and inside it one `Scenery` per chapter with its floor a little above the split line, fading one tint into the next. Everything can happen in the band: sets change, characters walk, things fly out of the top. Characters at `scale` 1 to 1.3 stand on the band's floor, props beside them, short titles at the very top (dark text on the light tints).
+- The pieces sit in `Behind`, so if the person rises into the band their head passes in front of it.
+- Keep the band busy enough that it reads as a little stage, not as icons floating.
 
 **Cutout Around.** The person stands inside the style's world:
 - The set fills the whole picture and the floor runs behind their shoulders (about where the shoulders start in `face.png`), so it shows at both sides.
@@ -150,7 +155,7 @@ Fill `src/scenes.tsx`, keeping its exports: `TAIL_SECONDS` (a few seconds of end
 
 1. `EDIT scenecheck "<WORK_FOLDER>"` compiles the code and measures all text against the face and the phone's buttons. Fix every `problem:` line, and code errors, by yourself. Repeat until `RESULT=clean`. The person never sees this part.
 2. `EDIT scenestills "<WORK_FOLDER>" --at <times>`, with times in the middle of your key moments, and look at the sheet honestly: does each moment match its sentence, does anything overlap, does it look like the style? Fix what you see.
-3. `EDIT scenesample "<WORK_FOLDER>" --range a,b` for about 10 seconds with the most going on, open it with `STUDIO open`, and ask if they like the direction.
+3. `EDIT scenesample "<WORK_FOLDER>" --range a,b` for about 10 seconds with the most going on, open it with `STUDIO open`, and ask if they like the direction. The range starts where a sentence starts and ends after a sentence has ended (a word's start from `data.ts`, minus 0.2 s, and the next pause), never in the middle of a word: a sample that starts or stops mid sentence sounds as if the edit cut their speech. If the whole video is 20 seconds or shorter, the sample is the whole video. Tell them in one line which part of the video the sample is.
 
 ## Step 11. The full video (gate 4)
 
