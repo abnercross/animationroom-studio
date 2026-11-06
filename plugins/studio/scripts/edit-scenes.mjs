@@ -15,7 +15,7 @@ import { videoCheck } from "./edit-check.mjs";
 import { finishedProjectName, jobNameOf, safeName } from "./projects.mjs";
 import { SR, envelope, renderScore, rms, wav } from "./sound.mjs";
 
-export const SCENE_COMMANDS = ["prepare", "cutout", "project", "scenecheck", "scenestills", "scenesample", "sceneopen", "scenerender", "scenegrade"];
+export const SCENE_COMMANDS = ["prepare", "cutout", "project", "scenecheck", "scenestills", "scenesample", "sceneopen", "scenerender", "scenegrade", "sceneclean"];
 const RUNTIME_EDIT = path.join(DATA, "runtime-edit");
 const SKILLS_HOME = path.join(DATA, "edit-remotion");
 const SKILLS_DIR = path.join(SKILLS_HOME, ".claude", "skills");
@@ -60,13 +60,14 @@ function stageVideo(edited, file) {
 }
 
 function project(work) {
-  // Three layouts the member picks from: split and around both cut the person out (split: the style plays in a band
-  // above their head and their own picture stays as it was below it; around: around and behind them, with a few pieces
-  // in front); frame puts them in a moving frame. Old names: "cutout" is around, "above" is split (Abner, 6 Nov 2026).
+  // Three layouts the member picks from. split: half and half, the style in the top half and the person's own video in
+  // the bottom half, framed on the face (Abner, 6 Nov 2026; drawn by the frame engine with a fixed half box, so it
+  // needs no cutout). around: the person cut out, the style around and behind them, a few pieces in front. frame:
+  // the person in a frame that moves with the story. Old names: "cutout" is around, "above" is split.
   const asked = String(opt.mode || ""), styleId = String(opt.style || "");
   const layout = asked === "cutout" ? "around" : asked === "above" ? "split" : asked;
   if (!["split", "around", "frame"].includes(layout)) fail("project needs --mode split, --mode around or --mode frame");
-  const mode = layout === "frame" ? "frame" : "cutout";
+  const mode = layout === "around" ? "cutout" : "frame";
   if (!styleId) fail("project needs --style <id>");
   const edited = path.join(work, "edited.mp4"), wordsFile = path.join(work, "edited.words.json");
   if (!fs.existsSync(edited) || !fs.existsSync(wordsFile)) fail("cut the video first: edited.mp4 and edited.words.json are missing from the work folder");
@@ -202,7 +203,8 @@ async function sceneCheck(work) {
     if (c.any) textFrames++;
     for (const k of ["face", "frame", "margin", "bottom", "right"]) if (c[k] > 6) hits[k].push(t);
   });
-  const say = { face: "text over the face", frame: "text over the frame", margin: "text too close to the side of the picture", bottom: "text under the phone's bottom bar", right: "text under the phone's side buttons" };
+  const split = /LAYOUT[^=]*=\s*"split"/.test(fs.readFileSync(path.join(dir, "src", "data.ts"), "utf8"));
+  const say = { face: "text over the face", frame: split ? "text over the face" : "text over the frame", margin: "text too close to the side of the picture", bottom: "text under the phone's bottom bar", right: "text under the phone's side buttons" };
   let count = 0;
   for (const [k, list] of Object.entries(hits)) if (list.length) { count++; console.log(`problem: ${say[k]} at ${list.slice(0, 12).join(", ")} s`); }
   if (!textFrames) console.log("warning: no text was found at all. Text and captions must use <Say> or <Captions>");
@@ -372,7 +374,7 @@ export async function sceneCommand(cmd) {
     const video = path.resolve(pos[1] || "");
     if (!fs.existsSync(video)) fail("cutout needs the cut video (edited.mp4)");
     const file = path.resolve(String(opt.out || path.join(path.dirname(video), "person.webm")));
-    const r = await makeCutout(stageVideo(video, path.join(path.dirname(file), "remotion", "public", "edited.mp4")), file);
+    const r = await makeCutout(stageVideo(video, path.join(path.dirname(file), "remotion", "public", "edited.mp4")), file, { edge: opt.edge === "soft" ? "soft" : "crisp" });
     r.problems.forEach((p) => console.log(`warning: ${p}`));
     out("RESULT", "cut_out");
     out("QUALITY", r.quality);
@@ -386,6 +388,18 @@ export async function sceneCommand(cmd) {
   if (cmd === "scenecheck") return sceneCheck(work);
   if (cmd === "scenestills") return sceneStills(work);
   if (cmd === "scenegrade") return sceneGrade(work);
+  if (cmd === "sceneclean") {
+    // The build cache (about 200 MB a video) only speeds up the next render of this project. Cleared once the member
+    // has approved the final video (Abner, 6 Nov 2026), so a finished project keeps only its code and its video;
+    // a later fix rebuilds it in about a minute.
+    const cache = path.join(work, "remotion", ".cache");
+    let bytes = 0;
+    const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) walk(f); else bytes += fs.statSync(f).size; } };
+    if (fs.existsSync(cache)) { walk(cache); fs.rmSync(cache, { recursive: true, force: true }); }
+    out("RESULT", "cleaned");
+    out("FREED_MB", Math.round(bytes / 1e6));
+    return;
+  }
   if (cmd === "sceneopen") {
     stopOpen();
     const dir = path.join(work, "remotion"), port = Number(opt.port) || 3124;

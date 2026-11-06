@@ -42,11 +42,12 @@ One question at a time, skipping anything they already told you:
 1. What is the video for, and who watches it? (one sentence)
 2. **Which style?** Show the names from `node animate.mjs styles` (in the scripts folder of the plugin), or take the one they named.
 3. **Which layout: Split Screen, Cutout Around or Frame?** (In Portuguese say Tela Dividida, Recorte ao Redor and Quadro.) Offer all three in one short line each:
-   - **Split Screen**: the screen is split in two. The animation plays in a band at the top, and below it the person's own video stays exactly as they filmed it, background and all. Calm, and the person stays the centre. A request that says Cutout Above or Recorte Acima (the old name) means Split Screen.
+   - **Split Screen**: the screen is split in half. The animation plays in the top half, the person's own video (background and all, framed on their face) in the bottom half, and the captions sit on the line between them. Calm, and the person stays the centre. A request that says Cutout Above or Recorte Acima (the old name) means Split Screen.
    - **Cutout Around**: the person is cut out and stands inside the style's world: characters beside them, things walking behind them, a few pieces in front of them (a heart on their chest). The most immersive.
    - **Frame**: the person sits in a frame that moves and changes shape with the story, and the animations live around it. A little faster to make, and suits videos with a lot of information.
    If they are unsure, suggest Cutout Around. A request from the members page may already say. Never pick for them without saying so: the layout changes the whole video.
-4. Anything to keep exactly as it is? (a phrase, a pause, a name)
+4. **The ending.** Every video ends with a short closing card after the last word (Abner, 6 Nov 2026: videos stopped too abruptly): an **ending message** (what they want viewers to do, like "Follow for more", PT "Segue para mais") and their **name or @**. A request from the members page may already say ("End with ... and ..." / "No final, mostre ... e ..."). If it does not, ask once: what should the ending say, and what name or @ goes with it? If they want none, the video still closes smoothly: the style's set opens over the last word with nothing written on it.
+5. Anything to keep exactly as it is? (a phrase, a pause, a name)
 
 The first version is vertical 9:16. Everything on screen must come from what the person says: no invented prices, numbers, results or promises.
 
@@ -54,7 +55,9 @@ The first version is vertical 9:16. Everything on screen must come from what the
 
 **Tip to give them once, in one line, before you start:** the edit uses the recording as it is, so they get the best result from one clean, final take. If they said a line twice or stumbled, they can trim it on their phone first or record that part again. Pauses and black frames are taken care of.
 
-`EDIT start` (or `EDIT start "<path>"` if they gave a path; a file from elsewhere is copied into Drop videos here, never moved). It prints `VIDEO`, `PROJECT` (the project's folder name, like `20261013 Skin treatment`), `WORK_FOLDER` and `FINISHED_FOLDER`. Work in `WORK_FOLDER` from now on. The same name is used in both places: drafts and plans in Work in progress, every exported version in Finished videos. If they dropped the file into the chat instead of the folder, tell them kindly that the file stays on the computer: ask them to put it in Drop videos here.
+The members page asks them to drag their video into the message (like the voiceover in Animate). In the Claude app the message then carries the file's place on their computer (a path, often after an `@`): run `EDIT start "<path>"`. A file from anywhere else is copied into Drop videos here, never moved, and the original stays where it was. With no file and no path, look in Drop videos here: one video, run `EDIT start` (it takes the newest); several, ask which one first and pass its path. Only if a file arrived with no path you can read (for example it was attached in a chat outside the Code tab), tell them kindly that the video has to stay on their computer and ask them to put it in Drop videos here, then run `EDIT start`.
+
+`EDIT start` prints `VIDEO`, `PROJECT` (the project's folder name, like `20261013 Skin treatment`), `WORK_FOLDER` and `FINISHED_FOLDER`. Work in `WORK_FOLDER` from now on. The same name is used in both places: drafts and plans in Work in progress, every exported version in Finished videos.
 
 ## Step 3. Listen to the recording
 
@@ -78,9 +81,11 @@ Read the list that `cuts` prints. Dropped parts are only silences and black pict
 
 ## Step 6. Set up the stage
 
-For **Split Screen** and **Cutout Around**: run `EDIT cutout "<WORK_FOLDER>/edited.mp4"`. Say first that it takes a few minutes. If it prints `QUALITY=poor` or fails, do not push on: look at a frame or two, and tell them in plain words that this recording is hard to cut out (for example busy background, or the person moves a lot), and suggest the Frame layout for this video. If they want a Cutout anyway, carry on and say what to expect.
+For **Cutout Around** only (Split Screen and Frame need no cutout): run `EDIT cutout "<WORK_FOLDER>/edited.mp4"`. Say first that it takes a few minutes. If it prints `QUALITY=poor` or fails, do not push on: look at a frame or two, and tell them in plain words that this recording is hard to cut out (for example busy background, or the person moves a lot), and suggest Split Screen or Frame for this video (neither needs a cutout). If they want a Cutout anyway, carry on and say what to expect.
 
-Then `EDIT project "<WORK_FOLDER>" --mode split --style <id> --face x,y,w` (or `--mode around`, or `--mode frame`). It makes the project in `<WORK_FOLDER>/remotion`, sharing the installed engine, and prints the files you need. You only ever write `src/scenes.tsx` and `src/sound.json`. You may restyle `src/Captions.tsx`. Leave `Edit.tsx`, `kit.tsx`, `pieces.tsx`, `data.ts`, `Root.tsx` and the `src/animate` folder alone.
+The cutout has a clean, sharp edge by default (Abner, 6 Nov 2026: a soft edge brought a smoky ring of the room along with the person). If they ask for a softer outline, run `EDIT cutout` again with `--edge soft` and call it a **soft edge** (in Portuguese **borda suave**). `LOOK.person` stays `"none"`: no glow round the person unless they ask for one.
+
+Then `EDIT project "<WORK_FOLDER>" --mode split --style <id> --face x,y,w` (or `--mode around`, or `--mode frame`). It makes the project in `<WORK_FOLDER>/remotion`, sharing the installed engine, and prints the files you need. You only ever write `src/scenes.tsx` and `src/sound.json`. You may restyle `src/Captions.tsx`. Leave `Edit.tsx`, `kit.tsx`, `pieces.tsx`, `ending.tsx`, `data.ts`, `Root.tsx` and the `src/animate` folder alone.
 
 ## Step 7. Read before writing
 
@@ -108,19 +113,19 @@ An Edit video uses the same characters, props and drawings as Animate, so the me
 Before any code, show a short table: when, the words said, what happens on screen, and which background. Invent the metaphors from this script: every element must answer "why does this belong to this sentence?", never reuse something from another video. Name the ending. Ask for their yes.
 
 Good habits from earlier videos:
-- In Cutout Around, alternate backgrounds: the real room for most of it and a full style stage for the three or four biggest moments, joined by fades of about half a second. The room stays dimmed (`LOOK.room`, brightness only). Darken its top, where light graphics and text live.
-- In Split Screen the person's background never changes (see below): only the band at the top changes its set.
+- In Cutout Around, alternate three kinds of background, joined by fades of about half a second (Abner, 6 Nov 2026): the person's **own room** for most of it, the **style's set** (`Scenery`) for the three or four biggest moments, and a **solid colour** from the style's palette (a plain `AbsoluteFill` in `Stage`) for a short punchy line or a list. Even a short video goes back to the room at least once after a set, so the member sees it is still their place. The room stays dimmed (`LOOK.room`, brightness only). Darken its top, where light graphics and text live. Show the background of each moment in the scene table.
+- The request may name the cutout edge: **sharp** (the default) or **soft** (`--edge soft` on `EDIT cutout`).
+- In Split Screen the person's background never changes (see below): only the top half changes its set.
 - Keep one thing that travels through the video instead of a new object per sentence, when the style allows.
 
 ## Split Screen and Cutout Around
 
 Look at `face.png` first: where the head and shoulders are tells you where the free space is.
 
-**Split Screen** (Abner, 6 Nov 2026: the person's own background stays the same from start to end). The screen is two parts, and they never mix:
-- **Bottom: the person's video exactly as filmed.** `LOOK.room` and `LOOK.person` are `"none"`: no dimming, no glow, no stage, no tint and no darkened top over the room, ever. Nothing is drawn over the room below the split except the captions and short pieces that sit on the person in `Front`.
-- **Top: the style's band.** Pick the split line a little above the hair at its highest (about 20 to 40 pixels clear of it in `face.png`), so the band is about a third of the screen. In `Stage`, put the style's set in a box from the top to that line with `overflow: hidden` (a soft shadow along its lower edge reads as a clean split), and inside it one `Scenery` per chapter with its floor a little above the split line, fading one tint into the next. Everything can happen in the band: sets change, characters walk, things fly out of the top. Characters at `scale` 1 to 1.3 stand on the band's floor, props beside them, short titles at the very top (dark text on the light tints).
-- The pieces sit in `Behind`, so if the person rises into the band their head passes in front of it.
-- Keep the band busy enough that it reads as a little stage, not as icons floating.
+**Split Screen** (Abner, 6 Nov 2026: half and half, and the person's own background stays the same from start to end). The screen is two halves that never mix:
+- **Bottom half: the person's video as filmed**, framed on their face by the engine. Write `FRAMES = [{ at: 0, shape: "half" }]` and never move it. `LOOK.room` and `LOOK.person` are `"none"`: no dimming, no glow, no tint over their video, ever. `LOOK.frame` may add a soft shadow along the top edge.
+- **Top half: the style.** In `Stage`, put the style's set in a box from 0 to 960 with `overflow: hidden`, and inside it one `Scenery` per chapter with its floor at about 880, fading one tint into the next. Everything can happen up there: sets change, characters walk, things fly out of the top. Characters at `scale` 1.3 to 1.5 stand on that floor, props beside them, short titles at the very top (dark text on the light tints). Keep it busy enough to read as a stage, not as icons floating.
+- **The line and the captions.** Draw the split line across the screen at 960 in the style's main colour (a bar about 6 pixels high, in `Front` before the captions). `<Captions />` puts the words on that line by itself, two at a time in a pill: pass the style's colours, for example `<Captions font="Poppins" color={colour("teal")} ink={colour("charcoal")} />`. The member may ask for the captions somewhere else: `place="below"` (low on the screen) or `place="top"`.
 
 **Cutout Around.** The person stands inside the style's world:
 - The set fills the whole picture and the floor runs behind their shoulders (about where the shoulders start in `face.png`), so it shows at both sides.
@@ -134,6 +139,7 @@ Look at `face.png` first: where the head and shoulders are tells you where the f
 The frame is a character. It must move and change shape with the story, and the animations must always look attached to it. A frame parked in one place with graphics floating far away is the mistake to avoid.
 
 - **Move it on the story's beats**, about every 4 to 8 seconds, with `FRAMES`: full screen on the opening hook and on strong personal lines, `bottom` when graphics need the top, `narrow` when things come in from both sides, `round` inside a ring, a clock or a lens, `left` or `right` for comparisons, your own `box` for anything else. Name these moves in the scene table.
+- **Calm moves.** Each mark takes `dur` frames (default 12). A move out of full screen, or any big change of size, takes 20 to 26 frames and starts a few frames before its word; small slides can stay at 12 to 14. The engine glides the person's framing from where it was to where it lands, so a longer move stays steady. Have the style's set fade in a little before the frame first leaves full screen, so the plain background never shows round its edges.
 - **Never type a position for a graphic** that has to follow the frame. Place it from where the frame is right now (pieces too: plan each move of the frame and put the pieces in the space it leaves): `frameBox(f)` gives its box, `spaceAt(f, "above")` the free space on a side, and `<Around side="above" w={600} h={400}>` holds a drawing against that edge, following the frame and fitting the space.
 - **Keep things touching.** Graphics sit within about 30 to 60 pixels of the frame, or actually touch it: a line that ends on its edge, an arrow landing on its top, a ring around it, cards sliding out from behind it. Draw things in `Stage` or `Behind` to pass behind the frame, in `Front` to overlap its edge.
 - **Let the frame act on things**: it pushes a graphic aside as it grows, swallows a shape, or reveals one when it moves away.
@@ -141,13 +147,15 @@ The frame is a character. It must move and change shape with the story, and the 
 
 ## Step 9. Write the scenes
 
-Fill `src/scenes.tsx`, keeping its exports: `TAIL_SECONDS` (a few seconds of ending without the person, or 0), `LOOK`, `FRAMES` (Frame look: where the frame goes), `Stage`, `Behind`, `Front`.
+Fill `src/scenes.tsx`, keeping its exports: `TAIL_SECONDS` (room for the ending after the speech: `endingTail()` from `ending.tsx`), `LOOK`, `FRAMES` (Frame look: where the frame goes), `Stage`, `Behind`, `Front`.
 
 - Time everything from the words with `cue("word")` or `cue("word", 2)` from `kit.tsx`, never with a typed frame number that nobody can check. Each thing enters on its word. Call `cue` and `sec` inside components or functions, never at the top of the file: `FRAMES` is read while `kit.tsx` loads, so for it look the word up in `WORDS` from `data.ts` yourself.
 - `useCurrentFrame()` drives all movement. No CSS animations, no timers, no `Math.random` (use Remotion's `random`).
 - **All text goes through `<Say>` in `Front`**, plus `<Captions />`. Never put text in `Behind` or draw it in SVG: the check cannot see it there, and in the Cutout layouts it would pass behind the person.
+- **Captions are yours to shape** (Abner, 6 Nov 2026). `<Captions />` has a `place` (`split` on the Split Screen line, `below`, `top`, or your own `top={y}`) and a `look` (`pill`: a short phrase in a rounded box in the style's colours; `plain`: words over the picture with a soft shadow), and takes the style's font and colours (`color`, `ink`, `paper`, `on`, `off`). Pick what suits the style and the layout, and feel free to restyle `Captions.tsx` further: one word at a time popping in, the active word in a coloured box, a hand lettered look for a hand drawn style. Keep it readable on a phone and clear of the face (the check measures it). Mention in one line what you chose, and offer the others when you list what they can still change. Never make captions so busy they fight the animation.
 - `faceAt(frame)` tells you where the face is, to keep graphics clear of it.
-- In a tail, cover the video yourself in `Front` with a full page, before the footage runs out, and put `<NoPerson />` from `kit.tsx` inside it while the person is hidden.
+- **The ending, every time.** `ending.tsx` has a ready made closing card: `export const TAIL_SECONDS = endingTail();` gives the room after the speech, and `<Ending cta="..." name="..." bg={...} ink={...} accent={...} font="..." />` goes last in `Front`, after the captions. The ending message pops in during the last word (small, at `leadY`, default 330, with a paper coloured edge so it reads over any picture), the circle starts as the last word ends, and the message rides it to the middle while the name follows (Abner, 6 Nov 2026: no gap between the speech and the ending). Pick a `leadY` where the message sits clear of the busiest drawings and the last pop word, and never over the face. The style opens over the video in a circle (`from` is where it opens: the hero or a prop, away from the face, so the circle sweeps over the person instead of starting on their face), then the ending message pops in and the name follows in a pill. Use the style's own colours (a light tint or a palette colour for `bg`). Make it belong to this video: put the hero or the video's travelling object inside it as children (`<Ending ...><Pieces blocks={[...]} /></Ending>`, timed from `endingAt()`, the hero waving or pointing at the name, the last drawing coming back), and lead into it from the grand finale so it feels like one move, not a stop. Add a pop at `ctaAt()` when the message appears (skip it if the grand finale already has a sound there), a soft whoosh at `endingAt()` and a chime about half a second later when the name lands in `sound.json`. Check a still in the middle of the ending.
+- Any other tail is yours to design: cover the video in `Front` with a full page before the footage runs out, and put `<NoPerson />` from `kit.tsx` inside it while the person is hidden.
 - `src/sound.json` is a list such as `[{ "kind": "pop", "at": 3.2 }]` in seconds on the words: `pop`, `whoosh`, `thump`, `chime`, with an optional `g` to make it softer. The music comes from the style by itself. Use effects sparingly; whooshes are heard more than you expect.
 - No hyphens, en dashes or em dashes in any on screen text.
 
@@ -160,6 +168,16 @@ Fill `src/scenes.tsx`, keeping its exports: `TAIL_SECONDS` (a few seconds of end
 ## Step 11. The full video (gate 4)
 
 `EDIT scenerender "<WORK_FOLDER>" --final --name "<short name>" --note "<what this version is>"`. It saves the code as the next version and writes `<name> V01.mp4` in this project's **Finished videos** folder, then checks the file (length, sound, black frames, and it listens for repeated phrases). Fix any `warning:` line or mention it honestly. Tell them where the file is, and ask them to watch it once from start to end.
+
+Then always tell them, in a short list, what they can still ask for, so they know a change is easy (Abner, 6 Nov 2026). Pick what fits this video and layout, for example:
+- any moment redone: a different drawing, character action or text for one sentence
+- the other layouts (Split Screen, Cutout Around, Frame), from the same cut
+- Cutout Around: a soft edge instead of the sharp one, more or fewer moments in their own room, a solid colour or the style's set in other moments
+- Frame: other shapes or moves for the frame (round, tall, square, small in a corner)
+- captions bigger or smaller, in another place (on the split line, low on the screen, high on the screen), with another look, or none
+- quieter or fewer sound effects
+- the ending message, the name, or how the ending looks
+- the colour grade (offered next)
 
 If they want to see or adjust it on a timeline, `EDIT sceneopen "<WORK_FOLDER>"` opens Remotion Studio and prints the address; `EDIT sceneopen --stop` closes it.
 
@@ -175,6 +193,8 @@ The footage keeps its own colours through the whole process. Never put a colour 
 ## Step 13. Fixes
 
 Ask where, what is wrong, what it should be. Change only that part of `scenes.tsx` or `sound.json`, run `scenecheck`, then `scenesample --range` around it. A sound only change still needs `scenerender`. When approved, make a new final: it becomes the next version and the earlier one stays. If a fix is to the cuts, run `cut` again, then `cutout` for the Cutout layouts and `project` again, because the times moved; check every `cue` still lands.
+
+When they say the final video is good (and the colour grade is settled), run `EDIT sceneclean "<WORK_FOLDER>"`: it removes the project's build cache (about 200 MB) and keeps the code, so a later fix still works. Never before their yes.
 
 When they are done with the project, tell them in one line that Drop videos here can be kept empty and offer: "Shall I move your original recording into the project folder so Drop videos here stays empty?" Only after a yes, run `STUDIO project --project "<PROJECT>" --original "<VIDEO>"`.
 

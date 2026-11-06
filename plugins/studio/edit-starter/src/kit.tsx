@@ -19,12 +19,31 @@ const soft = Easing.bezier(0.45, 0, 0.2, 1);
 export const ease = (f: number, a: number, b: number, e = soft) =>
   interpolate(f, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: e });
 
+// The tracker reads the face a few times a second and moves in small jumps. A frame that followed every jump would
+// shake (Abner, 6 Nov 2026: the frame look felt jarring), so the path is smoothed over about a second, like a calm
+// camera operator, and read between the samples.
+let smoothed: { x: number[]; y: number[] } | null = null;
+const smoothTrack = (tr: { step: number; x: number[]; y: number[] }) => {
+  if (smoothed) return smoothed;
+  const sigma = Math.max(1, 0.4 / tr.step), reach = Math.ceil(sigma * 2.5);
+  const blur = (v: number[]) => v.map((_, i) => {
+    let sum = 0, weight = 0;
+    for (let k = -reach; k <= reach; k++) {
+      const j = Math.max(0, Math.min(v.length - 1, i + k)), g = Math.exp(-(k * k) / (2 * sigma * sigma));
+      sum += v[j] * g; weight += g;
+    }
+    return sum / weight;
+  });
+  return (smoothed = { x: blur(tr.x), y: blur(tr.y) });
+};
+
 // Where the face is at this frame, as pixels on the 1080 by 1920 picture (the video fills the picture in the cutout look).
 export const faceAt = (frame: number) => {
-  const t = frame / FPS;
   const tr = FACE.track;
-  const i = tr ? Math.max(0, Math.min(tr.x.length - 1, Math.round(t / tr.step))) : 0;
-  return { x: (tr ? tr.x[i] : FACE.x) * 1080, y: (tr ? tr.y[i] : FACE.y) * 1920, w: FACE.w * 1080 };
+  if (!tr || !tr.x.length) return { x: FACE.x * 1080, y: FACE.y * 1920, w: FACE.w * 1080 };
+  const s = smoothTrack(tr), pos = Math.max(0, Math.min(tr.x.length - 1, frame / FPS / tr.step));
+  const i = Math.floor(pos), j = Math.min(tr.x.length - 1, i + 1), p = pos - i;
+  return { x: (s.x[i] + (s.x[j] - s.x[i]) * p) * 1080, y: (s.y[i] + (s.y[j] - s.y[i]) * p) * 1920, w: FACE.w * 1080 };
 };
 
 // All text on screen goes through Say, in the Front layer: the automatic check can then see it.
@@ -55,6 +74,7 @@ export const NoPerson: React.FC = () => {
 export type Box = { x: number; y: number; w: number; h: number; r: number };
 export const BOXES = {
   full: { x: 0, y: 0, w: 1080, h: 1920, r: 0 },
+  half: { x: 0, y: 960, w: 1080, h: 960, r: 0 }, // Split Screen: the bottom half, the style plays above it
   bottom: { x: 90, y: 780, w: 900, h: 700, r: 40 },
   top: { x: 90, y: 200, w: 900, h: 700, r: 40 },
   wide: { x: 0, y: 760, w: 1080, h: 720, r: 0 },

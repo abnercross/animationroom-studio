@@ -16,7 +16,14 @@ export function proposeCuts(a, { pause = 0.3, sentencePause = 0.5, lead = 0.1, m
   const sil = a.silences.filter((s) => s.to - s.from >= 0.3);
   const restarts = new Map(); // nothing is dropped for being said again; kept so the piece logic stays one shape
   // Real onset and offset of a word: snap to the silence edge when one is right there.
-  const onset = (w) => { const s = sil.find((x) => Math.abs(x.to - w[0]) < 0.3); return s ? s.to : w[0]; };
+  // A word stamped inside a silence really starts where the silence ends: after a quiet opening the speech engine
+  // often puts the first words at 0 s (a phone video kept 2.2 s of silence at the start because of it).
+  const onset = (w) => {
+    const inside = sil.find((x) => x.from <= w[0] + 0.05 && x.to - 0.05 > w[0]);
+    if (inside) return inside.to;
+    const s = sil.find((x) => Math.abs(x.to - w[0]) < 0.3);
+    return s ? s.to : w[0];
+  };
   const offset = (w) => { const s = sil.find((x) => Math.abs(x.from - w[1]) < 0.3 || (x.from <= w[1] && x.to >= w[1])); return s ? Math.max(w[0] + 0.05, s.from) : w[1]; };
   const silenceBetween = (w1, w2) => sil.find((s) => s.from >= w1[0] && s.to <= w2[1] + 0.3 && s.to - s.from >= 0.3 && s.from < w2[0] + 0.1);
 

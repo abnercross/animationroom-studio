@@ -106,20 +106,20 @@ function guardChildren(children, litter) {
 const GPU_FLAGS = { darwin: ["--use-gl=angle", "--use-angle=metal"], win32: ["--use-gl=angle", "--use-angle=d3d11"], linux: ["--use-gl=angle", "--use-angle=vulkan", "--enable-features=Vulkan"] };
 const SOFTWARE_FLAGS = ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
 
-export async function makeCutout(video, outFile) {
+export async function makeCutout(video, outFile, { edge = "crisp" } = {}) {
   await ensureModel();
   const flags = GPU_FLAGS[process.platform];
   if (flags) {
-    const fast = await attempt(video, outFile, [...flags, "--ignore-gpu-blocklist"], "GPU", 40);
+    const fast = await attempt(video, outFile, [...flags, "--ignore-gpu-blocklist"], "GPU", 40, edge);
     if (fast) return fast;
     console.error("The graphics chip could not be used, so this will take longer...");
   }
-  const slow = await attempt(video, outFile, SOFTWARE_FLAGS, "CPU", 300);
+  const slow = await attempt(video, outFile, SOFTWARE_FLAGS, "CPU", 300, edge);
   if (!slow) fail("the person could not be cut out of this video. Use the frame look for this one");
   return slow;
 }
 
-async function attempt(video, outFile, chromeFlags, delegate, patience) {
+async function attempt(video, outFile, chromeFlags, delegate, patience, edge = "crisp") {
   const ffmpeg = ensureFfmpeg(DATA), m = probe(video), browser = chrome();
   if (!ffmpeg) fail("the video tools are missing. Run: studio.mjs ffmpeg install");
   if (!browser) fail("the video browser is missing. Run: studio.mjs runtime install --engine edit");
@@ -200,9 +200,12 @@ async function attempt(video, outFile, chromeFlags, delegate, patience) {
   if (pageError && process.env.AR_DEBUG) console.error(`cutout page: ${pageError.slice(0, 300)}`);
   if (how || !areas.length) { fs.rmSync(partFile, { force: true }); fs.rmSync(maskFile, { force: true }); return null; }
   if (!fs.existsSync(maskFile) || !fs.statSync(maskFile).size) fail(`the cutout could not be saved: ${encErr.slice(-200)}`);
-  // Soft edge from the small mask, a touch of smoothing over time so the edge does not shimmer.
+  // The edge from the small mask, with a touch of smoothing over time so it does not shimmer. Soft: a wide ramp that
+  // reaches a little past the person. Crisp: a narrow ramp just inside the outline, so none of the room comes along
+  // as a ring (the ring read as a smoky aura on a dimmed room, Abner, 6 Nov 2026).
+  const ramp = edge === "crisp" ? "gblur=sigma=1.2,lut=y='clip((val-140)*255/36,0,255)'" : "gblur=sigma=2.5,lut=y='clip((val-95)*255/70,0,255)'";
   const merge = spawnSync(ffmpeg, ["-v", "error", "-y", "-i", maskFile, "-i", video,
-    "-filter_complex", `[0:v]scale=${outW}:${outH}:flags=bicubic,gblur=sigma=2.5,lut=y='clip((val-95)*255/70,0,255)',tmix=frames=2:weights='3 2',format=gray[a];[1:v]scale=${outW}:${outH}[c];[c][a]alphamerge,format=yuva420p[v]`,
+    "-filter_complex", `[0:v]scale=${outW}:${outH}:flags=bicubic,${ramp},tmix=frames=2:weights='3 2',format=gray[a];[1:v]scale=${outW}:${outH}[c];[c][a]alphamerge,format=yuva420p[v]`,
     "-map", "[v]", "-an", "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "28", "-deadline", "realtime", "-cpu-used", "7", "-row-mt", "1", "-auto-alt-ref", "0", "-shortest", partFile], { encoding: "utf8", maxBuffer: 1e8 });
   fs.rmSync(maskFile, { force: true });
   if (merge.status !== 0 || !fs.existsSync(partFile) || !fs.statSync(partFile).size) { fs.rmSync(partFile, { force: true }); fail(`the cutout could not be saved: ${String(merge.stderr || "").slice(-200)}`); }
