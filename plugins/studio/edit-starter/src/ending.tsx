@@ -12,10 +12,12 @@ import { CheckContext, NoPerson, Say, ease, faceAt } from "./kit";
 
 export const ENDING_SECONDS = 2.8;
 const lastWord = () => (WORDS.length ? WORDS[WORDS.length - 1] : [VIDEO_SECONDS, VIDEO_SECONDS, ""]) as [number, number, string];
-// When the circle starts: right as the last word ends, so the speech flows into the ending with no gap (Abner,
-// 6 Nov 2026: the first endings waited too long after the last word). If the footage runs out first, the person holds
-// still on the last frame (Edit.tsx) until the circle has covered them, never longer than a tenth of a second.
-export const endingAt = () => +Math.min(lastWord()[1] + 0.05, VIDEO_SECONDS + 0.1).toFixed(2);
+// When the circle starts: right as the last word ends, but never later than WIPE_SECONDS before the footage runs out,
+// so the circle has fully covered the person while the footage is still playing and the last frame never freezes on
+// screen (Abner, 9 Nov 2026: the last frames froze before the CTA). When the footage ends right at the last word, the
+// circle simply opens over the last half second of speech.
+export const WIPE_SECONDS = 0.6;
+export const endingAt = () => +Math.max(0, Math.min(lastWord()[1] + 0.05, VIDEO_SECONDS - WIPE_SECONDS)).toFixed(2);
 // When the ending message first pops in: during the last word, a little before the speech ends, so it joins the
 // speech to the ending. It appears small at leadY, then glides to the middle while the circle opens.
 export const ctaAt = (lead = 0.4) => +Math.max(lastWord()[0], endingAt() - lead).toFixed(2);

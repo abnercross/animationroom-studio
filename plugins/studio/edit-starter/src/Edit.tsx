@@ -22,7 +22,8 @@ const GradeFilter: React.FC<{ grade: NonNullable<Grade> }> = ({ grade }) => (
     </filter>
   </svg>
 );
-// After the footage runs out (an ending is playing), the person holds still on the last frame instead of vanishing.
+// Safety net only: the ending circle now opens before the footage runs out (ending.tsx, WIPE_SECONDS), so the person is
+// already covered by the time these last frames hold still.
 const LAST = Math.max(0, Math.floor(VIDEO_SECONDS * FPS) - 2);
 const Footage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const f = useCurrentFrame();
