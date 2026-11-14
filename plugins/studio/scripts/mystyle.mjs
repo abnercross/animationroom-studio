@@ -272,18 +272,25 @@ export async function mystyleCommand(ctx, sub, pos, opt) {
     need();
     const fam = familyOf(data, id);
     const index = readJson(path.join(ctx.pluginRoot, "samples", "index.json"));
-    const e = fam && index[fam];
+    const samples = path.join(ctx.pluginRoot, "samples");
+    let e = fam && index[fam] && Object.fromEntries(Object.entries(index[fam]).map(([key, f]) => [key, path.join(samples, f)]));
+    // A newer library style carries its own sample (sample.json in its folder), so it needs no new plugin version.
+    if (!e && fam && fam !== "blank") {
+      const got = await ctx.getStyle(fam);
+      const at = (f) => (got.entry.files.includes(f) && fs.existsSync(path.join(got.dir, f)) ? path.join(got.dir, f) : null);
+      if (at("sample.json") && at("sample-words.json")) e = { words: at("sample-words.json"), "9:16": at("sample.json"), ...(at("sample-16x9.json") ? { "16:9": at("sample-16x9.json") } : {}) };
+    }
     if (!e) fail(`there is no sample script for the look this style started from (${fam || "unknown"}). Test it with a real voiceover instead.`);
     const format = opt.format && opt.format !== true ? String(opt.format) : "9:16";
     if (!FORMATS.includes(format)) fail("format must be 9:16 or 16:9.");
     if (!e[format]) fail(`the sample for this look only comes in ${Object.keys(e).filter((k) => FORMATS.includes(k)).join(" and ")}.`);
     const dir = path.resolve(String(opt.out && opt.out !== true ? opt.out : path.join(mineDir(data), "preview", id)));
     fs.mkdirSync(dir, { recursive: true });
-    const sb = readJson(path.join(ctx.pluginRoot, "samples", e[format]));
+    const sb = readJson(e[format]);
     sb.style = id;
     const sbPath = path.join(dir, "sample.json"), wordsPath = path.join(dir, "sample-words.json");
     writeJson(sbPath, sb);
-    fs.copyFileSync(path.join(ctx.pluginRoot, "samples", e.words), wordsPath);
+    fs.copyFileSync(e.words, wordsPath);
     if (sub === "sample") {
       out("RESULT", "sample");
       out("STORYBOARD", sbPath);

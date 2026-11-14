@@ -188,6 +188,12 @@ async function libraryCatalog() {
     fail(`could not reach the Animation Room style library (${e.message}). Check the internet connection and try again.`);
   }
 }
+// Where each loaded style's files are, so a render can find the pieces a style brings itself (style.json "pieces").
+const STYLE_DIRS = new Map();
+// Sounds a style's own piece may make when it appears (one of the engine's ready voices).
+const PIECE_SOUNDS = ["pop", "blip", "whoosh", "click", "tick", "chime", "bell", "plop", "stamp", "swipe", "glass", "boing", "slap", "tape", "flip", "shuffle"];
+const ownBlocks = (style) => (style.pieces && typeof style.pieces.blocks === "object" && style.pieces.blocks) || {};
+
 async function getStyle(id) {
   const c = await catalog();
   if (c.latestEngine && !semverGte(ENGINE_VERSION, c.latestEngine)) out("UPDATE_AVAILABLE", c.latestEngine);
@@ -210,7 +216,9 @@ async function getStyle(id) {
       fs.writeFileSync(path.join(dir, f), body);
     }
   }
-  return { dir, entry, style: readJson(path.join(dir, "style.json")) };
+  const style = readJson(path.join(dir, "style.json"));
+  STYLE_DIRS.set(style.id, dir);
+  return { dir, entry, style };
 }
 
 // ---------- transcription (shared with Edit mode, see speech.mjs) ----------
@@ -313,17 +321,51 @@ function validate(sbPath, wordsPath, style) {
   };
   // the lowest things may sit: above the Instagram caption area in 9:16, above the bottom edge in 16:9
   const LOW = (sb.height ?? 1920) === 1920 ? 1560 : sb.height - 60, LOW_TEXT = (sb.height ?? 1920) === 1920 ? 1500 : sb.height - 80;
+  const own = ownBlocks(style);
+  for (const [n, d] of Object.entries(own)) {
+    if (BLOCK_TYPES.includes(n)) errors.push(`style ${style.id}: its own piece "${n}" has the name of an engine piece. Give it another name.`);
+    if (d && d.sound !== undefined && !PIECE_SOUNDS.includes(d.sound)) errors.push(`style ${style.id}: the sound of its piece "${n}" must be one of ${PIECE_SOUNDS.join(", ")}`);
+  }
   const walk = (b, where, scene) => {
     // a style may leave pieces out for good (style key noBlocks, for example a member who never wants a chapter counter)
     if ((style.noBlocks ?? []).includes(b.type)) errors.push(`${where}: the ${style.name} style does not use "${b.type}" (it is in the style's noBlocks list). Leave it out.`);
     if (sb.format === "16:9" && (style.portraitOnly ?? []).includes(b.type)) errors.push(`${where}: the ${style.name} style draws "${b.type}" in 9:16 only for now. Use another scene type in 16:9 (the guide lists the ones that work).`);
-    if (!BLOCK_TYPES.includes(b.type)) errors.push(`${where}: unknown block type "${b.type}" (engine ${ENGINE_VERSION} knows ${BLOCK_TYPES.join(", ")})`);
+    const mine = own[b.type]; // a piece the style brings itself (engine 1.14)
+    if (!mine && !BLOCK_TYPES.includes(b.type)) errors.push(`${where}: unknown block type "${b.type}" (engine ${ENGINE_VERSION} knows ${[...BLOCK_TYPES, ...Object.keys(own)].join(", ")})`);
     if (b.at !== undefined) b.at = T(b.at, where);
     if (b.out !== undefined) b.out = T(b.out, `${where}.out`);
     if (b.markerAt !== undefined) b.markerAt = T(b.markerAt, `${where}.markerAt`);
     if (b.keys) b.keys.forEach((k, i) => (k.t = T(k.t, `${where}.keys[${i}]`)));
     if (b.type === "morph" && b.at === undefined) b.at = b.keys?.[0]?.t;
     ["text", "kicker", "caption", "unit", "sub"].forEach((f) => checkText(b[f], `${where}.${f}`));
+    if (mine) {
+      // The style says what its piece needs; times anywhere inside it (at, out, until, t, and names ending in At) are resolved.
+      for (const f of mine.needs ?? []) if (b[f] === undefined) errors.push(`${where}: ${b.type} needs "${f}"`);
+      for (const f of (mine.text ?? []).filter((x) => !["text", "kicker", "caption", "unit", "sub", "lines"].includes(x))) (Array.isArray(b[f]) ? b[f] : [b[f]]).forEach((s, i) => checkText(s, `${where}.${f}${Array.isArray(b[f]) ? `[${i}]` : ""}`));
+      const deep = (o, w, top) => {
+        if (Array.isArray(o)) return o.forEach((x, i) => deep(x, `${w}[${i}]`, false));
+        if (!o || typeof o !== "object") return;
+        for (const [key, v] of Object.entries(o)) {
+          if (top && (key === "at" || key === "out" || key === "keys" || key === "blocks" || key === "drawing")) continue;
+          if ((key === "at" || key === "out" || key === "until" || key === "t" || /[a-z]At$/.test(key)) && (typeof v === "string" || typeof v === "number")) o[key] = T(v, `${w}.${key}`);
+          else deep(v, `${w}.${key}`, false);
+        }
+      };
+      deep(b, where, true);
+      if (mine.draw) {
+        const def = sb.drawings?.[b.draw], colors = COLOR_NAMES(style);
+        if (!def) errors.push(`${where}: ${b.type} needs "draw", the name of a drawing in the storyboard's "drawings" (${Object.keys(sb.drawings ?? {}).join(", ") || "none yet"})`);
+        else {
+          if (!Array.isArray(def.parts) || !def.parts.length) errors.push(`drawings.${b.draw}: needs "parts"`);
+          else def.parts.forEach((pt, i) => {
+            if (pt.text === undefined && !(typeof pt.d === "string" && /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.\-eE]+$/.test(pt.d) && /^\s*[Mm]/.test(pt.d))) errors.push(`drawings.${b.draw}.parts[${i}]: "d" must be an SVG path that starts with M`);
+            for (const f of ["fill", "stroke"]) if (pt[f] !== undefined && pt[f] !== "none" && !colors.includes(pt[f])) errors.push(`drawings.${b.draw}.parts[${i}]: ${f} "${pt[f]}" is not in the ${style.name} style. Use one of ${colors.join(", ")}`);
+            checkText(pt.text, `drawings.${b.draw}.parts[${i}].text`);
+          });
+          b.drawing = def;
+        }
+      }
+    }
     (b.lines ?? []).forEach((l, i) => checkText(l, `${where}.lines[${i}]`));
     if ((b.type === "path" || b.type === "travel") && !b.d) errors.push(`${where}: ${b.type} needs "d"`);
     // gradient fills (shape, hero, ring): colour names from the style, or hex
@@ -672,10 +714,31 @@ function validate(sbPath, wordsPath, style) {
 }
 
 // ---------- rendering ----------
+// The file the render starts from. A style that brings its own pieces (style.json "pieces", engine 1.14) gets its own
+// start file, which registers them before the engine loads; its pieces.tsx is copied next to the engine source first.
+// Every other style starts from the engine's index.ts, exactly as before. One start file per style, so two renders of
+// different styles at the same time never touch the same file.
+function entryFor(style) {
+  const plain = path.join(RUNTIME, "src", "index.ts");
+  if (!style.pieces?.file) return plain;
+  const dir = STYLE_DIRS.get(style.id);
+  const from = dir && path.join(dir, path.basename(String(style.pieces.file)));
+  if (!/^[a-z0-9-]+$/.test(String(style.id)) || !from || !fs.existsSync(from)) fail(`the ${style.name} style brings its own pieces (${style.pieces.file}) but that file is not with the style. Try the command again; if it keeps failing, write to support@animationroom.app.`);
+  if (!fs.existsSync(path.join(RUNTIME, "src", "stylePieces.ts"))) fail(`the ${style.name} style needs a newer render engine. Say "set up my studio" to update it, then try again.`);
+  const to = path.join(RUNTIME, "src", "style-pieces", style.id);
+  fs.mkdirSync(to, { recursive: true });
+  const put = (file, body) => { if (!fs.existsSync(file) || !fs.readFileSync(file).equals(Buffer.from(body))) fs.writeFileSync(file, body); };
+  put(path.join(to, "pieces.tsx"), fs.readFileSync(from));
+  put(path.join(to, "register.ts"), `import {setStylePieces} from '../../stylePieces';\nimport * as own from './pieces';\nsetStylePieces(own);\n`);
+  const entry = path.join(RUNTIME, "src", `index-${style.id}.ts`);
+  put(entry, `import './style-pieces/${style.id}/register';\nimport {registerRoot} from 'remotion';\nimport {Root} from './Root';\n\nregisterRoot(Root);\n`);
+  return entry;
+}
+
 async function prepare(sb, style) {
   const { bundle } = await importRuntime("@remotion/bundler");
   const { selectComposition, renderStill, renderMedia } = await importRuntime("@remotion/renderer");
-  const serveUrl = await bundle({ entryPoint: path.join(RUNTIME, "src", "index.ts"), publicDir: path.join(RUNTIME, "public"), onProgress: () => {} });
+  const serveUrl = await bundle({ entryPoint: entryFor(style), publicDir: path.join(RUNTIME, "public"), onProgress: () => {} });
   const inputProps = { style, storyboard: sb, silent: true };
   const browserExecutable = browser();
   const composition = await selectComposition({ serveUrl, id: "Animate", inputProps, browserExecutable, logLevel: "error" });
@@ -760,7 +823,7 @@ async function render(sb, style, vo, outFile) {
   const voBuf = decodeMono(vo);
   const n = Math.ceil(sb.duration * SR);
   const music = renderScore(sb, style.sound?.score);
-  const fx = renderSfx(sb, style.sound?.sfx);
+  const fx = renderSfx(sb, style.pieces ? { ...style.sound?.sfx, pieces: ownBlocks(style) } : style.sound?.sfx);
   const env = envelope(voBuf);
   const duck = style.sound?.duck ?? 0.45;
   const mg = (rms(voBuf) * Math.pow(10, (style.sound?.score?.level ?? -15) / 20)) / (rms(music) || 1);

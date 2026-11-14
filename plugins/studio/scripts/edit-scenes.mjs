@@ -106,6 +106,16 @@ function project(work) {
   fs.rmSync(animDir, { recursive: true, force: true });
   fs.cpSync(animSrc, animDir, { recursive: true, filter: (f) => !/(index|Root|Hello)\.tsx?$/.test(f) });
   fs.copyFileSync(path.join(PLUGIN_ROOT, "scripts", "chibi-names.mjs"), path.join(animDir, "names.mjs"));
+  // Pieces the style brings itself (style.json "pieces"): copied next to the engine source and registered.
+  if (style.pieces?.file) {
+    const own = path.join(path.dirname(guide), style.pieces.file);
+    if (!/^[a-z0-9-]+$/.test(String(style.id)) || !fs.existsSync(own)) fail(`the style ${styleId} names its own pieces (${style.pieces.file}) but the file could not be read`);
+    const to = path.join(animDir, "style-pieces", style.id);
+    fs.mkdirSync(to, { recursive: true });
+    fs.copyFileSync(own, path.join(to, "pieces.tsx"));
+    fs.writeFileSync(path.join(to, "register.ts"), `import {setStylePieces} from '../../stylePieces';\nimport * as own from './pieces';\nsetStylePieces(own);\n`);
+    fs.writeFileSync(path.join(animDir, "ownPieces.ts"), `import './style-pieces/${style.id}/register';\nexport {};\n`);
+  }
   for (const sub of ["fonts", "tex"]) copyMissing(path.join(PLUGIN_ROOT, "runtime", "public", sub), path.join(pub, sub));
   const m = probe(stage);
   const raw = readJson(wordsFile), words = (raw.words || raw).map((w) => [+(+w[0]).toFixed(2), +(+w[1]).toFixed(2), String(w[2]).trim()]);

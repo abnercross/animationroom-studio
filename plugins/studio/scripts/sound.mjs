@@ -554,6 +554,9 @@ export function collectEvents(sb, map = {}) {
   };
   const walk = (b) => {
     if (b.sfx === false) return;
+    // a piece the style brings itself (engine 1.14): the one small sound its style names for it, or none
+    const own = map.pieces?.[b.type];
+    if (own) { if (own.sound && typeof b.at === 'number') ev.push({kind: own.sound, at: b.at, n: ev.length, soft: true}); return; }
     if (b.type && b.type.startsWith('vox')) return voxEvents(b);
     if (b.type && b.type.startsWith('poster')) return posterEvents(b);
     // Happy Bean (engine 1.7): a soft pop for each thing that appears, a boing when a bean lands or hops

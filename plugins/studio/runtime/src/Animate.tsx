@@ -23,6 +23,7 @@ import {BeanBadge, BeanBlock, BeanDraw, BeanInfo, BeanProp, BeanTitle} from './b
 import {CutoutBlock, FaceBlock, PaperDefs, RansomBlock, Sheet, Table, sheetTransform} from './paper';
 import {ScreenContext, Style, clamp, cubicInOut, gray, hash, mergeTokens, progress, quintOut, StyleTokens} from './lib';
 import {VoxAnimate} from './vox';
+import {stylePieces} from './stylePieces';
 
 export type CamKey = {t: number; x?: number; y?: number; zoom?: number; dur?: number};
 export type Scene = {id: string; start: number; end: number; camera?: 'push' | 'still'; exit?: boolean; blocks: Block[]; tint?: string; floor?: number | false; cam?: CamKey[]; transition?: 'cut' | 'iris' | 'page' | 'swipe' | 'slide' | 'pan' | 'zoom'; origin?: [number, number]};
@@ -151,8 +152,11 @@ const renderBlock = (b: Block, t: number, k: StyleTokens): React.ReactNode => {
     case 'group':
       if (b.at !== undefined && t < b.at) return null;
       return <GroupBlock b={b} t={t} k={k} render={(c) => renderBlock(c, t, k)} />;
-    default:
-      return null;
+    default: {
+      // engine 1.14: a block type the style brings itself (its pieces.tsx)
+      const Own = stylePieces()?.blocks?.[b.type];
+      return Own ? <Own b={b} t={t} k={k} /> : null;
+    }
   }
 };
 
@@ -288,6 +292,9 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
   const tinted = k.background?.type === 'tint';
   const poster = k.background?.type === 'poster';
   const keyCam = k.camera === 'keys';
+  // engine 1.14: what the style brings itself (nothing for every style that only uses the engine's pieces)
+  const own = stylePieces();
+  const OwnDefs = own?.Defs, OwnGround = own?.Ground, OwnFinish = own?.Finish;
   const now = storyboard.scenes.find((s) => t >= s.start && t <= s.end + 0.001) ?? last;
   // Camera for styles that key it per scene: focus point and zoom, a small punch on each cut, a shake on impacts.
   const camAt = (s: Scene) => {
@@ -355,6 +362,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
     <AbsoluteFill style={{backgroundColor: gray(k.bg)}}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <defs>
+          {OwnDefs && <OwnDefs k={k} W={W} H={H} />}
           <pattern id="hatch" patternUnits="userSpaceOnUse" width={10} height={10} patternTransform="rotate(45)">
             <line x1={0} y1={0} x2={0} y2={10} stroke={gray(k.mid)} strokeWidth={1.3} />
           </pattern>
@@ -449,7 +457,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
           )}
         </defs>
         <g transform={pageT}>
-        {poster || k.background?.type === 'plain' ? <rect width={W} height={H} fill={gray(k.bg)} /> : board ? <Board k={k} W={W} H={H} /> : table ? <Table k={k} W={W} H={H} /> : tinted ? <rect x={-pm} y={-pm} width={W + pm * 2} height={H + pm * 2} fill={gray(k.tints?.[now.tint ?? ''] ?? k.bg)} /> : <Grid t={t} k={k} W={W} H={H} />}
+        {OwnGround ? <OwnGround t={t} k={k} W={W} H={H} scene={now} /> : poster || k.background?.type === 'plain' ? <rect width={W} height={H} fill={gray(k.bg)} /> : board ? <Board k={k} W={W} H={H} /> : table ? <Table k={k} W={W} H={H} /> : tinted ? <rect x={-pm} y={-pm} width={W + pm * 2} height={H + pm * 2} fill={gray(k.tints?.[now.tint ?? ''] ?? k.bg)} /> : <Grid t={t} k={k} W={W} H={H} />}
         {k.background?.motes && <Motes t={t} k={k} W={W} H={H} />}
         {pg && k.finish?.grain && <rect x={-pm} y={-pm} width={W + pm * 2} height={H + pm * 2} fill="url(#paperGrain)" opacity={k.finish.grain} />}
         <g mask={chalk ? 'url(#chalkMask)' : undefined} transform={[shake, k.sheet ? sheetTransform(t, D, k, W, H) : undefined].filter(Boolean).join(' ') || undefined}>
@@ -525,6 +533,7 @@ const AnimateMain: React.FC<AnimateProps> = ({style, storyboard, silent}) => {
         {k.finish?.vignette && <rect width={W} height={H} fill="url(#vignette)" opacity={k.finish.vignette} />}
         <InkSwipe k={k} t={t} W={W} H={H} cuts={storyboard.scenes.filter((s) => s.transition === 'swipe').map((s) => s.start)} />
         {keyCam && <Iris k={k} t={t} W={W} H={H} cuts={storyboard.scenes.filter((s) => s.transition === 'iris').map((s) => s.start)} />}
+        {OwnFinish && <OwnFinish t={t} k={k} W={W} H={H} />}
         {flicker !== 0 && <rect width={W} height={H} fill={flicker > 0 ? '#fff' : '#000'} opacity={Math.abs(flicker)} />}
         {fade > 0 && <rect width={W} height={H} fill={k.fade?.to === 'bg' ? gray(k.bg) : '#000'} opacity={fade} />}
       </svg>

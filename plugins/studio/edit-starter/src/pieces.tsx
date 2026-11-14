@@ -12,6 +12,8 @@ import * as O from "./animate/poster";
 import * as B from "./animate/bean";
 import * as P from "./animate/paper";
 import { StoryContext, gray, mergeTokens, StyleTokens } from "./animate/lib";
+import "./animate/ownPieces"; // registers the pieces a style brings itself, when it has any
+import { stylePieces } from "./animate/stylePieces";
 import { expandChibi } from "./animate/names.mjs";
 import { FACE, FPS, HEIGHT, STYLE, WIDTH, WORDS } from "./data";
 import { CheckContext, cue, faceAt } from "./kit";
@@ -82,7 +84,11 @@ const one = (b: Block, t: number, k: StyleTokens): React.ReactNode => {
     case "beanTitle": return <B.BeanTitle {...p} />;
     case "beanInfo": return <B.BeanInfo {...p} />;
     case "caption": return <C.CaptionBlock {...p} />;
-    default: throw new Error(`Piece: "${b.type}" is not one of Animate's pieces that work in Edit`);
+    default: {
+      const Own = stylePieces()?.blocks?.[b.type]; // a piece the style brings itself
+      if (Own) return <Own {...p} />;
+      throw new Error(`Piece: "${b.type}" is not one of Animate's pieces that work in Edit`);
+    }
   }
 };
 
@@ -105,6 +111,7 @@ const prepare = (b: Block): Block => {
       const def = (S as any).DRAWINGS?.[x.draw];
       if (!def) throw new Error(`Piece: drawing "${x.draw}" is not in DRAWINGS in scenes.tsx`);
       x.parts = def.parts;
+      if ((STYLE as any).pieces?.blocks?.[x.type]?.draw) x.drawing = def; // a style's own piece reads the whole drawing
       if (x.type === "beanDraw") x.drawing = def; // Happy Bean reads the whole drawing
       if (x.type === "prop" && x.kind === undefined) x.kind = "drawing";
     }
@@ -123,8 +130,10 @@ const prepare = (b: Block): Block => {
 const chalkOf = (k: StyleTokens) => (k as any).stroke?.style === "chalk";
 const Defs: React.FC<{ k: StyleTokens }> = ({ k }) => {
   const chalk = chalkOf(k), board = (k as any).background?.type === "board", st = (k as any).finish?.stitch;
+  const OwnDefs = stylePieces()?.Defs;
   return (
   <defs>
+    {OwnDefs && <OwnDefs k={k} W={WIDTH} H={HEIGHT} />}
     <pattern id="hatch" patternUnits="userSpaceOnUse" width={10} height={10} patternTransform="rotate(45)">
       <line x1={0} y1={0} x2={0} y2={10} stroke={gray((k as any).mid)} strokeWidth={1.3} />
     </pattern>

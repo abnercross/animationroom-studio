@@ -57,6 +57,8 @@ Tell them the plan first in 4 to 6 short lines: one per scene, the element that 
 4. The story, the scene order, the layout, the camera, the metaphors and the timing are yours to invent. Only the safe zones and the checker's rules are fixed.
 5. If an idea truly cannot be built with the style's tools, use the nearest honest way, and tell the person in one line what you could not draw, so it can be added later.
 
+Some styles bring pieces of their own that are not in the block reference below. The style's guide names them and their fields: write them exactly as the guide shows. The check knows them.
+
 ```json
 {
   "style": "blueprint",
