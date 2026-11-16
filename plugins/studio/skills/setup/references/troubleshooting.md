@@ -62,6 +62,17 @@ Run the check: the chat may be using an empty data folder (for example after the
 2. If the error mentions memory, ask them to close other heavy apps (video editors, many browser tabs) and retry.
 3. If it mentions the browser failing to launch, use the Chrome fallback above.
 
+## Windows: a command is "not recognized", or something asks for Git
+
+The studio never needs Git, and the person never installs it for the studio. Two things can look like it does:
+
+- **Your own commands fail** with "not recognized" or a parse error. This chat has a PowerShell tool instead of Bash (a Windows computer without Git). Put the call sign in front of a quoted program, `& "<NODE_USE>" "<script>" ...`, join commands with `;` instead of `&&`, and run the `.ps1` scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File`. Do not send the person to install anything.
+- **The store did not add or does not update** and the Claude app said `Command 'git' not found`. The store was added by its GitHub address, which the Claude app copies with Git. Give the person the one line from the members page instead (it adds the same store as a plain download, no Git): they open PowerShell from the Start menu, paste `irm https://animationroom.app/install.ps1 | iex`, press Enter, then close and reopen the Claude app. On a Mac the line is `curl -fsSL https://animationroom.app/install.sh | bash` in Terminal.
+
+## Windows: the person's name has an accent or a space and paths look broken
+
+Since plugin 0.24.1 the check prints paths in UTF-8, so `C:\Users\João Silva\...` arrives intact. Always wrap paths in double quotes. If a path still shows odd characters, run the check again and copy `NODE_USE` and `DATA_FOLDER` from its output exactly, never retype them.
+
 ## Windows: scripts are blocked
 
 If PowerShell says running scripts is disabled, make sure the command starts with `powershell -NoProfile -ExecutionPolicy Bypass -File`. This allows only that one script to run, once, and changes no settings.

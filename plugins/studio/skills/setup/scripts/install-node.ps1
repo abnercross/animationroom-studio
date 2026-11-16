@@ -4,6 +4,8 @@
 param([Parameter(Mandatory = $true)][string]$DataDir)
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
+# Paths with accents must reach Claude intact (Windows PowerShell 5.1 prints in the old regional code page otherwise).
+try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; $OutputEncoding = [Console]::OutputEncoding } catch {}
 $Dist = "https://nodejs.org/dist"
 
 $arch = $env:PROCESSOR_ARCHITECTURE
@@ -32,7 +34,15 @@ try {
   $actual = (Get-FileHash -Algorithm SHA256 (Join-Path $tmp $zip)).Hash.ToLower()
   if (-not $expected -or $expected.ToLower() -ne $actual) { throw "download check failed, the file did not match its checksum" }
 
-  Expand-Archive -Path (Join-Path $tmp $zip) -DestinationPath $tmp -Force
+  # Windows ships tar.exe (since Windows 10 1803): it unpacks in seconds and copes with long paths. Expand-Archive is the
+  # fallback: on Windows PowerShell 5.1 it takes minutes for the thousands of small files in Node.js.
+  $tar = Join-Path $env:SystemRoot "System32\tar.exe"
+  $unpacked = $false
+  if (Test-Path $tar) {
+    & $tar -xf (Join-Path $tmp $zip) -C $tmp
+    if ($LASTEXITCODE -eq 0 -and (Test-Path (Join-Path $tmp "$name\node.exe"))) { $unpacked = $true }
+  }
+  if (-not $unpacked) { Expand-Archive -Path (Join-Path $tmp $zip) -DestinationPath $tmp -Force }
   New-Item -ItemType Directory -Path $DataDir -Force | Out-Null
   $dest = Join-Path $DataDir "node"
   if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }

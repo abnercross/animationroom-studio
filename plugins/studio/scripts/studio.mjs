@@ -83,9 +83,11 @@ function setDeep(obj, key, value) {
 function getDeep(obj, key) { return key.split(".").reduce((o, p) => (o == null ? undefined : o[p]), obj); }
 const mask = (k) => (k && k.length > 4 ? "•••• " + k.slice(-4) : "••••");
 
+// Windows refuses to start a .cmd file (npm.cmd) without a shell since Node 20.12, so only those go through one.
+const WIN_CMD = /\.(cmd|bat)$/i;
 function run(cmd, args, { cwd, quiet = false } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { cwd, stdio: quiet ? ["ignore", "pipe", "pipe"] : ["ignore", "inherit", "inherit"], shell: false, env: nodeEnv({ npm_config_update_notifier: "false" }) });
+    const child = spawn(cmd, args, { cwd, stdio: quiet ? ["ignore", "pipe", "pipe"] : ["ignore", "inherit", "inherit"], shell: WIN_CMD.test(cmd), env: nodeEnv({ npm_config_update_notifier: "false" }) });
     let buf = "";
     if (quiet) { child.stdout.on("data", (d) => (buf += d)); child.stderr.on("data", (d) => (buf += d)); }
     child.on("error", reject);

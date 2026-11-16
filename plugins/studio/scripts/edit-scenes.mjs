@@ -36,7 +36,33 @@ function installSkills() {
   fs.mkdirSync(SKILLS_HOME, { recursive: true });
   const win = process.platform === "win32";
   const r = spawnSync(win ? "npx.cmd" : "npx", ["--yes", "skills", "add", "remotion-dev/skills", "--agent", "claude-code", "-y"], { cwd: SKILLS_HOME, env: nodeEnv(), shell: win, encoding: "utf8", timeout: 180000 });
-  return r.status === 0 && fs.existsSync(path.join(SKILLS_DIR, "remotion-best-practices", "SKILL.md")) ? "installed" : "missing";
+  if (r.status === 0 && fs.existsSync(path.join(SKILLS_DIR, "remotion-best-practices", "SKILL.md"))) return "installed";
+  return downloadSkills() ? "installed" : "missing";
+}
+
+// Remotion's installer copies the skills with git, and a Windows computer (or a Mac without Apple's developer tools)
+// has no git. The same public files also come as one download, unpacked with the tar program every Mac, Linux and
+// Windows 10 or 11 already has. Nothing is installed on the computer and nobody is asked to install git.
+function downloadSkills() {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "ar-skills-"));
+  try {
+    const file = path.join(tmp, "skills.tar.gz");
+    const get = spawnSync(process.execPath, ["-e", `
+      const fs = require("node:fs");
+      fetch(process.argv[1]).then(async (r) => { if (!r.ok) throw new Error("HTTP " + r.status); fs.writeFileSync(process.argv[2], Buffer.from(await r.arrayBuffer())); })
+        .catch((e) => { console.error(String(e.message || e)); process.exit(1); });
+    `, "https://codeload.github.com/remotion-dev/skills/tar.gz/refs/heads/main", file], { encoding: "utf8", timeout: 120000 });
+    if (get.status !== 0 || !fs.existsSync(file)) return false;
+    const sysTar = process.platform === "win32" ? path.join(process.env.SystemRoot || "C:\\Windows", "System32", "tar.exe") : "tar";
+    const un = spawnSync(sysTar, ["-xzf", "skills.tar.gz"], { cwd: tmp, encoding: "utf8", timeout: 120000 });
+    if (un.status !== 0) return false;
+    const root = fs.readdirSync(tmp, { withFileTypes: true }).find((e) => e.isDirectory());
+    const from = root ? path.join(tmp, root.name, "skills") : "";
+    if (!from || !fs.existsSync(path.join(from, "remotion-best-practices", "SKILL.md"))) return false;
+    fs.cpSync(from, SKILLS_DIR, { recursive: true });
+    return fs.existsSync(path.join(SKILLS_DIR, "remotion-best-practices", "SKILL.md"));
+  } catch { return false; }
+  finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }
 
 function copyMissing(from, to) {

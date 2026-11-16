@@ -6,6 +6,11 @@ param([string]$PluginRoot = "", [string]$DataDir = "", [string]$StudioDir = "")
 $MinNode = 20
 $MinFreeGB = 5
 function Say($k, $v) { Write-Output "$k=$v" }
+# A name with an accent (C:\Users\Joao with a tilde) must reach Claude intact, and files the studio wrote are UTF-8.
+# Windows PowerShell 5.1 would otherwise print and read them in the old regional code page and break the paths.
+try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; $OutputEncoding = [Console]::OutputEncoding } catch {}
+function ReadText($p) { return [System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8) }
+function ReadJson($p) { return (ReadText $p) | ConvertFrom-Json }
 
 Say STUDIO_CHECK 1
 
@@ -17,7 +22,7 @@ if (-not (IsStudio $DataDir)) {
   $ptr = Join-Path $homeDir "home.json"
   if (Test-Path $ptr) {
     $known = ""
-    try { $known = (Get-Content $ptr -Raw | ConvertFrom-Json).data } catch {}
+    try { $known = (ReadJson $ptr).data } catch {}
     if ((IsStudio $known) -and ($known -ne $DataDir)) { Say DATA_ADOPTED $known; $DataDir = $known }
   }
 }
@@ -63,28 +68,28 @@ Say NET_NODEJS (Net "https://nodejs.org/dist/index.tab")
 
 $inst = if ($DataDir) { Join-Path $DataDir "runtime\.installed.json" } else { "" }
 if ($inst -and (Test-Path $inst)) {
-  $have = (Get-Content $inst -Raw | ConvertFrom-Json).version
+  $have = (ReadJson $inst).version
   $want = ""
-  try { $want = (Get-Content (Join-Path $PluginRoot "runtime\package.json") -Raw | ConvertFrom-Json).version } catch {}
+  try { $want = (ReadJson (Join-Path $PluginRoot "runtime\package.json")).version } catch {}
   if ($want -and ($have -ne $want)) { Say RUNTIME outdated } else { Say RUNTIME installed }
   Say RUNTIME_VERSION $have
 } else { Say RUNTIME missing }
 # The Edit engine is separate from the Animate engine.
 $einst = if ($DataDir) { Join-Path $DataDir "runtime-edit\.installed.json" } else { "" }
 if ($einst -and (Test-Path $einst)) {
-  $ehave = (Get-Content $einst -Raw | ConvertFrom-Json).version
+  $ehave = (ReadJson $einst).version
   $ewant = ""
-  try { $ewant = (Get-Content (Join-Path $PluginRoot "edit-runtime\package.json") -Raw | ConvertFrom-Json).version } catch {}
+  try { $ewant = (ReadJson (Join-Path $PluginRoot "edit-runtime\package.json")).version } catch {}
   if ($ewant -and ($ehave -ne $ewant)) { Say EDIT_RUNTIME outdated } else { Say EDIT_RUNTIME installed }
 } else { Say EDIT_RUNTIME missing }
 # The install step writes .installed.json only after the video browser is in place.
-if ($inst -and (Test-Path $inst) -and ((Get-Content $inst -Raw) -match '"browser"')) { Say BROWSER ready } else { Say BROWSER missing }
+if ($inst -and (Test-Path $inst) -and ((ReadText $inst) -match '"browser"')) { Say BROWSER ready } else { Say BROWSER missing }
 if ($DataDir -and (Test-Path (Join-Path $DataDir "whisper\.ready"))) { Say TRANSCRIBER ready } else { Say TRANSCRIBER missing }
 
 $cfg = if ($DataDir) { Join-Path $DataDir "config.json" } else { "" }
 if ($cfg -and (Test-Path $cfg)) {
   Say CONFIG present
-  if ((Get-Content $cfg -Raw) -match '"license"') { Say LICENSE present } else { Say LICENSE missing }
+  if ((ReadText $cfg) -match '"license"') { Say LICENSE present } else { Say LICENSE missing }
 } else { Say CONFIG missing; Say LICENSE missing }
 
 # Where videos will live. The Videos folder is often moved into OneDrive, so check for that.
@@ -108,9 +113,9 @@ if (Test-Path $StudioDir) { Say STUDIO_DIR_EXISTS yes } else { Say STUDIO_DIR_EX
 # An outdated engine is fine: the Animate and Edit scripts update it by themselves when they need it.
 $base = $true; $missing = @()
 if (-not $use) { $base = $false; $missing += "node" }
-$licensed = $cfg -and (Test-Path $cfg) -and ((Get-Content $cfg -Raw) -match '"license"')
+$licensed = $cfg -and (Test-Path $cfg) -and ((ReadText $cfg) -match '"license"')
 if (-not $licensed) { $base = $false; $missing += "license" }
-$hasBrowser = $inst -and (Test-Path $inst) -and ((Get-Content $inst -Raw) -match '"browser"')
+$hasBrowser = $inst -and (Test-Path $inst) -and ((ReadText $inst) -match '"browser"')
 if (-not $hasBrowser) { $base = $false; $missing += "browser" }
 $readyAnimate = $base; $readyEdit = $base
 if (-not ($inst -and (Test-Path $inst))) { $readyAnimate = $false; $missing += "animation_engine" }

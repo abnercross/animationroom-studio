@@ -15,6 +15,7 @@ Reply in the language the person writes in, from the first message to the last. 
 
 - Plugin folder: `${CLAUDE_PLUGIN_ROOT}`. Studio data folder: `${CLAUDE_PLUGIN_DATA}`.
 - Find the Node to use by running the setup check (`skills/setup/scripts/check.sh`, or `check.ps1` on Windows) and reading `NODE_USE`.
+- Windows: with a Bash tool, write the commands as shown. With only a PowerShell tool (a Windows computer without Git), put the call sign in front of every command that starts with a quoted program, `& "<NODE_USE>" "<script>" ...`, and join commands with `;`, never `&&`. Never ask the person to install Git or anything else for this: the studio needs nothing on the computer besides its own folder.
 - `ANIMATE` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/animate.mjs"` and `STUDIO` means `"<NODE_USE>" "${CLAUDE_PLUGIN_ROOT}/scripts/studio.mjs"`. Always add `--data "${CLAUDE_PLUGIN_DATA}"`.
 - Scripts end with `KEY=value` lines. `RESULT=failed` comes with a `REASON` written for the person; pass it on in your own words and do what it says.
 - Video tools (ffmpeg): the studio looks after them. The scripts find a full copy or install one into the studio folder by themselves (one line on screen, about a minute, once). Never install ffmpeg yourself (no brew, winget or downloads) and never ask the person about it. If you need to cut or convert a file yourself, run `STUDIO ffmpeg install` and use the `FFMPEG_PATH` it prints.

@@ -72,6 +72,7 @@ export function installFfmpeg(data) {
   const [cmd, lead] = npmCommand();
   const r = spawnSync(cmd, [...lead, "install", PACKAGE, "--no-audit", "--no-fund", "--no-progress", "--loglevel=error"], {
     cwd: dir, encoding: "utf8", env: nodeEnv({ npm_config_update_notifier: "false" }), maxBuffer: 1e8,
+    shell: /\.(cmd|bat)$/i.test(cmd), // Windows refuses to start npm.cmd without a shell since Node 20.12
   });
   if (r.status !== 0) return { error: `the video tools did not download: ${String(r.stderr || r.error || "").slice(-300)}` };
   const own = studioCopy(data);
